@@ -64,7 +64,7 @@ public class BasicOpMode_Iterative extends OpMode
      */
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Status", "Yeah, I'm Initialized!");
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -114,10 +114,10 @@ public class BasicOpMode_Iterative extends OpMode
 
 
 
-        * public class HelloWorld{
+        * public class MotorPositionChange{
     static double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
-        double MoveYBasePower[] = {1.0000d, 1.0000d, 1.0000d, 1.0000d};
-        double MoveXBasePower[] = {1.0000d, -1.0000d, -1.0000d, 1.0000};
+        double MoveYBasePower[] = {1.0000d, 1.0000d, 1.0000d, 1.0000d};                             //Base Motor Power for Y movement
+        double MoveXBasePower[] = {1.0000d, -1.0000d, -1.0000d, 1.0000};                            //Base Motor Power for X movement
         Yg -= Ya;
         Xg -= Xa;
         Yg /= 144;
@@ -134,8 +134,8 @@ public class BasicOpMode_Iterative extends OpMode
 
     }
     public static void main(String []args) {
-       double[] MotorPower = PositionChange(2.3000d, -3.0000d, 10.0500d, 8.78000d);
-       for(int i = 0; i < 4; i++) {
+       double[] MotorPower = PositionChange(2.3000d, -3.0000d, 10.0500d, 8.78000d);                 //Input actual position(Xa, Ya) and position goal (Xg, Yg) in the form
+       for(int i = 0; i < 4; i++) {                                                                 //of {Xg, Xa, Yg, Ya}
            System.out.println(MotorPower[i]);
        }
     }
