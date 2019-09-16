@@ -107,39 +107,67 @@ public class BasicOpMode_Iterative extends OpMode
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
+
+        /** The following codes are basic (and messy) codes for the odometry calculations during
+        *  autonomous. Add (odometry related) codes in this comment to be stored for usage. And if
+         *  you are wondering: Yes, I did type this in a javadoc comment because I like the color
+         *  green for my comments, and it worked because you are reading this. :) */
         /*
+       ================================================
 
-        RYAN'S CODE
+        RYAN'S CODE :
 
 
+    Code for changing motor position:
 
+    public class MotorPositionChange{
+        static double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
+            double MoveYBasePower[] = {1.0000d, 1.0000d, 1.0000d, 1.0000d};                             //Base Motor Power for Y movement
+            double MoveXBasePower[] = {1.0000d, -1.0000d, -1.0000d, 1.0000};                            //Base Motor Power for X movement
+            Yg -= Ya;
+            Xg -= Xa;
+            Yg /= 144;
+            Xg /= 144;
+            for(int j = 0; j < 4; j++) {
+                MoveYBasePower[j] *= Yg;
+                MoveXBasePower[j] *= Xg;
+            }
+            double[] motorPower = new double[4];
+            for(int k = 0; k < 4; k++) {
+                motorPower[k] = MoveXBasePower[k] + MoveYBasePower[k];
+            }
+            return motorPower;
 
-        * public class MotorPositionChange{
-    static double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
-        double MoveYBasePower[] = {1.0000d, 1.0000d, 1.0000d, 1.0000d};                             //Base Motor Power for Y movement
-        double MoveXBasePower[] = {1.0000d, -1.0000d, -1.0000d, 1.0000};                            //Base Motor Power for X movement
-        Yg -= Ya;
-        Xg -= Xa;
-        Yg /= 144;
-        Xg /= 144;
-        for(int j = 0; j < 4; j++) {
-            MoveYBasePower[j] *= Yg;
-            MoveXBasePower[j] *= Xg;
         }
-        double[] motorPower = new double[4];
-        for(int k = 0; k < 4; k++) {
-            motorPower[k] = MoveXBasePower[k] + MoveYBasePower[k];
+        public static void main(String []args) {
+            double[] MotorPower = PositionChange(2.3000d, -3.0000d, 10.0500d, 8.78000d);                 //Input actual position(Xa, Ya) and position goal (Xg, Yg) in the form
+            for(int i = 0; i < 4; i++) {                                                                 //of {Xg, Xa, Yg, Ya}
+                System.out.println(MotorPower[i]);
+            }
         }
-        return motorPower;
+    }
 
+     Code for changing angle:
+
+                                                                                                       //Angle Position Change Method
+    public class HelloWorld{
+        static double[] AngleChange(double thetaA, double thetaG) {
+            double TurnBasePower[] = {1.0000d, -1.0000d, 1.0000d, -1.0000d};
+            thetaA -= thetaG;
+            double[] motorPower = new double[4];
+            for(int i = 0; i < 4; i++) {
+                motorPower[i] = thetaA * TurnBasePower[i];
+            }
+            return motorPower;
+        }
+
+     public static void main(String []args){
+        double MotorPower[] = AngleChange(142.23d, 60.0d);                 //type inputs in the format {actual angle, angle goal}.
+            for(int k = 0; k < 4; k++) {                                   //delete this, it is just for debugging purposes.
+                System.out.println(MotorPower[k]);
+            }
+        }
     }
-    public static void main(String []args) {
-       double[] MotorPower = PositionChange(2.3000d, -3.0000d, 10.0500d, 8.78000d);                 //Input actual position(Xa, Ya) and position goal (Xg, Yg) in the form
-       for(int i = 0; i < 4; i++) {                                                                 //of {Xg, Xa, Yg, Ya}
-           System.out.println(MotorPower[i]);
-       }
-    }
-}
         *
         *
         *
@@ -148,6 +176,8 @@ public class BasicOpMode_Iterative extends OpMode
         *
         *
         * */
+
+
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
         double drive = -gamepad1.left_stick_y;
