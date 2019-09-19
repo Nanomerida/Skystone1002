@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "Mechanum Test", group="TeleOp")
 
-public class MechanumTest extends OpMode {
+public class TeleOp extends OpMode {
     //Crates HardwareMap object robot
     CRGreenHardwareMap robot = new CRGreenHardwareMap(telemetry);
 

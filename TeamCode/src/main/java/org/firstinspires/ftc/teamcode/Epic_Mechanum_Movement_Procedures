@@ -1,0 +1,47 @@
+public class Epic_Mechanum_Movement_Procedures{
+    float forward = {
+            robot.rightFrontMotor.setPower(1);
+            robot.rightBackMotor.setPower(1);
+            robot.leftBackMotor.setPower(1);
+            robot.leftFrontMotor.setPower(1);
+    }
+
+
+    float backward = {
+            robot.rightFrontMotor.setPower(-1);
+            robot.rightBackMotor.setPower(-1);
+            robot.leftBackMotor.setPower(-1);
+            robot.leftFrontMotor.setPower(-1);
+    }
+
+
+     float strafeR = {
+            robot.rightFrontMotor.setPower(-1);
+            robot.rightBackMotor.setPower(1);
+            robot.leftBackMotor.setPower(-1);
+            robot.leftFrontMotor.setPower(1);
+     }
+
+
+     float strafeL = {
+            robot.rightFrontMotor.setPower(1);
+            robot.rightBackMotor.setPower(-1);
+            robot.leftBackMotor.setPower(1);
+            robot.leftFrontMotor.setPower(-1);
+     }
+
+     float rotatec = {
+            robot.rightFrontMotor.setPower(-1);
+            robot.rightBackMotor.setPower(-1);
+            robot.leftBackMotor.setPower(1);
+            robot.leftFrontMotor.setPower(1);
+     }
+
+
+     float rotatecc = {
+            robot.rightFrontMotor.setPower(1);
+            robot.rightBackMotor.setPower(1);
+            robot.leftBackMotor.setPower(-1);
+            robot.leftFrontMotor.setPower(-1);
+     }
+}
