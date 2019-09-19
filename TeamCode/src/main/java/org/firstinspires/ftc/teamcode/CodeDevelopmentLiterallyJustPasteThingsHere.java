@@ -115,7 +115,7 @@ public class BasicOpMode_Iterative extends OpMode
         /*
        ================================================
 
-        RYAN'S CODE :
+        AUTONOMOUS CODE :
 
 
     Code for changing motor position:
@@ -168,6 +168,37 @@ public class BasicOpMode_Iterative extends OpMode
             }
         }
     }
+    Code for Absolute position with two Y encoders and one X encoder.
+    import java.lang.Math.*
+    public class HelloWorld{
+        static double[] = AbsolutePosition(double PrevX, double PrevY) {
+            double PreviousPosition[] = {PrevX, PrevY};
+            double CurrentPosition[] = new double[2];
+            double XEncoderPosition[] = new double[2];
+            double YEncoderPosition[] = new double[2];
+            double ConvRate[] = Math.PI * 90 / 208076.8;
+            double Heading = "current reading from gyro";
+            double WeirdOrlandoMathsX[] = {sin(Heading), cos(Heading)};
+            double WeirdOrlandoMathsY[] = {cos(Heading), sin(Heading)};
+            double XClicks = {"encoders detected since previous iteration X"};
+            double YClicks = {"encoders detected since previous iteration Y"};
+            for(int i = 0; i < 2; i++) {
+                XEncoderPosition[i] = ConvRate * XClicks * WeirdOrlandoMathsX[i];
+                YEncoderPosition[i] = ConvRate * YClicks * WeirdOrlandoMathsY[i];
+            }
+            for(int k = 0; k < 2; k++) {
+                CurrentPosition[k] = XEncoderPosition[k] + YEncoderPosition[k] + PreviousPosition;
+            }
+            //something here to reset encoder readings.
+            //First iteration, PrevX = 0.00d, PrevY = 0.00d
+            return CurrentPosition
+        }
+
+            public static void main(String []args){
+                double ActualPosition[] = AbsolutePosition(0.00d, 0.00d);
+            }
+    }
+
         *
         *
         *
