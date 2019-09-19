@@ -143,9 +143,11 @@ public class BasicOpMode_Iterative extends OpMode
         }
         public static void main(String []args) {
             double[] MotorPower = PositionChange(2.3000d, -3.0000d, 10.0500d, 8.78000d);                 //Input actual position(Xa, Ya) and position goal (Xg, Yg) in the form
-            for(int i = 0; i < 4; i++) {                                                                 //of {Xg, Xa, Yg, Ya}
-                System.out.println(MotorPower[i]);
-            }
+            robot.leftFrontMotor.setPower(MotorPower[0]);
+            robot.leftBackMotor.setPower(MotorPower[1]);
+            robot.rightFront.setPower(MotorPower[2]);
+            robot.rightBack.setPower(MotoPower[3]);                                                                           //of {Xg, Xa, Yg, Ya}
+
         }
     }
 

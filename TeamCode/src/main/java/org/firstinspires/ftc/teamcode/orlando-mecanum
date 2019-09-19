@@ -1,0 +1,32 @@
+Autonomous:
+currentPos = (xo, yo)
+goTo(x,y);
+vuForiaBlockCheck(); //outputs skystonePos
+if skystonepos = 0:
+    goto();
+    grab thing
+    goto();
+if skystonepos = 1:
+       goto();
+       grab thing
+       goto();
+if skystonepos = 2:
+    goto();
+    grab thing
+    goto();
+else{
+    insert backup code
+}
+
+goTo(x, y):
+    xg=x
+    yg=y
+    xa=xa
+    ya=ya
+    while xg-xa>.01 and yg-ya>.01{
+
+
+    }
+
+
+rotate():
