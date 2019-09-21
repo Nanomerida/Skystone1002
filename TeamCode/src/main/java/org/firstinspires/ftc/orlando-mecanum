@@ -1,0 +1,105 @@
+Autonomous:
+
+Init {
+
+
+double currentPos[] = new double[2];
+
+//Not a jagged array, so each internal array must be the same length
+double goalLibrary[][] = {{0, x, y},
+{1, angle, 0}, {0, x, y}, {2, 0, 0}, {0, x, y}, {4, 0, 0}, {3, 0, 0},
+{0, x, y}, {1, angle, 0}, {0, x, y}, etc...., //Blank steps for vuforia,
+{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0},
+{0, x, y}, {1, 0, 0}, continue.... ;
+
+//0 is a position change in format {0, x, y}
+//1 is an angle change in format {1, angle, 0}
+//2 is the vision test for skystone in format {2, 0, 0}
+//3 is an claw change in format {3, angle, orientation}
+//4 is an arm change in format {4, angle, height}
+//others as needed
+
+int stepNumber = 0;
+Boolean newGoal = true; //check if new goal is desired
+double previousPos[] = {0.00d, 0.00d}; //define starting position here.
+
+}
+
+Autonomous loop {
+//Goal check method for position
+public static boolean GoalCheckPos = (double Xa, double Xg, double Ya, double Yg) {
+    boolean reachedGoal = true
+    if((Xg - Xa) < 0.1) {
+        reachedGoal = true;
+    }
+    if else((Yg - Ya) < 0.1) {
+        reachedGoal = true;
+    }
+    else{
+        reachedGoal = false;
+    }
+    return reachedGoal;
+}
+/* Still need goal check for angle. I'm too tired to do it right now. 
+This has all taken 7 hours to do, on my Moto G6 play phone in the back
+of a car driving to Cape Canaveral, FL. Btw, thanks Nelitha for setting some stuff up.
+*/
+
+
+int goalType = GoalLibrary[stepNumber][0];
+
+if(goalType == 0){
+    double actualPos[] = AbsolutePosition(previousPos[0], previousPos[1]);
+    previousPos[0] = actualPos[0];
+    previousPos[1] = actualPos[1]; // set previous position values for next position calculation.
+    double motorPowerPos[] = PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]);
+    motorPower
+    motorPower
+    motorPower
+    motorPower
+    actualPos = AbsolutePosition(previousPos[0], previousPos[1],);
+    //Need to make goal check method
+    boolean goalReachedPos = GoalCheckPos(actualPos[0], goalLibrary [stepNumber][1], actualPos [1], goalLibrary [stepNumber][2]);
+    newGoal = (goalReachedPos == true) ? true : false;
+}
+
+if(goalType == 1) {
+    double motorPowerAngle[] = AngleChange(goalLibrary [stepNumber][1]);
+    motorPower
+    motorPower
+    motorPower
+    motorPower
+    boolean goalReachedAngle = GoalCheckAngle(goalLibrary [stepNumber][1]);
+    newGoal = (goalReachedAngle == true) ? true : false;
+}
+
+if(goalType == 2) {
+    int skystonePos = vuForiaBlockCheck(); //outputs skystonePos
+    switch(skystonePos) {
+        case 1:
+            goto();
+            grab thing;
+            goto();
+            goalLibrary [12][1] = x //change steps in library because we know where other Skystone is
+            goalLibrary [12][2] = y
+            break;
+        case 2:
+            goto();
+            grab thing;
+            goto();
+            goalLibrary [13][0] = 1
+            goalLibrary [13][1] = angle //change steps in library because we know where other Skystone is
+            break;
+        case 3:
+            goto();
+            grab thing;
+            goto();
+            goalLibrary [14][1] = x //change steps in library because we know where other Skystone is
+            goalLibrary [14][2] = y
+            break;
+        default:
+            //insert backup code
+            break;
+    }
+}
+//Define other types of steps (arm, claw, etc)
