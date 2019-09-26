@@ -1,29 +1,245 @@
+/* Copyright (c) 2017 FIRST. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted (subject to the limitations in the disclaimer below) provided that
+ * the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list
+ * of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this
+ * list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * Neither the name of FIRST nor the names of its contributors may be used to endorse or
+ * promote products derived from this software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+ * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
+import java.lang.Math;
 
-@Autonomous(name="Autonomous", group="Auto")
-//@Disabled
-public class Autonomous extends LinearOpMode {
+@Autonomous(name="Basic: Iterative OpMode", group="Iterative Opmode")
+@Disabled
+public class Autonomous extends OpMode
+{
 
-    /* Declare OpMode members. */
-    HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
-    private ElapsedTime     runtime = new ElapsedTime();
-
-
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
     @Override
-    public void runOpMode() {
-        robot.init(hardwareMap);
+    public void init() {
+        /* Define methods to be used here. Also for goal library and other variables used in loop. */
+        
+        /* Method for Position change, outputs motor powers needed. */
+        static double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
+            double MoveYBasePower[] = {1.0000d, 1.0000d, 1.0000d, 1.0000d};                             //Base Motor Power for Y movement
+            double MoveXBasePower[] = {1.0000d, -1.0000d, -1.0000d, 1.0000};                            //Base Motor Power for X movement
+            Yg -= Ya;
+            Xg -= Xa;
+            Yg /= 144;
+            Xg /= 144;
+            for(int j = 0; j < 4; j++) {
+                MoveYBasePower[j] *= Yg;
+                MoveXBasePower[j] *= Xg;
+            }
+            double[] motorPower = new double[4];
+            for(int k = 0; k < 4; k++) {
+                motorPower[k] = MoveXBasePower[k] + MoveYBasePower[k];
+            }
+            return motorPower;
+        }
+        
+        /* Method for angle change, outputs motor powers needed, */
+        static double[] AngleChange(double thetaA, double thetaG) {
+            double TurnBasePower[] = {1.0000d, -1.0000d, 1.0000d, -1.0000d};
+            thetaA -= thetaG;
+            double[] motorPower = new double[4];
+            for(int i = 0; i < 4; i++) {
+                motorPower[i] = thetaA * TurnBasePower[i];
+            }
+            return motorPower;
+        }
+        
+        static double[] = AbsolutePosition(double PrevX, double PrevY) {
+            double PreviousPosition[] = {PrevX, PrevY};
+            double CurrentPosition[] = new double[2];
+            double XEncoderPosition[] = new double[2];
+            double YEncoderPosition[] = new double[2];
+            double ConvRate[] = Math.PI * 90 / 208076.8;
+            double Heading = "current reading from gyro";
+            double WeirdOrlandoMathsX[] = {sin(Heading), cos(Heading)};
+            double WeirdOrlandoMathsY[] = {cos(Heading), sin(Heading)};
+            double XClicks = {"encoders detected since previous iteration X"};
+            double YClicks = {"encoders detected since previous iteration Y"};
+            for(int i = 0; i < 2; i++) {
+                XEncoderPosition[i] = ConvRate * XClicks * WeirdOrlandoMathsX[i];
+                YEncoderPosition[i] = ConvRate * YClicks * WeirdOrlandoMathsY[i];
+            }
+            for(int k = 0; k < 2; k++) {
+                CurrentPosition[k] = XEncoderPosition[k] + YEncoderPosition[k] + PreviousPosition;
+            }
+            //something here to reset encoder readings.
+            return CurrentPosition
+        }
+        
+        /* Method for goal check for position */
+        public static boolean GoalCheckPos = (double Xa, double Xg, double Ya, double Yg) {
+            boolean reachedGoal = true
+            if((Xg - Xa) < 0.1) {
+                reachedGoal = true;
+            }
+            if else((Yg - Ya) < 0.1) {
+                reachedGoal = true;
+            }
+            else{
+                reachedGoal = false;
+            }
+            return reachedGoal;
+        }
+        
+        /* Need goal check for angle, similar to position goal check. */
+        
+        /* Also need method for Vuforia. */
+        
+        /* Method for other things. */
+        
+        /* Goal Library */
 
+        //Not a jagged array, so each internal array must be the same length
+        
+        double goalLibrary[][] = {{0, x, y},
+        {1, angle, 0}, {0, x, y}, {2, 0, 0}, {0, x, y}, {4, 0, 0}, {3, 0, 0},
+        {0, x, y}, {1, angle, 0}, {0, x, y}, etc...., //Blank steps for vuforia,
+        {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0},
+        {0, x, y}, {1, 0, 0}, continue....} ;
 
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
+        //0 is a position change in format {0, x, y}
+        //1 is an angle change in format {1, angle, 0}
+        //2 is the vision test for skystone in format {2, 0, 0}
+        //3 is an claw change in format {3, angle, orientation}
+        //4 is an arm change in format {4, angle, height}
+        //others as needed
+        
+        /* other variables */
+
+        int stepNumber = 0;
+        boolean newGoal = true; //variable if new goal is desired
+        double previousPos[] = {0.00d, 0.00d}; //define starting position here. May chnage based on placement.
+        
+        
     }
 
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
+    @Override
+    public void init_loop() {
     }
+
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
+    }
+
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
+    
+    int goalType = goalLibrary[stepNumber][0]; //Setting goal each time
+    newGoal = true;
+
+    /* Position Change */
+    if(goalType == 0){
+        double actualPos[] = AbsolutePosition(previousPos[0], previousPos[1]);
+        previousPos[0] = actualPos[0];
+        previousPos[1] = actualPos[1]; // set previous position values for next position calculation.
+        double motorPowerPos[] = PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]);
+        robot.leftFrontMotor.setPower(motorPowerPos[0]);
+        robot.leftBackMotor.setPower(motorPowerPos[1]);
+        robot.rightFrontMotor.setPower(motorPowerPos[2]);
+        robot.rightBackMotor.setPower(motorPowerPOs[3]);
+        actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
+        boolean goalReachedPos = GoalCheckPos(actualPos[0], goalLibrary [stepNumber][1], actualPos [1], goalLibrary [stepNumber][2]);
+        newGoal = (goalReachedPos == true) ? true : false;
+    }
+    
+    /* Angle Change */
+    if(goalType == 1) {
+        double motorPowerAngle[] = AngleChange(goalLibrary [stepNumber][1]);
+        robot.leftFrontMotor.setPower(motorPowerAngle[0]);
+        robot.leftBackMotor.setPower(motorPowerAngle[1]);
+        robot.rightFrontMotor.setPower(motorPowerAngle[2]);
+        robot.rightBackMotor.setPower(motorPowerAngle[3]);
+        boolean goalReachedAngle = GoalCheckAngle(goalLibrary[stepNumber][1]); //need to make this
+        newGoal = (goalReachedAngle == true) ? true : false;
+    }
+    /* Vuforia :( ugh... */
+    if(goalType == 2) {
+        int skystonePos = vuForiaBlockCheck(); //outputs skystonePos, still need to make
+        switch(skystonePos) {
+            case 1: //first position (left, towards skybridge)
+                go there;
+                grab thing; 
+                go back;
+                goalLibrary [12][1] = x //change steps in library because we know where other Skystone is
+                goalLibrary [12][2] = y
+                break;
+            case 2: //second position (middle)
+                go there;
+                grab thing;
+                go back;
+                goalLibrary [13][0] = 1
+                goalLibrary [13][1] = angle //change steps in library because we know where other Skystone is
+                break;
+            case 3: //third position (right, towards wall)
+                go there;
+                grab thing;
+                go back;
+                goalLibrary [14][1] = x //change steps in library because we know where other Skystone is
+                goalLibrary [14][2] = y
+                break;
+            default:
+                //insert backup code if needed
+                break;
+        }
+    if(newGoal = true) {
+        stepNumber++;
+    }
+    
+    //Define other types of steps (arm, claw, etc)
+    
+    }
+    
+
+    /*
+     * Code to run ONCE after the driver hits STOP
+     */
+    @Override
+    public void stop() {
+    }
+
 }
