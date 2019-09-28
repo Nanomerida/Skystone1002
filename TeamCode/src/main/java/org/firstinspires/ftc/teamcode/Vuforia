@@ -35,23 +35,24 @@
  * the SkyStone vuMark.). I annotated certain things, which are usually the non-official looking comments. A few object names and 
  * stuff like that I have changed to make more relevant to Skystone. As for using this, it just needs to return an int or something with
  * 0, 1, or 2. We will need to make all of this a method eventually, and make sure the same vuforia libraries are imported in our code.
+ * I'm also going to set this up to be able to be a class called in the Autonomous file, and will comment out some things.
  * - Ryan Driemeyer */
  
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous; //changed to Autonomous
+//import com.qualcomm.robotcore.eventloop.opmode.Autonomous; 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode; //change to OpMode maybe
+//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory; //don't think we should change these things
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName; 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName; //figure this out
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix; //pretty sure we don't need all this positioning stuff, since it is only used
+/* import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix; //pretty sure we don't need all this positioning stuff, since it is only used
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;      // by the things I deleted from the sample (explained further down)
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation; */
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark; // <-- this is the enum explained below, there is no skystone equivalant in files
 import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId; //this is just vuforia stuff
@@ -74,18 +75,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
- *
- * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
- * is explained in {@link ConceptVuforiaNavigationWebcam}.
  */
-
-@TeleOp(name="Vuforia", group ="Vuforia")
+//@TeleOp(name="Vuforia", group ="Vuforia")
 @Disabled
-public class ConceptVuMarkIdentificationWebcam extends LinearOpMode {
+public class Vuforia { //extends LinearOpMode 
+    public int visionTest() {      //changed name to visionTest, and made it a intiger method.  
+
+
+    /*NOTE. I am moving the main method for the Vuforia class up here, but I'm not sure if it will mess up some stuff.
+    * Therefore, I will mark the original location of the method. */
 
     public static final String TAG = "Vuforia VuMark Sample";
-
-    OpenGLMatrix lastLocation = null;
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -99,7 +99,7 @@ public class ConceptVuMarkIdentificationWebcam extends LinearOpMode {
      */
     WebcamName webcamName;
 
-    @Override public void runOpMode() {
+    //ORIGINAL LOCATION OF METHOD
 
         /*
          * Retrieve the camera we are to use.
@@ -142,9 +142,11 @@ public class ConceptVuMarkIdentificationWebcam extends LinearOpMode {
         waitForStart();
 
         skystoneTrackables.activate(); //activates the Vuforia, this is how we turn it on.
+        boolean nofoundSkystone = true;
+        int skystonePos = 0;
 
-        while (opModeIsActive()) { //need to change this condition since we are not using LinearOp, but this needs to loop until
-                                   //a match is found. Maybe a boolean for the condition? 
+        while (nofoundSkystone) { // changed this condition since we are not using LinearOp, but this needs to loop until
+                                   //a match is found. Maybe a boolean for the condition? I'll go with that for now. 
             /**
              * See if any of the instances of {@link skystoneStone} are currently visible.
              * {@link RelicRecoveryVuMark} is an enum which can have the following values:
@@ -158,8 +160,17 @@ public class ConceptVuMarkIdentificationWebcam extends LinearOpMode {
                 This is where we will need to put all the stuff we want to get from this code. The object "vuMark" is a constant
                 from the above enum which is either "UNKNOWN, LEFT, RIGHT, or CENTER". My recommendation is that we have a switch
                 statement with the conditions based on the position of the vuMark.*/
+                if(vuMark == RelicRecoveryVuMark.LEFT) {
+                    skystonePos = 0;
+                    nofoundSkystone = false;
+                } else if (vuMark == RelicRecoveryVuMark.CENTER) {
+                    skystonePos = 1;
+                    nofoundSkystone = false;
+                } else (vuMark == RelicRecoveryVuMark.RIGHT) {
+                    skystonePos = 2;
+                    nofoundSkystone = false;
+                }
                 
-                telemetry.addData("VuMark", "%s visible", vuMark); //I'll leave this for now
             }
 
 /* As far as I can tell, this is as much as we need for what we are doing with just finding the Skystone. The rest is just
@@ -168,10 +179,9 @@ public class ConceptVuMarkIdentificationWebcam extends LinearOpMode {
 
             
             else {
-                telemetry.addData("VuMark", "not visible");    //I'll leave this else statement though. Who knows? ( ͡° ͜ʖ ͡°) 
+            //I'll leave this else statement though. Who knows? ( ͡° ͜ʖ ͡°) 
             }
-
-            telemetry.update(); 
         }
+        return skystonePos;
     }
 }
