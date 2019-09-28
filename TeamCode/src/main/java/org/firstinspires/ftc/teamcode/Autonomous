@@ -200,7 +200,7 @@ public class Autonomous extends OpMode
     /* Vuforia :( ugh... */
     if(goalType == 2) {
         Vuforia blockPos = new Vuforia(); //creates a Vuforia object from the Vuforia.java class.
-        int stonePos = blockPos.skystonePos(); //outputs skystone position, in integer form.
+        int stonePos = blockPos.visionTest(); //outputs skystone position, in integer form.
         switch(stonePos) {
             case 0: //first position (left, towards skybridge)
                 go there;
