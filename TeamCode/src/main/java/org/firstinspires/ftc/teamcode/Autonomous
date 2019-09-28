@@ -48,7 +48,8 @@ public class Autonomous extends OpMode
      */
     @Override
     public void init() {
-        /* Define methods to be used here. Also for goal library and other variables used in loop. */
+        /* Define methods to be used here. Also for goal library and other variables used in loop. 
+         * NOTE: Maybe put some more of these methods in an array?*/
         
         /* Method for Position change, outputs motor powers needed. */
         static double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
@@ -119,7 +120,6 @@ public class Autonomous extends OpMode
         
         /* Need goal check for angle, similar to position goal check. */
         
-        /* Also need method for Vuforia. */
         
         /* Method for other things. */
         
@@ -199,23 +199,24 @@ public class Autonomous extends OpMode
     }
     /* Vuforia :( ugh... */
     if(goalType == 2) {
-        int skystonePos = vuForiaBlockCheck(); //outputs skystonePos, still need to make
-        switch(skystonePos) {
-            case 1: //first position (left, towards skybridge)
+        Vuforia blockPos = new Vuforia(); //creates a Vuforia object from the Vuforia.java class.
+        int stonePos = blockPos.skystonePos(); //outputs skystone position, in integer form.
+        switch(stonePos) {
+            case 0: //first position (left, towards skybridge)
                 go there;
                 grab thing; 
                 go back;
                 goalLibrary [12][1] = x //change steps in library because we know where other Skystone is
                 goalLibrary [12][2] = y
                 break;
-            case 2: //second position (middle)
+            case 1: //second position (center)
                 go there;
                 grab thing;
                 go back;
                 goalLibrary [13][0] = 1
                 goalLibrary [13][1] = angle //change steps in library because we know where other Skystone is
                 break;
-            case 3: //third position (right, towards wall)
+            case 2: //third position (right, towards wall)
                 go there;
                 grab thing;
                 go back;
