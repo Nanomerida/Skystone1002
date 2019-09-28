@@ -1,17 +1,60 @@
+/* Copyright (c) 2017 FIRST. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted (subject to the limitations in the disclaimer below) provided that
+ * the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list
+ * of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this
+ * list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * Neither the name of FIRST nor the names of its contributors may be used to endorse or
+ * promote products derived from this software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+ * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ //^ Blah, blah, blah, blah, ....
+ 
+ /* In the following code, I have edited things to be able to use this with the Skystone vuMark. This is originaly meant for 
+ * Relic Recovery (obviously), and some things still assumed the relic recovery trackables. I changed most of those to Skystone files,
+ * like the data set used for loading VuforiaTrackables (if you are interested, it's in Skystone1002/FtcRobotController/src/main/assets,
+ * under Skystone.xml. There are other Trackables there too for the pictures on the perimeter and the bridges, but the first one in the list is
+ * the SkyStone vuMark.). I annotated certain things, which are usually the non-official looking comments. A few object names and 
+ * stuff like that I have changed to make more relevant to Skystone. As for using this, it just needs to return an int or something with
+ * 0, 1, or 2. We will need to make all of this a method eventually, and make sure the same vuforia libraries are imported in our code.
+ * - Ryan Driemeyer */
+ 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous; //changed to Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode; //change to OpMode maybe
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory; //don't think we should change these things
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName; 
+
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix; //pretty sure we don't need all this positioning stuff, since it is only used
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;      // by the things I deleted from the sample (explained further down)
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
+
+import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark; // <-- this is the enum explained below, there is no skystone equivalant in files
+import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId; //this is just vuforia stuff
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
@@ -20,11 +63,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 /**
  * This OpMode illustrates the basics of using the Vuforia engine to determine
  * the identity of Vuforia VuMarks encountered on the field. The code is structured as
- * a LinearOpMode. It shares much structure with {@link ConceptVuforiaNavigation}; we do not here
+ * a LinearOpMode. It shares much structure with {@link ConceptVuforiaNavigationWebcam}; we do not here
  * duplicate the core Vuforia documentation found there, but rather instead focus on the
  * differences between the use of Vuforia for navigation vs VuMark identification.
  *
- * @see ConceptVuforiaNavigation
+ * @see ConceptVuforiaNavigationWebcam
  * @see VuforiaLocalizer
  * @see VuforiaTrackableDefaultListener
  * see  ftc_app/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
@@ -33,12 +76,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
  *
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
- * is explained in {@link ConceptVuforiaNavigation}.
+ * is explained in {@link ConceptVuforiaNavigationWebcam}.
  */
 
-@TeleOp(name="Concept: VuMark Id", group ="Concept")
-//GAMER
-public class ConceptVuMarkIdentification extends LinearOpMode {
+@TeleOp(name="Vuforia", group ="Vuforia")
+@Disabled
+public class ConceptVuMarkIdentificationWebcam extends LinearOpMode {
 
     public static final String TAG = "Vuforia VuMark Sample";
 
@@ -50,108 +93,85 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
      */
     VuforiaLocalizer vuforia;
 
+    /**
+     * This is the webcam we are to use. As with other hardware devices such as motors and
+     * servos, this device is identified using the robot configuration tool in the FTC application.
+     */
+    WebcamName webcamName;
+
     @Override public void runOpMode() {
 
         /*
+         * Retrieve the camera we are to use.
+         */
+        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1"); //no idea how this works
+
+        /*
          * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
+         * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
          */
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+         
+         //We don't need this, unless we want a live view. I'll just comment it out for now.
+         
+       // int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+       // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
+        //This is what we'll use for now:
+        
         // OR...  Do Not Activate the Camera Monitor View, to save power
-        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        /*
-         * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-         * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-         * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-         * web site at https://developer.vuforia.com/license-manager.
-         *
-         * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-         * random data. As an example, here is a example of a fragment of a valid key:
-         *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-         * Once you've obtained a license key, copy the string from the Vuforia web site
-         * and paste it in to your code on the next line, between the double quotes.
-         */
-        parameters.vuforiaLicenseKey = "AbRuapT/////AAABmZiFpOZE/UKvkFh6NVYkcgN7QIA+/Cx4USk2+4HxF2ScBq4L/IeYX7V2At7jlLgQFdZDZRb+Q/bIBP+ovRLADQcs9aRyQaa+oWPgWZehBZyCiNN0l8tI2M6Ih9SlqrccuXQr41zwNUrqHOvPr6h7CNbZPnPQjh5umnaplqSQfKVXz9J3/KgOOTvuYCEuKy9PJE0Eh62I3cweK9Oohjn208ACJcHn+9BGxqP99oKEi7GEWSwVv7iBpJ4BA3ieJCxmorveypMrVlAzQ5smrZ2mnyFreokeRUDSfBxyFuMKGpmUwCDWavmVCWp1VtoH0Dd0mb05J3+Mn2C07XwYo0sUliedqvNl1JJYp3cFa7K7x01O ";
-
-        /*
-         * We also indicate which camera on the RC that we wish to use.
-         * Here we chose the back (HiRes) camera (for greater range), but
-         * for a competition robot, the front camera might be more convenient.
-         */
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parameters.vuforiaLicenseKey = AeCl8dv/////AAABmU0vhtooEkbCoy9D8hM/5Yh8AhufXZT4nSVVD16Vjh1o/rLFmVyKVPNW3S/lXY0UWmDBpSNPS5yMk6lZoMFhTMoq9BMbmXHJ9KU+uKvC+GVp5cuEo18HvMpLMPPNmIVoXgOv9CqDfnRCOLSCblZf5cRF+E/LNqkZU7dEnEe/rrDq76FjVXruSdMBmUefIhu853VEpgvJPJTNopNjE0yU5TJ3+Uprgldx7fdy//VPG8PfXcaxLj4EJOzEKwJuCNdPS43bio37xbTbnLTzbKmfTqCI6BJpPaK5fXCk7o5xdVewJJbZCA8DDuNX6KUTT//OJ1UEWnMSYw5H1BrWMkytK5Syws7gdsCpYUshsQX7VP51;
+        //vuforia key, I pasted in ours for now
 
         /**
-         * Instantiate the Vuforia engine
+         * We also indicate which camera on the RC we wish to use. For pedagogical purposes,
+         * we use the same logic as in {@link ConceptVuforiaNavigationWebcam}.
          */
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        parameters.cameraName = webcamName;
+        this.vuforia = ClassFactory.getInstance().createVuforia(parameters); //I don't understand this yet, we will have to do this.
+        
+        //loads trackables. I will rename all of this to fit the skystone theme.
+        
+        VuforiaTrackables skystoneTrackables = this.vuforia.loadTrackablesFromAsset("Skystone"); //changed this correct Skystone file from Assets folder
+        VuforiaTrackable skystoneStone = skystoneTrackables.get(0); //It uses relic template, I will just make this skystoneStone
+        skystoneStone.setName("SKYSTONE"); // can help in debugging; otherwise not necessary
 
-
-        /**
-         * Load the data set containing the VuMarks for Relic Recovery. There's only one trackable
-         * in this data set: all three of the VuMarks in the game were created from this one template,
-         * but differ in their instance id information.
-         * @see VuMarkInstanceId
-         */
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-
-        telemetry.addData(">", "Press Play to start");
+        telemetry.addData(">", "Press Play to start"); //useless telemetry >:(
         telemetry.update();
         waitForStart();
 
-        relicTrackables.activate();
+        skystoneTrackables.activate(); //activates the Vuforia, this is how we turn it on.
 
-        while (opModeIsActive()) {
-
+        while (opModeIsActive()) { //need to change this condition since we are not using LinearOp, but this needs to loop until
+                                   //a match is found. Maybe a boolean for the condition? 
             /**
-             * See if any of the instances of {@link relicTemplate} are currently visible.
+             * See if any of the instances of {@link skystoneStone} are currently visible.
              * {@link RelicRecoveryVuMark} is an enum which can have the following values:
              * UNKNOWN, LEFT, CENTER, and RIGHT. When a VuMark is visible, something other than
              * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
              */
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(skystoneStone); //I've found the enum in the FTC Library, but it's pretty specific. 
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {                          //So for now, the name will have to stay the same. :(
 
-                /* Found an instance of the template. In the actual game, you will probably
-                 * loop until this condition occurs, then move on to act accordingly depending
-                 * on which VuMark was visible. */
-                telemetry.addData("VuMark", "%s visible", vuMark);
-
-                /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
-                 * it is perhaps unlikely that you will actually need to act on this pose information, but
-                 * we illustrate it nevertheless, for completeness. */
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
-                telemetry.addData("Pose", format(pose));
-
-                /* We further illustrate how to decompose the pose into useful rotational and
-                 * translational components */
-                if (pose != null) {
-                    VectorF trans = pose.getTranslation();
-                    Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-                    // Extract the X, Y, and Z components of the offset of the target relative to the robot
-                    double tX = trans.get(0);
-                    double tY = trans.get(1);
-                    double tZ = trans.get(2);
-
-                    // Extract the rotational components of the target relative to the robot
-                    double rX = rot.firstAngle;
-                    double rY = rot.secondAngle;
-                    double rZ = rot.thirdAngle;
-                }
+                /* This will be triggered when the status of the vuMark detected is anything other than UNKNOWN.
+                This is where we will need to put all the stuff we want to get from this code. The object "vuMark" is a constant
+                from the above enum which is either "UNKNOWN, LEFT, RIGHT, or CENTER". My recommendation is that we have a switch
+                statement with the conditions based on the position of the vuMark.*/
+                
+                telemetry.addData("VuMark", "%s visible", vuMark); //I'll leave this for now
             }
+
+/* As far as I can tell, this is as much as we need for what we are doing with just finding the Skystone. The rest is just
+ * doing other things with the vuMark, like localization. We don't really need that, so I will delete most of it. It can be 
+ * found in the FTC sample code if desired. -RyanD */
+
+            
             else {
-                telemetry.addData("VuMark", "not visible");
+                telemetry.addData("VuMark", "not visible");    //I'll leave this else statement though. Who knows? ( ͡° ͜ʖ ͡°) 
             }
 
-            telemetry.update();
+            telemetry.update(); 
         }
-    }
-
-    String format(OpenGLMatrix transformationMatrix) {
-        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
 }
