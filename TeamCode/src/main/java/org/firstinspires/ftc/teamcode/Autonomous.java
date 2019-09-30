@@ -135,7 +135,7 @@ public class Autonomous extends OpMode {
      */
     @Override
     public void loop() {
-        int goalType = goalLibrary [stepNumber ][0]; //Setting goal each time
+        int goalType = goalLibrary [stepNumber][0]; //Setting goal each time
         newGoal = true;
 
         /* Position Change */
@@ -144,10 +144,6 @@ public class Autonomous extends OpMode {
             previousPos[0] = actualPos[0];
             previousPos[1] = actualPos[1]; // set previous position values for next position calculation.
             double motorPowerPos[] = PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]);
-            robot.leftFrontMotor.setPower(motorPowerPos[0]);
-            robot.leftBackMotor.setPower(motorPowerPos[1]);
-            robot.rightFrontMotor.setPower(motorPowerPos[2]);
-            robot.rightBackMotor.setPower(motorPowerPos[3]);
             actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
             boolean goalReachedPos = GoalCheckPos(actualPos[0], goalLibrary [stepNumber][1], actualPos [1], goalLibrary [stepNumber][2]);
             newGoal = (goalReachedPos == true) ? true : false;
@@ -156,10 +152,6 @@ public class Autonomous extends OpMode {
         /* Angle Change */
         if(goalType == 1) {
             double motorPowerAngle[] = AngleChange(goalLibrary [stepNumber][1]);
-            robot.leftFrontMotor.setPower(motorPowerAngle[0]);
-            robot.leftBackMotor.setPower(motorPowerAngle[1]);
-            robot.rightFrontMotor.setPower(motorPowerAngle[2]);
-            robot.rightBackMotor.setPower(motorPowerAngle[3]);
             boolean goalReachedAngle = GoalCheckAngle(goalLibrary[stepNumber][1]); //need to make this
             newGoal = (goalReachedAngle == true) ? true : false;
         }
