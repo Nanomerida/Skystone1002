@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import java.lang.Math*;
+import static java.lang.Math*; //so i dont have to reference the stupid class every >TIMEEEEEEEEEEEEEE!!!
 
 @Autonomous(name="Autonomous", group="bruh") //Assuming this is right
 //@Disabled
 public class Autonomous extends OpMode {
-    public static double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
+    public double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
         double MoveYBasePower[] = {1.0000d, 1.0000d, 1.0000d, 1.0000d};                             //Base Motor Power for Y movement
         double MoveXBasePower[] = {1.0000d, -1.0000d, -1.0000d, 1.0000};                            //Base Motor Power for X movement
         Yg -= Ya;
@@ -28,7 +28,7 @@ public class Autonomous extends OpMode {
         }
         return motorPower;
     }
-    public static double[] AngleChange(double thetaA, double thetaG) {
+    public double[] AngleChange(double thetaA, double thetaG) {
         double TurnBasePower[] = {1.0000d, -1.0000d, 1.0000d, -1.0000d};
         thetaA -= thetaG;
         double[] motorPower = new double[4];
@@ -37,12 +37,12 @@ public class Autonomous extends OpMode {
         }
         return motorPower;
     }
-    public static double[] AbsolutePosition(double PrevX, double PrevY) {
+    public double[] AbsolutePosition(double PrevX, double PrevY) {
         double PreviousPosition[] = {PrevX, PrevY};
         double CurrentPosition[] = new double[2];
         double XEncoderPosition[] = new double[2];
         double YEncoderPosition[] = new double[2];
-        double ConvRate = Math.PI * 90 / 208076.8;
+        double ConvRate = (PI * 90) / 208076.8;
         double Heading = "current reading from gyro";
         double WeirdOrlandoMathsX[] = {sin(Heading), cos(Heading)};
         double WeirdOrlandoMathsY[] = {cos(Heading), sin(Heading)};
@@ -58,7 +58,7 @@ public class Autonomous extends OpMode {
         //something here to reset encoder readings.
         return CurrentPosition;
     }
-    public static boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg) {
+    public boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg) {
         boolean reachedGoal = true
         if((Xg - Xa) < 0.1) {
             reachedGoal = true;
@@ -83,6 +83,7 @@ public class Autonomous extends OpMode {
         //3 is an claw change in format {3, angle, orientation}
         //4 is an arm change in format {4, angle, height}
         //others as needed
+    Vuforia blockPos = new Vuforia(); //creates a Vuforia object from the Vuforia.java class.
     int stepNumber = 0;
     boolean newGoal = true; //variable if new goal is desired
     double previousPos[] = {0.00d, 0.00d}; //define starting position here. May chnage based on placement.
