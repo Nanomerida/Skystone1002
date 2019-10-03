@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -27,6 +28,9 @@ public class AutonomousCode extends OpMode {
     DcMotor left_back_drive;
     DcMotor right_front_drive;
     DcMotor right_back_drive;
+    DcMotor main_arm;
+    Servo claw_level;
+    Servo claw;
 
 
 
@@ -116,13 +120,13 @@ public class AutonomousCode extends OpMode {
 
 
 
-    public static double[][] goalLibrary = {{0, x, y}, {1, angle, 0}, {0, x, y}, {2, 0, 0}, {0, x, y}, {4, 0, 0}, {3, 0, 0}, {0, x, y}, {1, angle, 0}, {0, x, y}} //Blank steps for vuforia,{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, x, y}, {1, 0, 0}, continu....};
+    public static double[][] goalLibrary = {{0, 0, 0}, {1, 0, 0}};// {0, x, y}, {2, 0, 0}, {0, x, y}, {4, 0, 0}, {3, 0, 0}, {0, x, y}, {1, angle, 0}, {0, x, y}} //Blank steps for vuforia,{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, x, y}, {1, 0, 0}, continu....};
 
         //0 is a position change in format {0, x, y}
         //1 is an angle change in format {1, angle, 0}
         //2 is the vision test for skystone in format {2, 0, 0}
-        //3 is an claw change in format {3, angle, orientation}
-        //4 is an arm change in format {4, angle, height}
+        //3 is an claw change in format {3, arm power, claw head servo}
+        //4 is an arm change in format {4, open(0)/close(1) claw, 0}
         //others as needed
 
     Vuforia blockPos = new Vuforia(); //creates a Vuforia.java object from the Vuforia.java.java class.
@@ -145,6 +149,9 @@ public class AutonomousCode extends OpMode {
         left_back_drive = hardwareMap.dcMotor.get("leftBackMotor");
         right_front_drive = hardwareMap.dcMotor.get("rightFrontMotor");
         right_back_drive = hardwareMap.dcMotor.get("rightBackMotor");
+        main_arm = hardwareMap.dcMotor.get("armMotor");
+        claw_level = hardwareMap.servo.get("clawLevelServo");
+        claw = hardwareMap.servo.get("clawServo");
 
         // MORE IMU STUFF
 
