@@ -117,6 +117,15 @@ public class AutonomousCode extends OpMode {
         right_back_drive.setPower(powers[3]);
         //right, Ima head out.
     }
+    public double armClawPower(double armPower){ //write orlando's math here for ar power.
+        telemetry.update();
+        return armPower;
+    }
+
+    public void armMove(double armPower, double clawPower){ //convert to 1-0
+        main_arm.setPower(armPower);
+        claw_level.setPosition(clawPower);
+    }
 
 
 
@@ -247,6 +256,14 @@ public class AutonomousCode extends OpMode {
                     goalLibrary [14][2] = y;
                     break;
             }
+        }
+        /* Arm Change */
+        if(goalType == 3) {
+            double clawLevelPower = armClawPower(goalLibrary[stepNumber][1]);
+            armMove(goalLibrary[stepNumber][1], clawLevelPower);
+
+
+
         }
     }
 
