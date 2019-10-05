@@ -145,7 +145,7 @@ public class AutonomousCode extends OpMode {
         //4 is an claw change in format {4, open(0)/close(1) claw, 0}
         //others as needed
 
-    NewVuforia blockPos = new NewVuforia(); //creates a Vuforia object from the Vuforia.java class.
+    NewVuforia blockPos = new NewVuforia(); //creates a VuforiaOld object from the VuforiaOld.java class.
     public static int stepNumber = 0;
     public static boolean newGoal = true; //variable if new goal is desired
     public static double[] previousPos = {0.00d, 0.00d}; //define starting position here. May change based on placement.

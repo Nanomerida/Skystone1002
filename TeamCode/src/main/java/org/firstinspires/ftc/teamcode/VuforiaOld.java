@@ -62,11 +62,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 /**
- * This OpMode illustrates the basics of using the Vuforia engine to determine
- * the identity of Vuforia VuMarks encountered on the field. The code is structured as
+ * This OpMode illustrates the basics of using the VuforiaOld engine to determine
+ * the identity of VuforiaOld VuMarks encountered on the field. The code is structured as
  * a LinearOpMode. It shares much structure with {@link ConceptVuforiaNavigationWebcam}; we do not here
- * duplicate the core Vuforia documentation found there, but rather instead focus on the
- * differences between the use of Vuforia for navigation vs VuMark identification.
+ * duplicate the core VuforiaOld documentation found there, but rather instead focus on the
+ * differences between the use of VuforiaOld for navigation vs VuMark identification.
  *
  * @see ConceptVuforiaNavigationWebcam
  * @see VuforiaLocalizer
@@ -76,18 +76,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
  */
-@Autonomous(name="Vuforia", group ="Vuforia")
+@Autonomous(name="VuforiaOld", group ="VuforiaOld")
 //@Disabled
-public class Vuforia { //extends LinearOpMode
+public class VuforiaOld { //extends LinearOpMode
 
 
-        /*NOTE. I am moving the main method for the Vuforia class up here, but I'm not sure if it will mess up some stuff.
+        /*NOTE. I am moving the main method for the VuforiaOld class up here, but I'm not sure if it will mess up some stuff.
          * Therefore, I will mark the original location of the method. */
 
-        public static final String TAG = "Vuforia VuMark Sample";
+        public static final String TAG = "VuforiaOld VuMark Sample";
 
         /**
-         * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+         * {@link #vuforia} is the variable we will use to store our instance of the VuforiaOld
          * localization engine.
          */
         VuforiaLocalizer vuforia;
@@ -107,7 +107,7 @@ public class Vuforia { //extends LinearOpMode
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1"); //no idea how this works
 
         /*
-         * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
+         * To start up VuforiaOld, tell it the view that we wish to use for camera monitor (on the RC phone);
          * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
          */
 
@@ -140,7 +140,7 @@ public class Vuforia { //extends LinearOpMode
         telemetry.addData(">", "Press Play to start"); //useless telemetry >:(
         telemetry.update();
 
-        skystoneTrackables.activate(); //activates the Vuforia, this is how we turn it on.
+        skystoneTrackables.activate(); //activates the VuforiaOld, this is how we turn it on.
         boolean nofoundSkystone = true;
         int skystonePos = 0;
 
