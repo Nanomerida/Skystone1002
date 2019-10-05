@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
-@TeleOp(name = "Mechanum Test", group="TeleOp")
+@TeleOp(name = "TeleOp", group="TeleOp")
 
 public class TeleOp extends OpMode {
     //Crates HardwareMap object robot

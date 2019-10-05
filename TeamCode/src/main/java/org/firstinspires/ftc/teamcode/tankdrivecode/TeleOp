@@ -1,0 +1,65 @@
+package org.firstinspires.ftc.robotcontroller.external.samples;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.Range;
+
+
+@TeleOp(name="TankTeleOp", group="TeleOp")
+
+public class TankTeleOp extends OpMode {
+    //Crates HardwareMap object robot
+    CRGreenHardwareMap robot = new CRGreenHardwareMap(telemetry);
+    //Initializes with the hardwareMap
+
+    @Override
+    public void init() {
+        robot.init(hardwareMap);
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Say", "The Matrix is Ready");    //
+    }
+
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
+    @Override
+    public void init_loop() {
+    }
+
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
+    }
+
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
+        // Obtain joystick values
+        //  robot.hangerServo.setPosition(0);
+        double right = -gamepad1.right_stick_y;
+        double left = -gamepad1.left_stick_y;
+
+        // Set joystick values to motor values on robot
+        robot.leftFrontMotor.setPower(left);
+        robot.leftBackMotor.setPower(left);
+        robot.rightFrontMotor.setPower(right);
+        robot.rightBackMotor.setPower(right);
+    }
+
+    //Ends all motor actions by setting power to 0 when teleOp is finished
+    @Override
+    public void stop() {
+        robot.leftFrontMotor.setPower(0);
+        robot.leftBackMotor.setPower(0);
+        robot.rightFrontMotor.setPower(0);
+        robot.rightBackMotor.setPower(0);
+        robot.hangerMotor.setPower(0);
+        robot.intakeMotor.setPower(0);
+    }
+}
