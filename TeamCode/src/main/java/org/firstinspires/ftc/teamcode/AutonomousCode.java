@@ -145,7 +145,7 @@ public class AutonomousCode extends OpMode {
         //4 is an claw change in format {4, open(0)/close(1) claw, 0}
         //others as needed
 
-    Vuforia blockPos = new Vuforia(); //creates a Vuforia object from the Vuforia.java class.
+    NewVuforia blockPos = new NewVuforia(); //creates a Vuforia object from the Vuforia.java class.
     public static int stepNumber = 0;
     public static boolean newGoal = true; //variable if new goal is desired
     public static double[] previousPos = {0.00d, 0.00d}; //define starting position here. May change based on placement.
@@ -268,7 +268,7 @@ public class AutonomousCode extends OpMode {
             int stonePos = blockPos.visionTest(); //outputs skystone position, in integer form.
             switch(stonePos) {
                 case 0: //first position (left, towards skybridge)
-                    visionStatus.setValue("SKYSTONE: LEFT");
+                    visionStatus.setValue("SKYSTONE: TOWARDS BRIDGE");
                     telemetry.update();
                     go there;
                     grab thing;
@@ -286,7 +286,7 @@ public class AutonomousCode extends OpMode {
                     goalLibrary [13][1] = angle; //change steps in library because we know where other Skystone is
                     break;
                 case 2: //third position (right, towards wall)
-                    visionStatus.setValue("SKYSTONE: RIGHT");
+                    visionStatus.setValue("SKYSTONE: TOWARDS WALL");
                     telemetry.update();
                     go there;
                     grab thing;
