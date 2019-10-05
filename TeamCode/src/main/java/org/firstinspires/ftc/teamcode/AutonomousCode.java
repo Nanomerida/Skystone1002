@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -110,7 +112,11 @@ public class AutonomousCode extends OpMode {
         return reachedGoal;
     }
 
-    public void moveMotor(double[] powers) { //method to move.
+    public double degreeServoConv(double degrees){
+        return degrees * servoDegreesConst;
+    }
+
+    public void moveDrive(double[] powers) { //method to move.
         left_front_drive.setPower(powers[0]);
         left_back_drive.setPower(powers[1]);
         right_front_drive.setPower(powers[2]);
@@ -123,6 +129,7 @@ public class AutonomousCode extends OpMode {
     }
 
     public void armMove(double armPower, double clawPower){ //convert to 1-0
+        clawPower = degreeServoConv(clawPower);
         main_arm.setPower(armPower);
         claw_level.setPosition(clawPower);
     }
@@ -134,14 +141,21 @@ public class AutonomousCode extends OpMode {
         //0 is a position change in format {0, x, y}
         //1 is an angle change in format {1, angle, 0}
         //2 is the vision test for skystone in format {2, 0, 0}
-        //3 is an claw change in format {3, arm power, claw head servo}
-        //4 is an arm change in format {4, open(0)/close(1) claw, 0}
+        //3 is an arm change in format {3, arm power, claw head servo}
+        //4 is an claw change in format {4, open(0)/close(1) claw, 0}
         //others as needed
 
-    Vuforia blockPos = new Vuforia(); //creates a Vuforia.java object from the Vuforia.java.java class.
+    Vuforia blockPos = new Vuforia(); //creates a Vuforia object from the Vuforia.java class.
     public static int stepNumber = 0;
     public static boolean newGoal = true; //variable if new goal is desired
     public static double[] previousPos = {0.00d, 0.00d}; //define starting position here. May change based on placement.
+    public static final double servoDegreesConst = 0.005;
+    public static final double clawClosed = 45.0d;
+    public static final double clawOpen = 90.0d;
+    public static final String driveIdle = "IDLE";
+    public static final String driveMoving = "MOVING";
+    public static final String driveTurning = "TURNING";
+    HardwareMap hardwareMap;
     /* Need goal check for angle, similar to position goal check. */
 
 
@@ -152,7 +166,6 @@ public class AutonomousCode extends OpMode {
      */
     @Override
     public void init() {
-        robot.init(hardwareMap);
 
         left_front_drive = hardwareMap.dcMotor.get("leftFrontMotor");
         left_back_drive = hardwareMap.dcMotor.get("leftBackMotor");
@@ -177,6 +190,7 @@ public class AutonomousCode extends OpMode {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
+
     }
 
 
@@ -195,7 +209,7 @@ public class AutonomousCode extends OpMode {
     @Override
     public void start() {
         /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
-        telemetry.addData("Glitches in MATRIX detected: 0", 4);
+        telemetry.addData("Glitches in MATRIX detected:", 0);
         telemetry.update();
     }
 
@@ -204,6 +218,15 @@ public class AutonomousCode extends OpMode {
      */
     @Override
     public void loop() {
+        telemetry.setAutoClear(false); //so it doesn't auto clear.
+        Telemetry.Item driveStatus = telemetry.addData("Drive Base Status:", driveIdle); //drive status
+        Telemetry.Item armStatus = telemetry.addData("Arm Motor Status:", "IDLE");
+        Telemetry.Item clawLevelStatus = telemetry.addData("Claw Level Servo Status:", "IDLE");
+        Telemetry.Item clawStatus = telemetry.addData("Claw Servo Status:", "IDLE");
+        Telemetry.Item visionStatus = telemetry.addData("Vision Testing Status:", "DISABLED"); //first item
+        Telemetry.Item stepNumb = telemetry.addData("Current Step Number", stepNumber);
+        telemetry.update();
+
         double goalType = goalLibrary[stepNumber][0]; //Setting goal each time
         newGoal = false;
 
@@ -212,10 +235,14 @@ public class AutonomousCode extends OpMode {
             double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
             previousPos[0] = actualPos[0];
             previousPos[1] = actualPos[1]; // set previous position values for next position calculation.
-            double[] motorPowerPos = PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]);
-            moveMotor(motorPowerPos);
+            double[] motorPowerPos = PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]); //move
+            driveStatus.setValue(driveMoving);
+            telemetry.update();
+            moveDrive(motorPowerPos);
+            driveStatus.setValue(driveIdle);
+            telemetry.update();
             actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
-            boolean goalReachedPos = GoalCheckPos(actualPos[0], goalLibrary [stepNumber][1], actualPos [1], goalLibrary [stepNumber][2]);
+            boolean goalReachedPos = GoalCheckPos(actualPos[0], goalLibrary [stepNumber][1], actualPos [1], goalLibrary [stepNumber][2]); //check if we are at position
             if(goalReachedPos){
                 newGoal = true;
             }
@@ -224,17 +251,25 @@ public class AutonomousCode extends OpMode {
         /* Angle Change */
         if(goalType == 1) {
             double[] motorPowerAngle = AngleChange(this.angles.firstAngle, goalLibrary[stepNumber][1]);
-            moveMotor(motorPowerAngle);
-            boolean goalReachedAngle = GoalCheckAngle(goalLibrary[stepNumber][1]); //need to make this
+            driveStatus.setValue(driveTurning);
+            telemetry.update();
+            moveDrive(motorPowerAngle); //move
+            driveStatus.setValue(driveIdle);
+            telemetry.update();
+            boolean goalReachedAngle = GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
             if(goalReachedAngle){
                 newGoal = true;
             }
         }
         /* Vuforia.java :( ugh... */
         if(goalType == 2) {
+            visionStatus.setValue("ENABLED; SEARCHING");
+            telemetry.update();
             int stonePos = blockPos.visionTest(); //outputs skystone position, in integer form.
             switch(stonePos) {
                 case 0: //first position (left, towards skybridge)
+                    visionStatus.setValue("SKYSTONE: LEFT");
+                    telemetry.update();
                     go there;
                     grab thing;
                     go back;
@@ -242,6 +277,8 @@ public class AutonomousCode extends OpMode {
                     goalLibrary [12][2] = y;
                     break;
                 case 1: //second position (center)
+                    visionStatus.setValue("SKYSTONE: CENTER");
+                    telemetry.update();
                     go there;
                     grab thing;
                     go back;
@@ -249,6 +286,8 @@ public class AutonomousCode extends OpMode {
                     goalLibrary [13][1] = angle; //change steps in library because we know where other Skystone is
                     break;
                 case 2: //third position (right, towards wall)
+                    visionStatus.setValue("SKYSTONE: RIGHT");
+                    telemetry.update();
                     go there;
                     grab thing;
                     go back;
@@ -256,15 +295,41 @@ public class AutonomousCode extends OpMode {
                     goalLibrary [14][2] = y;
                     break;
             }
+            visionStatus.setValue("DISABLED");
+            telemetry.update();
+            newGoal = true;
         }
         /* Arm Change */
         if(goalType == 3) {
             double clawLevelPower = armClawPower(goalLibrary[stepNumber][1]);
+            armStatus.setValue("MOVING");
+            clawLevelStatus.setValue("MOVING");
+            telemetry.update();
             armMove(goalLibrary[stepNumber][1], clawLevelPower);
-
+            armStatus.setValue("IDLE");
+            clawLevelStatus.setValue("IDLE");
+            telemetry.update();
 
 
         }
+        if(goalType == 4) { //claw: open is 0, closed is 1
+            if(goalLibrary[stepNumber][1] == 0){ //open claw
+                clawStatus.setValue("OPENING");
+                telemetry.update();
+                claw.setPosition(clawOpen);
+            }
+            else { //close claw
+                clawStatus.setValue("CLOSING");
+                telemetry.update();
+                claw.setPosition(clawClosed);
+            }
+            clawStatus.setValue("IDLE");
+            telemetry.update();
+        }
+        if(newGoal){
+            stepNumber++;
+        }
+        telemetry.update();
     }
 
 
