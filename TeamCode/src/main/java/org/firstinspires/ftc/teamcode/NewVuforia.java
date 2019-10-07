@@ -338,7 +338,7 @@ public class NewVuforia extends LinearOpMode {
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
                 if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    OpenGLMatrix skystonePositionCoords = ((VuforiaTrackableDefaultListener)trackable.getListener()).getFtcCameraFromTarget(); //give pose of trackable, returns null if not visible
+                    OpenGLMatrix skystonePositionCoords = ((VuforiaTrackablesDefaultListener).trackable.getListener().getVuforiaCameraFromTarget()); //give pose of trackable, returns null if not visible
 
                     targetVisible = true;
 
