@@ -53,6 +53,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
+import org.firstinspires.ftc.teamcode.tankdrivecode.*;
+
 /**
  * This 2019-2020 OpMode illustrates the basics of using the Vuforia localizer to determine
  * positioning and orientation of robot on the SKYSTONE FTC field.
@@ -86,6 +88,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 @TeleOp(name="SKYSTONE Vuforia Nav Webcam", group ="Concept")
 @Disabled
 public class NewVuforia extends LinearOpMode {
+
+    HardwareMapTank robot = new HardwareMapTank();
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK; //need this
@@ -134,12 +138,9 @@ public class NewVuforia extends LinearOpMode {
     private float phoneZRotate    = 0;
 
     private static int skystonePosition = 4;
+    robot.initWebcam(hardwaremap);
 
      @Override public void runOpMode() {
-         /*
-          * Retrieve the camera we are to use.
-          */
-         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
      }
      public int visionTest(){
         /*
@@ -158,7 +159,7 @@ public class NewVuforia extends LinearOpMode {
         /*
          * We also indicate which camera on the RC we wish to use.
          */
-        parameters.cameraName = webcamName;
+        parameters.cameraName = robot.webcamName;
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);

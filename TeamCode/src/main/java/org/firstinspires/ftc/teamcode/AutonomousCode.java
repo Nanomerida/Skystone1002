@@ -24,7 +24,7 @@ import static java.lang.Math.abs;
 //@Disabled
 public class AutonomousCode extends OpMode {
 
-    CRGreenHardwareMap robot = new CRGreenHardwareMap(telemetry); //need to define the hardware map
+    HardwareMapTank robot = new HardwareMapTank(); //need to define the hardware map
 
     DcMotor left_front_drive;
     DcMotor left_back_drive;
@@ -166,14 +166,10 @@ public class AutonomousCode extends OpMode {
      */
     @Override
     public void init() {
+        //VUFORIA STUFF
+        blockPos.
 
-        left_front_drive = hardwareMap.dcMotor.get("leftFrontMotor");
-        left_back_drive = hardwareMap.dcMotor.get("leftBackMotor");
-        right_front_drive = hardwareMap.dcMotor.get("rightFrontMotor");
-        right_back_drive = hardwareMap.dcMotor.get("rightBackMotor");
-        main_arm = hardwareMap.dcMotor.get("armMotor");
-        claw_level = hardwareMap.servo.get("clawLevelServo");
-        claw = hardwareMap.servo.get("clawServo");
+        robot.init(hardwareMap);
 
         // MORE IMU STUFF
 

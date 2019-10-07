@@ -20,9 +20,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Motor channel:  Right Back drive Motor:       "rightBackDrive"
  * Motor channel:  Arm main motor:               "main_arm"
  * Motor channel:  Linear Slide motor:           "slide_motor"
+ * Motor channel:  Linear Slide motor 2:         "slide_motor_2"
  * Servo channel:  Servo to control claw level:  "claw_leveler"
  * Servo channel:  Servo to open claw:           "claw"
  * Servo channel:  Servo to rotate claw:         "clawRotate"
+ * Webcam channel: Webcam:                       "Webcam 1"
  */
 public class HardwareMapTank
 {
@@ -33,9 +35,11 @@ public class HardwareMapTank
     public DcMotor  right_back_drive = null;
     public DcMotor  main_arm     = null;
     public DcMotor  slide = null;
+    public DcMotor  slide2 = null;
     public Servo    claw_level    = null;
     public Servo    claw   = null;
     public Servo    claw_rotate = null;
+    public Webcamname webcamname = null;
 
     public static final double START_POSITION_CLAW       =  0.0 ; //starting pose of main claw servo
     public static final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
@@ -64,10 +68,12 @@ public class HardwareMapTank
         right_back_drive = hwMap.get(DcMotor.class, "rightBackDrive");
 
         slide = hwMap.get(DcMotor.class, "slide_motor");
+        slide2 = hwMap.et(DcMotor.class, "slide_motor_2");
         main_arm    = hwMap.get(DcMotor.class, "main_arm");
         claw_level = hwMap.get(Servo.class, "claw_leveler");
         claw = hwMap.get(Servo.class, "claw");
         claw_rotate = hwMap.get(Servo.class, "clawRotate");
+
 
         // Set all motors to zero power
         left_front_drive.setPower(0);
@@ -85,13 +91,19 @@ public class HardwareMapTank
         right_front_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        main_arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); //I don't know what we want for this
+        slide.setMode(DcMotor.RunMode.RUN_WITH_ENCODER);
+        slide2.setMode(DcMotor.RunMode.RUN_WITH_ENCODER);
+        main_arm.setMode(DcMotor.RunMode.RUN_WITH_ENCODER); //I don't know what we want for this
 
         // Define and initialize ALL installed servos.
         claw_level.setPosition(START_POSITION_CLAW_LEVELER);
         claw.setPosition(START_POSITION_CLAW);
         claw_rotate.setPosition(START_POSITION_CLAW_ROTATOR);
+    }
+
+    public void initWebcam(HardwareMap ahwmap){
+        hwMap = ahwmap;
+        webcamname = hwMap.get(Webcam.class, "Webcam 1");
     }
 
     public void resetEncoders(){
