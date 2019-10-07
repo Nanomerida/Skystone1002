@@ -105,7 +105,7 @@ public class NewVuforia extends LinearOpMode {
     //Skystone Positions
     private static final int skystoneMid    = -28; //X positions of skystone positions
     private static final int skystoneCenter = -36;
-    private static final int skystoneWall   = -44;
+    //private static final int skystoneWall   = -44;
 
     // Constants for the center support targets
     /* private static final float bridgeZ = 6.42f * mmPerInch;

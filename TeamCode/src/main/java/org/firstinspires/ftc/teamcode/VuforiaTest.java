@@ -59,7 +59,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * is explained in.
  */
 
-@Autonomous(name="Concept: VuMark Id Webcam", group ="Concept")
+@Autonomous(name="Vuforia Test", group ="Testing")
 @Disabled
 public class VuforiaTest extends LinearOpMode {
 

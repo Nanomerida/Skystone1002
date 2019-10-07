@@ -218,7 +218,6 @@ public class AutonomousCode extends OpMode {
      */
     @Override
     public void loop() {
-        telemetry.setAutoClear(false); //so it doesn't auto clear.
         Telemetry.Item driveStatus = telemetry.addData("Drive Base Status:", driveIdle); //drive status
         Telemetry.Item armStatus = telemetry.addData("Arm Motor Status:", "IDLE");
         Telemetry.Item clawLevelStatus = telemetry.addData("Claw Level Servo Status:", "IDLE");
@@ -328,6 +327,7 @@ public class AutonomousCode extends OpMode {
         }
         if(newGoal){
             stepNumber++;
+            stepNumb.setValue(stepNumber);
         }
         telemetry.update();
     }

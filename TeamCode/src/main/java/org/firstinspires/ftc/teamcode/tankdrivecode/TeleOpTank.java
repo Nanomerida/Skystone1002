@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.tankdrivecode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.util.Range;
 
 @TeleOp(name="TankTeleOp", group="TeleOp")
 
-public class TankTeleOp extends OpMode {
+public class TeleOpTank extends OpMode {
     //Crates HardwareMap object robot
-    CRGreenHardwareMap robot = new CRGreenHardwareMap(telemetry);
+    HardwareMapTank robot = new HardwareMapTank();
     //Initializes with the hardwareMap
 
     @Override
@@ -33,6 +33,9 @@ public class TankTeleOp extends OpMode {
      */
     @Override
     public void start() {
+        /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
+        telemetry.addData("Glitches in MATRIX detected:", 0);
+        telemetry.update();
     }
 
     /*
@@ -40,26 +43,31 @@ public class TankTeleOp extends OpMode {
      */
     @Override
     public void loop() {
+        /*Things on claw current:
+        robot.main_arm.setPower();
+        robot.claw_level.setPosition();
+        robot.claw.setPosition();
+         */
         // Obtain joystick values
         //  robot.hangerServo.setPosition(0);
         double right = -gamepad1.right_stick_y;
         double left = -gamepad1.left_stick_y;
 
         // Set joystick values to motor values on robot
-        robot.leftFrontMotor.setPower(left);
-        robot.leftBackMotor.setPower(left);
-        robot.rightFrontMotor.setPower(right);
-        robot.rightBackMotor.setPower(right);
+        robot.left_front_drive.setPower(left);
+        robot.left_back_drive.setPower(left);
+        robot.right_front_drive.setPower(right);
+        robot.right_back_drive.setPower(right);
     }
 
     //Ends all motor actions by setting power to 0 when teleOp is finished
     @Override
     public void stop() {
-        robot.leftFrontMotor.setPower(0);
-        robot.leftBackMotor.setPower(0);
-        robot.rightFrontMotor.setPower(0);
-        robot.rightBackMotor.setPower(0);
-        robot.hangerMotor.setPower(0);
-        robot.intakeMotor.setPower(0);
+        robot.left_front_drive.setPower(0);
+        robot.left_back_drive.setPower(0);
+        robot.right_front_drive.setPower(0);
+        robot.right_back_drive.setPower(0);
+
+        robot.main_arm.setPower(0);
     }
 }

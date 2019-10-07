@@ -4,9 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
@@ -23,7 +20,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
-@Autonomous
+@Autonomous (name = "TankAutonomous", group = "Autonomous")
 
 public class AutonomousTank extends OpMode {
     HardwareMapTank robot   = new HardwareMapTank();
@@ -33,11 +30,14 @@ public class AutonomousTank extends OpMode {
     public double degreeServoConv(double degrees){
         return degrees * servoDegreesConst;
     }
-    /*Move\ing claw to keep up with amr movement */
+
+    /*Moving claw to keep up with amr movement */
+
     public double armClawPower(double armPower){ //write orlando's math here for arm to claw_leveler power.
         telemetry.update();
         return armPower;
     }
+
     /* Moving Claw */
     public void armMove(double armPower, double clawPower){ //convert degrees to Servo powers
         clawPower = degreeServoConv(clawPower);
@@ -77,6 +77,8 @@ public class AutonomousTank extends OpMode {
 
     @Override
     public void init() {
+        //Set up vuforia
+        blockPos.runOpMode();
         // MORE IMU STUFF
 
         // Set up the parameters with which we will use our IMU. Note that integration
@@ -121,12 +123,29 @@ public class AutonomousTank extends OpMode {
     }
 
 
-    }
     @Override
     public void start() {
     }
 
     public void loop() {
+//---------------------------------------------------------------------------------------------------------------------
+        /* NOTE TO 1002 -----> When the vision test is needed, do int skystonePos = blockPos.visionTest();
+         * This will output either 0(closest to bridge), 1(center), or 2(closest to wall).
+         * -RyanD
+         */
+
+//---------------------------------------------------------------------------------------------------------------------
+
+
+        //Telemetry stuff
+        Telemetry.Item driveStatus = telemetry.addData("Drive Base Status:", driveIdle); //drive status
+        Telemetry.Item armStatus = telemetry.addData("Arm Motor Status:", "IDLE");
+        Telemetry.Item clawLevelStatus = telemetry.addData("Claw Level Servo Status:", "IDLE");
+        Telemetry.Item clawStatus = telemetry.addData("Claw Servo Status:", "IDLE");
+        Telemetry.Item visionStatus = telemetry.addData("Vision Testing Status:", "DISABLED"); //first item
+        telemetry.update();
+        //For Telemetry, use just do it whenever one of these actions is performed.
+
         /**THIS IS THE PART THAT NEEDS TO BE ADJUSTED PER EACH AUTON*/
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)

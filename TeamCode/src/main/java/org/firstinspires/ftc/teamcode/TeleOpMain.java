@@ -4,13 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.tankdrivecode.*;
 
 
-@TeleOp(name = "TeleOp", group="TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group="TeleOp")
 
-public class TeleOp extends OpMode {
+public class TeleOpMain extends OpMode {
     //Crates HardwareMap object robot
-    CRGreenHardwareMap robot = new CRGreenHardwareMap(telemetry);
+    HardwareMapTank robot = new HardwareMapTank();
 
     public float[] m_v_mult(float[][] m, float[] v) {
         float[] out = new float[4];
@@ -20,20 +21,12 @@ public class TeleOp extends OpMode {
         out[3] = v[0] * m[0][3] + v[1] * m[1][3] + v[2] * m[2][3];
         return out;
     }
-    DcMotor left_front_drive;
-    DcMotor left_back_drive;
-    DcMotor right_front_drive;
-    DcMotor right_back_drive;
 
     //Initializes with the hardwareMap
     @Override
     public void init() {
         robot.init(hardwareMap);
 
-        left_front_drive = hardwareMap.dcMotor.get("leftFrontMotor");
-        left_back_drive = hardwareMap.dcMotor.get("leftBackMotor");
-        right_front_drive = hardwareMap.dcMotor.get("rightFrontMotor");
-        right_back_drive = hardwareMap.dcMotor.get("rightBackMotor");
     }
 
     @Override
@@ -58,10 +51,10 @@ public class TeleOp extends OpMode {
 
         outputs = m_v_mult(matrix, inputs);
 
-        left_front_drive.setPower(outputs[2]);
-        left_back_drive.setPower(outputs[3]);
-        right_front_drive.setPower(outputs[0]);
-        right_back_drive.setPower(outputs[1]);
+        robot.left_front_drive.setPower(outputs[2]);
+        robot.left_back_drive.setPower(outputs[3]);
+        robot.right_front_drive.setPower(outputs[0]);
+        robot.right_back_drive.setPower(outputs[1]);
 
 
 
