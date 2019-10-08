@@ -53,7 +53,9 @@ public class AutonomousCode extends OpMode {
         }
         return motorPower;
     }
-    public double[] AngleChange(double thetaA, double thetaG) {
+    
+    public double[] AngleChange(double thetaG) {
+        double thetaA = degreesConversion();
         double[] TurnBasePower = {1.0000d, -1.0000d, 1.0000d, -1.0000d};
         thetaA -= thetaG;
         double[] motorPower = new double[4];
@@ -68,7 +70,7 @@ public class AutonomousCode extends OpMode {
         double[] XEncoderPosition = new double[2];
         double[] YEncoderPosition = new double[2];
         double ConvRate = (PI * 90) / 208076.8;
-        double Heading = this.angles.firstAngle;
+        double Heading = degreesConversion;
         double[] WeirdOrlandoMathsX = {sin(Heading), cos(Heading)};
         double[] WeirdOrlandoMathsY = {cos(Heading), sin(Heading)};
         double XClicks = {"encoders detected since previous iteration X"};
@@ -99,7 +101,7 @@ public class AutonomousCode extends OpMode {
 
     public boolean GoalCheckAngle(double thetaG) {
         boolean reachedGoal = false;
-        double thetaA = this.angles.firstAngle;
+        double thetaA = degreesConversion();
         double thetaDif = (thetaG - thetaA);
         if(abs(thetaDif) < 0.1) {
             reachedGoal = true;
@@ -109,6 +111,14 @@ public class AutonomousCode extends OpMode {
 
     public double degreeServoConv(double degrees){
         return degrees * servoDegreesConst;
+    }
+    
+    public double degreesConversion(){
+        double theta = this.angles.firstAngle;
+        if(theta < 0) {
+            theta += 360;
+        }
+        return theta;
     }
 
     public void moveDrive(double[] powers) { //method to move.
@@ -161,7 +171,7 @@ public class AutonomousCode extends OpMode {
      */
     @Override
     public void init() {
-        //VUFORIA STUFF
+        //HARDWARE MAP
 
         robot.init(hardwareMap);
 
@@ -214,6 +224,7 @@ public class AutonomousCode extends OpMode {
         Telemetry.Item clawStatus = telemetry.addData("Claw Servo Status:", "IDLE");
         Telemetry.Item visionStatus = telemetry.addData("Vision Testing Status:", "DISABLED"); //first item
         Telemetry.Item stepNumb = telemetry.addData("Current Step Number", stepNumber);
+        Telemetry.Item currentHeading = telemetry.addData("Current Heading:", degreesConversion);
         telemetry.update();
 
         double goalType = goalLibrary[stepNumber][0]; //Setting goal each time
@@ -239,7 +250,7 @@ public class AutonomousCode extends OpMode {
 
         /* Angle Change */
         if(goalType == 1) {
-            double[] motorPowerAngle = AngleChange(this.angles.firstAngle, goalLibrary[stepNumber][1]);
+            double[] motorPowerAngle = AngleChange( goalLibrary[stepNumber][1]);
             driveStatus.setValue(driveTurning);
             telemetry.update();
             moveDrive(motorPowerAngle); //move
