@@ -70,11 +70,11 @@ public class AutonomousCode extends OpMode {
         double[] XEncoderPosition = new double[2];
         double[] YEncoderPosition = new double[2];
         double ConvRate = (PI * 90) / 208076.8;
-        double Heading = degreesConversion;
+        double Heading = degreesConversion();
         double[] WeirdOrlandoMathsX = {sin(Heading), cos(Heading)};
         double[] WeirdOrlandoMathsY = {cos(Heading), sin(Heading)};
-        double XClicks = {"encoders detected since previous iteration X"};
-        double YClicks = {"encoders detected since previous iteration Y"};
+        double XClicks = 0.0d; //"encoders detected since previous iteration X"};
+        double YClicks = 0.0d; //{"encoders detected since previous iteration Y"};
         for(int i = 0; i < 2; i++) {
             XEncoderPosition[i] = ConvRate * XClicks * WeirdOrlandoMathsX[i];
             YEncoderPosition[i] = ConvRate * YClicks * WeirdOrlandoMathsY[i];
@@ -224,7 +224,7 @@ public class AutonomousCode extends OpMode {
         Telemetry.Item clawStatus = telemetry.addData("Claw Servo Status:", "IDLE");
         Telemetry.Item visionStatus = telemetry.addData("Vision Testing Status:", "DISABLED"); //first item
         Telemetry.Item stepNumb = telemetry.addData("Current Step Number", stepNumber);
-        Telemetry.Item currentHeading = telemetry.addData("Current Heading:", degreesConversion);
+        Telemetry.Item currentHeading = telemetry.addData("Current Heading:", degreesConversion());
         telemetry.update();
 
         double goalType = goalLibrary[stepNumber][0]; //Setting goal each time
@@ -270,29 +270,29 @@ public class AutonomousCode extends OpMode {
                 case 0: //first position (left, towards skybridge)
                     visionStatus.setValue("SKYSTONE: TOWARDS BRIDGE");
                     telemetry.update();
-                    go there;
-                    grab thing;
-                    go back;
-                    goalLibrary [12][1] = x;//change steps in library because we know where other Skystone is
-                    goalLibrary [12][2] = y;
+                    //go there;
+                    //grab thing;
+                    //go back;
+                    goalLibrary [12][1] = 0;//change steps in library because we know where other Skystone is
+                    goalLibrary [12][2] = 0;
                     break;
                 case 1: //second position (center)
                     visionStatus.setValue("SKYSTONE: CENTER");
                     telemetry.update();
-                    go there;
-                    grab thing;
-                    go back;
+                    //go there;
+                    //grab thing;
+                    //go back;
                     goalLibrary [13][0] = 1;
-                    goalLibrary [13][1] = angle; //change steps in library because we know where other Skystone is
+                    goalLibrary [13][1] = 0; //change steps in library because we know where other Skystone is
                     break;
                 case 2: //third position (right, towards wall)
                     visionStatus.setValue("SKYSTONE: TOWARDS WALL");
                     telemetry.update();
-                    go there;
-                    grab thing;
-                    go back;
-                    goalLibrary [14][1] = x; //change steps in library because we know where other Skystone is
-                    goalLibrary [14][2] = y;
+                    //go there;
+                    //grab thing;
+                    //go back;
+                    goalLibrary [14][1] = 0; //change steps in library because we know where other Skystone is
+                    goalLibrary [14][2] = 0;
                     break;
             }
             visionStatus.setValue("DISABLED");
