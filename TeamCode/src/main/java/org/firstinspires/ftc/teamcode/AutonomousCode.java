@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
+import org.firstinspires.ftc.teamcode.tankdrivecode.*;
+
 import static java.lang.Math.cos; //Ryan's Math Stuff
 import static java.lang.Math.sin;
 import static java.lang.Math.PI;
@@ -26,13 +28,6 @@ public class AutonomousCode extends OpMode {
 
     HardwareMapTank robot = new HardwareMapTank(); //need to define the hardware map
 
-    DcMotor left_front_drive;
-    DcMotor left_back_drive;
-    DcMotor right_front_drive;
-    DcMotor right_back_drive;
-    DcMotor main_arm;
-    Servo claw_level;
-    Servo claw;
 
 
 
@@ -117,10 +112,10 @@ public class AutonomousCode extends OpMode {
     }
 
     public void moveDrive(double[] powers) { //method to move.
-        left_front_drive.setPower(powers[0]);
-        left_back_drive.setPower(powers[1]);
-        right_front_drive.setPower(powers[2]);
-        right_back_drive.setPower(powers[3]);
+        robot.left_front_drive.setPower(powers[0]);
+        robot.left_back_drive.setPower(powers[1]);
+        robot.right_front_drive.setPower(powers[2]);
+        robot.right_back_drive.setPower(powers[3]);
         //right, Ima head out.
     }
     public double armClawPower(double armPower){ //write orlando's math here for ar power.
@@ -130,8 +125,8 @@ public class AutonomousCode extends OpMode {
 
     public void armMove(double armPower, double clawPower){ //convert to 1-0
         clawPower = degreeServoConv(clawPower);
-        main_arm.setPower(armPower);
-        claw_level.setPosition(clawPower);
+        robot.main_arm.setPower(armPower);
+        robot.claw_level.setPosition(clawPower);
     }
 
 
@@ -145,7 +140,7 @@ public class AutonomousCode extends OpMode {
         //4 is an claw change in format {4, open(0)/close(1) claw, 0}
         //others as needed
 
-    NewVuforia blockPos = new NewVuforia(); //creates a VuforiaOld object from the VuforiaOld.java class.
+    NewVuforia blockPos = new NewVuforia(); //creates a NewVuforia object from the NewVuforia.java class.
     public static int stepNumber = 0;
     public static boolean newGoal = true; //variable if new goal is desired
     public static double[] previousPos = {0.00d, 0.00d}; //define starting position here. May change based on placement.
@@ -167,7 +162,6 @@ public class AutonomousCode extends OpMode {
     @Override
     public void init() {
         //VUFORIA STUFF
-        blockPos.
 
         robot.init(hardwareMap);
 
@@ -311,12 +305,12 @@ public class AutonomousCode extends OpMode {
             if(goalLibrary[stepNumber][1] == 0){ //open claw
                 clawStatus.setValue("OPENING");
                 telemetry.update();
-                claw.setPosition(clawOpen);
+                robot.claw.setPosition(clawOpen);
             }
             else { //close claw
                 clawStatus.setValue("CLOSING");
                 telemetry.update();
-                claw.setPosition(clawClosed);
+                robot.claw.setPosition(clawClosed);
             }
             clawStatus.setValue("IDLE");
             telemetry.update();

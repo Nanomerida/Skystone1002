@@ -55,7 +55,7 @@ import java.util.Locale;
  */
 @Autonomous(name = "Gyro Testing", group = "Development")
 //@Disabled                            // Comment this out to add to the opmode list
-public class FiguringOutGyro extends LinearOpMode {
+public class FiguringOutIMU extends LinearOpMode {
     // The IMU sensor object
     BNO055IMU imu;
 

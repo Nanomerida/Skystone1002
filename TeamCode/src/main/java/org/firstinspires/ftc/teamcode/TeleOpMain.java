@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.tankdrivecode.*;
 
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group="TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOpMain", group="TeleOp")
 
 public class TeleOpMain extends OpMode {
     //Crates HardwareMap object robot

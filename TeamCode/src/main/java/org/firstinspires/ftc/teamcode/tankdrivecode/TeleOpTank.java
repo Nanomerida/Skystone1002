@@ -43,6 +43,15 @@ public class TeleOpTank extends OpMode {
      */
     @Override
     public void loop() {
+        /** Manipulator button layout:
+         * D-Pad: rotate claw left/right
+         * Right joystick: move arm up/down
+         * Button: Y: slide up
+         * Button A: slide down
+         * Button LT: open claw
+         * Button RT: close claw
+         *
+         */
         /*Things on claw current:
         robot.main_arm.setPower();
         robot.claw_level.setPosition();

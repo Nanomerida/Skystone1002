@@ -53,7 +53,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
-import org.firstinspires.ftc.teamcode.tankdrivecode.*;
 
 /**
  * This 2019-2020 OpMode illustrates the basics of using the Vuforia localizer to determine
@@ -89,7 +88,7 @@ import org.firstinspires.ftc.teamcode.tankdrivecode.*;
 @Disabled
 public class NewVuforia extends LinearOpMode {
 
-    HardwareMapTank robot = new HardwareMapTank();
+    WebcamInit robot = new WebcamInit();
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK; //need this
@@ -130,7 +129,6 @@ public class NewVuforia extends LinearOpMode {
      * This is the webcam we are to use. As with other hardware devices such as motors and
      * servos, this device is identified using the robot configuration tool in the FTC application.
      */
-    WebcamName webcamName = null;
 
     private boolean targetVisible = false;
     private float phoneXRotate    = 0;
@@ -138,11 +136,11 @@ public class NewVuforia extends LinearOpMode {
     private float phoneZRotate    = 0;
 
     private static int skystonePosition = 4;
-    robot.initWebcam(hardwaremap);
 
      @Override public void runOpMode() {
      }
      public int visionTest(){
+         robot.init(hardwareMap);
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
@@ -339,7 +337,7 @@ public class NewVuforia extends LinearOpMode {
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
                 if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    OpenGLMatrix skystonePositionCoords = ((VuforiaTrackablesDefaultListener).trackable.getListener().getVuforiaCameraFromTarget()); //give pose of trackable, returns null if not visible
+                    OpenGLMatrix skystonePositionCoords = ((VuforiaTrackableDefaultListener)trackable.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
 
                     targetVisible = true;
 
