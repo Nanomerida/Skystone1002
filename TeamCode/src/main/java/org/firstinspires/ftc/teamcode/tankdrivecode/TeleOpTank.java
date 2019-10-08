@@ -67,6 +67,9 @@ public class TeleOpTank extends OpMode {
         robot.left_back_drive.setPower(left);
         robot.right_front_drive.setPower(right);
         robot.right_back_drive.setPower(right);
+
+
+        if gamepad2.
     }
 
     //Ends all motor actions by setting power to 0 when teleOp is finished
