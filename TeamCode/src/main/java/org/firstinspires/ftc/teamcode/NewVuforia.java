@@ -106,8 +106,8 @@ public class NewVuforia extends LinearOpMode {
     private static final float stoneZ = 2.00f * mmPerInch;
 
     //Skystone Positions
-    private static final int skystoneMid    = -28; //X positions of skystone positions
-    private static final int skystoneCenter = -36;
+    private static final int skystoneMid    = -28 * mmPerInch; //X positions of skystone positions
+    private static final int skystoneCenter = -36 * mmPerInch;
     //private static final int skystoneWall   = -44;
 
     // Constants for the center support targets
@@ -168,7 +168,7 @@ public class NewVuforia extends LinearOpMode {
 
         //This is the Skystone target, we probably don't need anything else
         VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
-        stoneTarget.setName("Stone Target");
+        stoneTarget.setName("Skystone");
         /* VuforiaTrackable blueRearBridge = targetsSkyStone.get(1);
         blueRearBridge.setName("Blue Rear Bridge");
         VuforiaTrackable redRearBridge = targetsSkyStone.get(2);
@@ -353,10 +353,10 @@ public class NewVuforia extends LinearOpMode {
                 // express position (translation) of robot in inches.
                 VectorF skystoneCoords = lastLocation.getTranslation();
                 float skystoneX = (skystoneCoords.get(0) / mmPerInch);
-                if(abs(skystoneX - skystoneMid) < 1 ) {
+                if(abs(skystoneX - skystoneMid) < 30 ) {
                     skystonePosition = 0;
                 }
-                else if(abs(skystoneX - skystoneCenter) < 1){
+                else if(abs(skystoneX - skystoneCenter) < 30){
                     skystonePosition = 1;
                 }
                 else{
