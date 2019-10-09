@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.tankdrivecode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -149,9 +150,9 @@ public class AutonomousTank extends OpMode {
         /**THIS IS THE PART THAT NEEDS TO BE ADJUSTED PER EACH AUTON*/
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        //encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -166,7 +167,7 @@ public class AutonomousTank extends OpMode {
 
 
         // Determine new target position, and pass to motor controller
-        newLeftFrontTarget = robot.left_front_drive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
+        /*newLeftFrontTarget = robot.left_front_drive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
         newLeftBackTarget = robot.left_back_drive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
         newRightFrontTarget = robot.right_front_drive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
         newRightBackTarget = robot.right_back_drive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
@@ -184,7 +185,8 @@ public class AutonomousTank extends OpMode {
         robot.leftBackMotor.setPower(Math.abs(speed));
         robot.rightFrontMotor.setPower(Math.abs(speed));
         robot.rightBackMotor.setPower(Math.abs(speed));
-
+*/
+        /*
         // keep looping while we are still active, and there is time left, and both motors are running.
         while (opModeIsActive() &&
                 (runtime.seconds() < timeoutS) &&
@@ -201,5 +203,6 @@ public class AutonomousTank extends OpMode {
         robot.setRunWithEncoders();
 
         sleep(250);   // optional pause after each move
+         */
     }
 }

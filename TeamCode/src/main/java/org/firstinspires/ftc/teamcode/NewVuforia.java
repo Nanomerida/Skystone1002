@@ -106,8 +106,8 @@ public class NewVuforia extends LinearOpMode {
     private static final float stoneZ = 2.00f * mmPerInch;
 
     //Skystone Positions
-    private static final int skystoneMid    = -28 * mmPerInch; //X positions of skystone positions
-    private static final int skystoneCenter = -36 * mmPerInch;
+    private static final float skystoneMid    = -28 * mmPerInch; //X positions of skystone positions
+    private static final float skystoneCenter = -36 * mmPerInch;
     //private static final int skystoneWall   = -44;
 
     // Constants for the center support targets
