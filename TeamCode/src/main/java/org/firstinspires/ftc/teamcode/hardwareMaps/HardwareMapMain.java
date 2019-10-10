@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.tankdrivecode;
+package org.firstinspires.ftc.teamcode.hardwareMaps;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -25,10 +24,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Servo channel:  Servo to control claw level:  "claw_leveler"
  * Servo channel:  Servo to open claw:           "claw"
  * Servo channel:  Servo to rotate claw:         "clawRotate"
- * Webcam channel: Webcam:                       "Webcam 1"
  */
-public class HardwareMapTank
-{
+public class HardwareMapMain {
     /* Public OpMode members. */
     public DcMotor  left_front_drive   = null;
     public DcMotor  left_back_drive  = null;
@@ -40,7 +37,6 @@ public class HardwareMapTank
     public Servo    claw_level    = null;
     public Servo    claw   = null;
     public Servo    claw_rotate = null;
-    public WebcamName webcamname = null;
 
     public static final double START_POSITION_CLAW       =  0.0 ; //starting pose of main claw servo
     public static final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
@@ -53,7 +49,7 @@ public class HardwareMapTank
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public HardwareMapTank(){
+    public HardwareMapMain(){
 
     }
 
@@ -63,11 +59,14 @@ public class HardwareMapTank
         hwMap = ahwMap;
 
         // Define and Initialize Motors
+
+        //Drive
         left_front_drive  = hwMap.get(DcMotor.class, "leftFrontDrive");
         left_back_drive = hwMap.get(DcMotor.class, "leftBackDrive");
         right_front_drive = hwMap.get(DcMotor.class, "rightFrontDrive");
         right_back_drive = hwMap.get(DcMotor.class, "rightBackDrive");
 
+        //Arm
         slide = hwMap.get(DcMotor.class, "slide_motor");
         slide2 = hwMap.get(DcMotor.class, "slide_motor_2");
         main_arm    = hwMap.get(DcMotor.class, "main_arm");
@@ -83,7 +82,7 @@ public class HardwareMapTank
         right_back_drive.setPower(0);
 
         slide.setPower(0);
-        main_arm.setPower(0);
+        slide2.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.

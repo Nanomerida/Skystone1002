@@ -34,7 +34,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -52,6 +51,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
+
+import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapWebcam;
 
 
 /**
@@ -88,7 +89,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 @Disabled
 public class NewVuforia extends LinearOpMode {
 
-    WebcamInit robot = new WebcamInit();
+    HardwareMapWebcam robot = new HardwareMapWebcam();
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK; //need this
@@ -105,10 +106,10 @@ public class NewVuforia extends LinearOpMode {
     // Constant for Stone Target
     private static final float stoneZ = 2.00f * mmPerInch;
 
-    //Skystone Positions
-    private static final float skystoneMid    = -28 * mmPerInch; //X positions of skystone positions
-    private static final float skystoneCenter = -36 * mmPerInch;
-    //private static final int skystoneWall   = -44;
+    //Skystone Positions for 19 inches away and 6 inches high for the the left side of the field:
+    private static final float skystoneMid    = -107.5f; //X positions of skystone positions
+    private static final float skystoneCenter = 98.0f;
+    private static final float skystoneWall   = 102.3f;
 
     // Constants for the center support targets
     /* private static final float bridgeZ = 6.42f * mmPerInch;
@@ -352,7 +353,7 @@ public class NewVuforia extends LinearOpMode {
             if (targetVisible) {
                 // express position (translation) of robot in inches.
                 VectorF skystoneCoords = lastLocation.getTranslation();
-                float skystoneX = (skystoneCoords.get(0) / mmPerInch);
+                float skystoneX = (skystoneCoords.get(0));
                 if(abs(skystoneX - skystoneMid) < 30 ) {
                     skystonePosition = 0;
                 }

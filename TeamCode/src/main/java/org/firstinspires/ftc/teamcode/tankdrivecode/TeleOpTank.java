@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.tankdrivecode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 
 
 @TeleOp(name="TankTeleOp", group="TeleOp")
 
 public class TeleOpTank extends OpMode {
     //Crates HardwareMap object robot
-    HardwareMapTank robot = new HardwareMapTank();
+    HardwareMapMain robot = new HardwareMapMain();
     //Initializes with the hardwareMap
 
     @Override

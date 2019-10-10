@@ -1,7 +1,6 @@
 
 package org.firstinspires.ftc.teamcode.tankdrivecode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -13,23 +12,28 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
+import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 import org.firstinspires.ftc.teamcode.NewVuforia;
+import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 
 
-import static java.lang.Math.cos; //Ryan's Math Stuff
-import static java.lang.Math.sin;
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 @Autonomous (name = "TankAutonomous", group = "Autonomous")
 
 public class AutonomousTank extends OpMode {
-    HardwareMapTank robot   = new HardwareMapTank();
+    HardwareMapMain robot   = new HardwareMapMain();
+    GeneralMethods methods = new GeneralMethods();
 
 
     //define methods to be used here
-    public double degreeServoConv(double degrees){
-        return degrees * servoDegreesConst;
+
+    public double degreesConversion(){
+        double theta = this.angles.firstAngle;
+        if(theta < 0) {
+            theta += 360;
+        }
+        return theta;
     }
 
     /*Moving claw to keep up with amr movement */
@@ -41,7 +45,7 @@ public class AutonomousTank extends OpMode {
 
     /* Moving Claw */
     public void armMove(double armPower, double clawPower){ //convert degrees to Servo powers
-        clawPower = degreeServoConv(clawPower);
+        clawPower = methods.degreeServoConv(clawPower);
         robot.main_arm.setPower(armPower);
         robot.claw_level.setPosition(clawPower);
     }
@@ -66,14 +70,14 @@ public class AutonomousTank extends OpMode {
     public static final double servoDegreesConst = 0.005;
     public static final double clawClosed = 45.0d;
     public static final double clawOpen = 90.0d;
-    public static final String driveIdle = "IDLE";
-    public static final String driveMoving = "MOVING";
-    public static final String driveTurning = "TURNING";
+    public static final String driveIdle = "IDLE"; /**/
+    public static final String driveMoving = "MOVING"; /**/
+    public static final String driveTurning = "TURNING"; /**/
 
     //IMU STUFF
     BNO055IMU imu;
     Orientation angles;
-    //NOTE: to get heading, do this.angles.firstAngle
+    //NOTE: to get heading, do degreesConversion()
 
 
     @Override
@@ -95,7 +99,7 @@ public class AutonomousTank extends OpMode {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("Status","IMU Initialized, Current Heading %4d",
-                this.angles.firstAngle);
+                degreesConversion());
         telemetry.update();
         /*
          * Initialize the drive system variables.

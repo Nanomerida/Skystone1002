@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -15,7 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
-import org.firstinspires.ftc.teamcode.tankdrivecode.*;
+import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
+import org.firstinspires.ftc.teamcode.Variables.*;
+import org.firstinspires.ftc.teamcode.Methods.*;
 
 import static java.lang.Math.cos; //Ryan's Math Stuff
 import static java.lang.Math.sin;
@@ -26,44 +25,20 @@ import static java.lang.Math.abs;
 //@Disabled
 public class AutonomousCode extends OpMode {
 
-    HardwareMapTank robot = new HardwareMapTank(); //need to define the hardware map
+    HardwareMapMain robot = new HardwareMapMain(); //need to define the hardware map
+    NewVuforia blockPos = new NewVuforia(); //creates a NewVuforia object from the NewVuforia.java class.
+    GoalLibraries library = new GoalLibraries();
+    Reference constants = new Reference();
+    GeneralMethods methods = new GeneralMethods();
 
 
 
 
     //IMU STUFF
     BNO055IMU imu;
-    Orientation angles;
+    public Orientation angles;
 
 
-    public double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
-        double[] MoveYBasePower = {1.0000d, 1.0000d, 1.0000d, 1.0000d};                             //Base Motor Power for Y movement
-        double[] MoveXBasePower = {1.0000d, -1.0000d, -1.0000d, 1.0000};                            //Base Motor Power for X movement
-        Yg -= Ya;
-        Xg -= Xa;
-        Yg /= 144;
-        Xg /= 144;
-        for (int j = 0; j < 4; j++) {
-            MoveYBasePower[j] *= Yg;
-            MoveXBasePower[j] *= Xg;
-        }
-        double[] motorPower = new double[4];
-        for (int k = 0; k < 4; k++) {
-            motorPower[k] = MoveXBasePower[k] + MoveYBasePower[k];
-        }
-        return motorPower;
-    }
-    
-    public double[] AngleChange(double thetaG) {
-        double thetaA = degreesConversion();
-        double[] TurnBasePower = {1.0000d, -1.0000d, 1.0000d, -1.0000d};
-        thetaA -= thetaG;
-        double[] motorPower = new double[4];
-        for(int i = 0; i < 4; i++) {
-            motorPower[i] = thetaA * TurnBasePower[i];
-        }
-        return motorPower;
-    }
     public double[] AbsolutePosition(double PrevX, double PrevY) {
         double[] PreviousPosition = {PrevX, PrevY};
         double[] CurrentPosition = new double[2];
@@ -85,33 +60,8 @@ public class AutonomousCode extends OpMode {
         //something here to reset encoder readings.
         return CurrentPosition;
     }
-    public boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg) {
-        boolean reachedGoal = false;
-        if(abs(Xg - Xa) < 0.1) {
-            reachedGoal = true;
-            if (abs(Yg - Ya) < 0.1) {
-                reachedGoal = true;
-            }
-        }
-        else{
-            reachedGoal = false;
-        }
-        return reachedGoal;
-    }
 
-    public boolean GoalCheckAngle(double thetaG) {
-        boolean reachedGoal = false;
-        double thetaA = degreesConversion();
-        double thetaDif = (thetaG - thetaA);
-        if(abs(thetaDif) < 0.1) {
-            reachedGoal = true;
-        }
-        return reachedGoal;
-    }
 
-    public double degreeServoConv(double degrees){
-        return degrees * servoDegreesConst;
-    }
     
     public double degreesConversion(){
         double theta = this.angles.firstAngle;
@@ -128,20 +78,21 @@ public class AutonomousCode extends OpMode {
         robot.right_back_drive.setPower(powers[3]);
         //right, Ima head out.
     }
+
     public double armClawPower(double armPower){ //write orlando's math here for ar power.
         telemetry.update();
         return armPower;
     }
 
     public void armMove(double armPower, double clawPower){ //convert to 1-0
-        clawPower = degreeServoConv(clawPower);
+        clawPower = methods.degreeServoConv(clawPower);
         robot.main_arm.setPower(armPower);
         robot.claw_level.setPosition(clawPower);
     }
 
 
-
-    public static double[][] goalLibrary = {{0, 0, 0}, {1, 0, 0}};// {0, x, y}, {2, 0, 0}, {0, x, y}, {4, 0, 0}, {3, 0, 0}, {0, x, y}, {1, angle, 0}, {0, x, y}} //Blank steps for vuforia,{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, x, y}, {1, 0, 0}, continu....};
+    /** MUST CHANGE THIS ACCORDING TO DESIRED ROUTE */
+    private double[][] goalLibrary = library.goalLibraryBBF;
 
         //0 is a position change in format {0, x, y}
         //1 is an angle change in format {1, angle, 0}
@@ -150,7 +101,6 @@ public class AutonomousCode extends OpMode {
         //4 is an claw change in format {4, open(0)/close(1) claw, 0}
         //others as needed
 
-    NewVuforia blockPos = new NewVuforia(); //creates a NewVuforia object from the NewVuforia.java class.
     public static int stepNumber = 0;
     public static boolean newGoal = true; //variable if new goal is desired
     public static double[] previousPos = {0.00d, 0.00d}; //define starting position here. May change based on placement.
@@ -235,14 +185,14 @@ public class AutonomousCode extends OpMode {
             double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
             previousPos[0] = actualPos[0];
             previousPos[1] = actualPos[1]; // set previous position values for next position calculation.
-            double[] motorPowerPos = PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]); //move
+            double[] motorPowerPos = methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]); //move
             driveStatus.setValue(driveMoving);
             telemetry.update();
             moveDrive(motorPowerPos);
             driveStatus.setValue(driveIdle);
             telemetry.update();
             actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
-            boolean goalReachedPos = GoalCheckPos(actualPos[0], goalLibrary [stepNumber][1], actualPos [1], goalLibrary [stepNumber][2]); //check if we are at position
+            boolean goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary [stepNumber][1], actualPos [1], goalLibrary [stepNumber][2]); //check if we are at position
             if(goalReachedPos){
                 newGoal = true;
             }
@@ -250,13 +200,13 @@ public class AutonomousCode extends OpMode {
 
         /* Angle Change */
         if(goalType == 1) {
-            double[] motorPowerAngle = AngleChange( goalLibrary[stepNumber][1]);
+            double[] motorPowerAngle = methods.AngleChange( goalLibrary[stepNumber][1]);
             driveStatus.setValue(driveTurning);
             telemetry.update();
             moveDrive(motorPowerAngle); //move
             driveStatus.setValue(driveIdle);
             telemetry.update();
-            boolean goalReachedAngle = GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
+            boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
             if(goalReachedAngle){
                 newGoal = true;
             }
