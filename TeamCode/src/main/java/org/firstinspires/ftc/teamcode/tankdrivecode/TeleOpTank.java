@@ -4,6 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
+import org.firstinspires.ftc.teamcode.Methods.*;
+import org.firstinspires.ftc.teamcode.Variables.*;
+
 
 
 @TeleOp(name="TankTeleOp", group="TeleOp")
@@ -11,14 +14,37 @@ import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 public class TeleOpTank extends OpMode {
     //Crates HardwareMap object robot
     HardwareMapMain robot = new HardwareMapMain();
+    GeneralMethods methods = new GeneralMethods();
+    Reference ref = new Reference();
     //Initializes with the hardwareMap
 
     @Override
     public void init() {
+        telemetry.addData("Initializing hardware", "...");
+        telemetry.update();
+        
         robot.init(hardwareMap);
+        
+        telemetry.addData("Hardware Initialization:", "Complete");
+        telemetry.updatte();
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "The Matrix is Ready");    //
+          /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
+        telemetry.addData("Say", "The Matrix is Ready");
+        telemetry.addData("Glitches detected:", "0");
+        
+        telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
+        telemetry.addData("Risk calculated:", ref.vuforiaRisk);
+        telemetry.update();
+        sleep(2000);
+        
+        telemetry.addData("Hello Driver:", ref.currentDriver);
+        telemetry.addData("Hello Manipulator: ", ref.currentManip);
+        telemetry.addData("Hello Coach:", ref.currentCoach);
+        telemetry.addData("Hello Human Player:", ref.currentPlayer);
+        telemetry.update();
+        sleep(5000);
+        
     }
 
     /*
@@ -33,9 +59,6 @@ public class TeleOpTank extends OpMode {
      */
     @Override
     public void start() {
-        /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
-        telemetry.addData("Glitches in MATRIX detected:", 0);
-        telemetry.update();
     }
 
     /*
