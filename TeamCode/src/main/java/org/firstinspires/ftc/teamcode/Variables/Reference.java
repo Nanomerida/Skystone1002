@@ -15,4 +15,10 @@ public class Reference {
     
     //Current Vuforia AI risk factor
     public static final String vuforiaRisk = "LOW-MEDIUM";
+    
+    //Current Drivers
+    public static final String currentDriver = "Parker Anderson";
+    public static final String currentManip = "Jonah Isaza";
+    public static final String currentCoach = "Orlando Karam";
+    public static final String currentPlayer = "Undetermined";
 }
