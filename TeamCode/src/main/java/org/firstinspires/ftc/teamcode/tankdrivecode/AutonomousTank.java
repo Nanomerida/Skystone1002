@@ -13,7 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
-import org.firstinspires.ftc.teamcode.NewVuforia;
+import org.firstinspires.ftc.teamcode.BlueVuforia;
+import org.firstinspires.ftc.teamcode.RedVuforia;
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 
 
@@ -66,7 +67,8 @@ public class AutonomousTank extends OpMode {
     static final double     TURN_SPEED              = 0.5;
 
     /* Other Variables */
-    private NewVuforia blockPos = new NewVuforia();
+    private VuforiaBlue blockPosBlue = new VuforiaBlue();
+    private VuforiaRed blockPosRed = new VuforiaRed();
     public static final double servoDegreesConst = 0.005;
     public static final double clawClosed = 45.0d;
     public static final double clawOpen = 90.0d;
@@ -82,8 +84,6 @@ public class AutonomousTank extends OpMode {
 
     @Override
     public void init() {
-        //Set up vuforia
-        blockPos.runOpMode();
         // MORE IMU STUFF
 
         // Set up the parameters with which we will use our IMU. Note that integration
