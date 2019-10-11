@@ -26,7 +26,8 @@ import static java.lang.Math.abs;
 public class AutonomousCode extends OpMode {
 
     HardwareMapMain robot = new HardwareMapMain(); //need to define the hardware map
-    NewVuforia blockPos = new NewVuforia(); //creates a NewVuforia object from the NewVuforia.java class.
+    VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
+    VuforiaRed blockPosRed = new VuforiaRed(); //creates an instance of the vuforia red side file
     GoalLibraries library = new GoalLibraries();
     Reference constants = new Reference();
     GeneralMethods methods = new GeneralMethods();
@@ -215,7 +216,7 @@ public class AutonomousCode extends OpMode {
         if(goalType == 2) {
             visionStatus.setValue("ENABLED; SEARCHING");
             telemetry.update();
-            int stonePos = blockPos.visionTest(); //outputs skystone position, in integer form.
+            int stonePos = blockPosBlue.visionTest(); //outputs skystone position, in integer form.
             switch(stonePos) {
                 case 0: //first position (left, towards skybridge)
                     visionStatus.setValue("SKYSTONE: TOWARDS BRIDGE");

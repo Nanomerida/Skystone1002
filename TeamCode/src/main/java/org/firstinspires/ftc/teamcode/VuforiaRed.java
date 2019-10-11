@@ -88,7 +88,7 @@ import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapWebcam;
 
 @Autonomous(name="SKYSTONE Vuforia Nav Webcam", group ="Concept")
 //@Disabled
-public class NewVuforia extends LinearOpMode {
+public class VuforiaRed extends LinearOpMode {
 
     HardwareMapWebcam robot = new HardwareMapWebcam();
     private ElapsedTime searchTime = new ElapsedTime(0);
@@ -108,9 +108,9 @@ public class NewVuforia extends LinearOpMode {
     private static final float stoneZ = 2.00f * mmPerInch;
 
     //Skystone Positions for 19 inches away and 6 inches high for the the left side of the field:
-    private static final float skystoneMid    = -107.5f; //X positions of skystone positions
+    private static final float skystoneMid    = 102.3f; //X positions of skystone positions
     private static final float skystoneCenter = 98.0f;
-    private static final float skystoneWall   = 102.3f;
+    private static final float skystoneWall   = -107.5f;
 
     // Class Members
     private OpenGLMatrix lastLocation = null;
@@ -128,10 +128,10 @@ public class NewVuforia extends LinearOpMode {
 
     private static int skystonePosition = 4;
 
-     @Override public void runOpMode() {
-     }
-     public int visionTest(){
-         robot.init(hardwareMap);
+    @Override public void runOpMode() {
+    }
+    public int visionTest(){
+        robot.init(hardwareMap);
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
@@ -158,7 +158,7 @@ public class NewVuforia extends LinearOpMode {
         VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
         VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
         stoneTarget.setName("Skystone");
-         
+
         // For convenience, gather together all the trackable objects in one easily-iterable collection
         List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targetsSkyStone);
@@ -243,44 +243,44 @@ public class NewVuforia extends LinearOpMode {
 
         targetsSkyStone.activate();
         boolean noFoundSkystone = true;
-        runtime.reset();
-        while (runtime.seconds() != 7 || noFoundSkystone = true) {
+        searchTime.reset();
+        while (searchTime.seconds() != 7) {
+            while (noFoundSkystone) {
 
-            // check all the trackable targets to see which one (if any) is visible.
-            targetVisible = false;
-            for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    OpenGLMatrix skystonePositionCoords = ((VuforiaTrackableDefaultListener)trackable.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
+                // check all the trackable targets to see which one (if any) is visible.
+                targetVisible = false;
+                for (VuforiaTrackable trackable : allTrackables) {
+                    if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                        OpenGLMatrix skystonePositionCoords = ((VuforiaTrackableDefaultListener) trackable.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
 
-                    targetVisible = true;
+                        targetVisible = true;
 
-                    // getUpdatedRobotLocation() will return null if no new information is available since
-                    // the last time that call was made, or if the trackable is not currently visible.
-                    lastLocation = skystonePositionCoords;
-                    break;
+                        // getUpdatedRobotLocation() will return null if no new information is available since
+                        // the last time that call was made, or if the trackable is not currently visible.
+                        lastLocation = skystonePositionCoords;
+                        break;
+                    }
                 }
-            }
 
-            // Provide feedback as to where the robot is located (if we know).
-            if (targetVisible) {
-                // express position (translation) of robot in inches.
-                VectorF skystoneCoords = lastLocation.getTranslation();
-                float skystoneX = (skystoneCoords.get(0));
-                if(abs(skystoneX - skystoneMid) < 30 ) {
-                    skystonePosition = 0;
+                // Provide feedback as to where the robot is located (if we know).
+                if (targetVisible) {
+                    // express position (translation) of robot in inches.
+                    VectorF skystoneCoords = lastLocation.getTranslation();
+                    float skystoneX = (skystoneCoords.get(0));
+                    if (abs(skystoneX - skystoneMid) < 30) {
+                        skystonePosition = 0;
+                    } else if (abs(skystoneX - skystoneCenter) < 30) {
+                        skystonePosition = 1;
+                    } else {
+                        skystonePosition = 2;
+                    }
+                    noFoundSkystone = false;
                 }
-                else if(abs(skystoneX - skystoneCenter) < 30){
-                    skystonePosition = 1;
-                }
-                else{
-                    skystonePosition = 2;
-                }
-                noFoundSkystone = false;
             }
         }
 
         // Disable Tracking when we are done;
         targetsSkyStone.deactivate();
         return skystonePosition;
-     }
+    }
 }
