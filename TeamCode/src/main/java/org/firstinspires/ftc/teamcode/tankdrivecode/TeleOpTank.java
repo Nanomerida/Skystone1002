@@ -20,30 +20,14 @@ public class TeleOpTank extends OpMode {
 
     @Override
     public void init() {
-        telemetry.addData("Initializing hardware", "...");
-        telemetry.update();
         
         robot.init(hardwareMap);
-        
-        telemetry.addData("Hardware Initialization:", "Complete");
-        telemetry.updatte();
+
 
         // Send telemetry message to signify robot waiting;
           /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
         telemetry.addData("Say", "The Matrix is Ready");
-        telemetry.addData("Glitches detected:", "0");
-        
-        telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
-        telemetry.addData("Risk calculated:", ref.vuforiaRisk);
-        telemetry.update();
-        sleep(2000);
-        
-        telemetry.addData("Hello Driver:", ref.currentDriver);
-        telemetry.addData("Hello Manipulator: ", ref.currentManip);
-        telemetry.addData("Hello Coach:", ref.currentCoach);
-        telemetry.addData("Hello Human Player:", ref.currentPlayer);
-        telemetry.update();
-        sleep(5000);
+
         
     }
 

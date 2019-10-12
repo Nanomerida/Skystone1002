@@ -93,10 +93,8 @@ public class VuforiaRed extends LinearOpMode {
     HardwareMapWebcam robot = new HardwareMapWebcam();
     private ElapsedTime searchTime = new ElapsedTime(0);
 
-    // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK; //need this
     private static final boolean PHONE_IS_PORTRAIT = false  ; //need this
-    /* vuforia key */
     private static final String VUFORIA_KEY =
             "AeCl8dv/////AAABmU0vhtooEkbCoy9D8hM/5Yh8AhufXZT4nSVVD16Vjh1o/rLFmVyKVPNW3S/lXY0UWmDBpSNPS5yMk6lZoMFhTMoq9BMbmXHJ9KU+uKvC+GVp5cuEo18HvMpLMPPNmIVoXgOv9CqDfnRCOLSCblZf5cRF+E/LNqkZU7dEnEe/rrDq76FjVXruSdMBmUefIhu853VEpgvJPJTNopNjE0yU5TJ3+Uprgldx7fdy//VPG8PfXcaxLj4EJOzEKwJuCNdPS43bio37xbTbnLTzbKmfTqCI6BJpPaK5fXCk7o5xdVewJJbZCA8DDuNX6KUTT//OJ1UEWnMSYw5H1BrWMkytK5Syws7gdsCpYUshsQX7VP51";
 
@@ -163,23 +161,6 @@ public class VuforiaRed extends LinearOpMode {
         List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targetsSkyStone);
 
-        /*
-         * In order for localization to work, we need to tell the system where each target is on the field, and
-         * where the phone resides on the robot.  These specifications are in the form of <em>transformation matrices.</em>
-         * Transformation matrices are a central, important concept in the math here involved in localization.
-         * See <a href="https://en.wikipedia.org/wiki/Transformation_matrix">Transformation Matrix</a>
-         * for detailed information. Commonly, you'll encounter transformation matrices as instances
-         * of the OpenGLMatrix class.
-         *
-         * If you are standing in the Red Alliance Station looking towards the center of the field,
-         *     - The X axis runs from your left to the right. (positive from the center to the right)
-         *     - The Y axis runs from the Red Alliance Station towards the other side of the field
-         *       where the Blue Alliance Station is. (Positive is from the center, towards the BlueAlliance station)
-         *     - The Z axis runs from the floor, upwards towards the ceiling.  (Positive is above the floor)
-         *
-         * Before being transformed, each target image is conceptually located at the origin of the field's
-         *  coordinate system (the center of the field), facing up.
-         */
 
         // Set the position of the Stone Target.  Since it's not fixed in position, assume it's at the field origin.
         // Rotated it to to face forward, and raised it to sit on the ground correctly.
@@ -188,15 +169,6 @@ public class VuforiaRed extends LinearOpMode {
                 .translation(0, 0, stoneZ)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
 
-        //
-        // Create a transformation matrix describing where the phone is on the robot.
-        //
-        // NOTE !!!!  It's very important that you turn OFF your phone's Auto-Screen-Rotation option.
-        // Lock it into Portrait for these numbers to work.
-        //
-        // Info:  The coordinate frame for the robot looks the same as the field.
-        // The robot's "forward" direction is facing out along X axis, with the LEFT side facing out along the Y axis.
-        // Z is UP on the robot.  This equates to a bearing angle of Zero degrees.
         //
         // The phone starts out lying flat, with the screen facing Up and with the physical top of the phone
         // pointing to the LEFT side of the Robot.
@@ -229,17 +201,6 @@ public class VuforiaRed extends LinearOpMode {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
 
-        // WARNING:
-        // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
-        // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
-        // CONSEQUENTLY do not put any driving commands in this loop.
-        // To restore the normal opmode structure, just un-comment the following line:
-
-        // waitForStart();
-
-        // Note: To use the remote camera preview:
-        // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
-        // Tap the preview window to receive a fresh image.
 
         targetsSkyStone.activate();
         boolean noFoundSkystone = true;

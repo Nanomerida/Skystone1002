@@ -65,17 +65,7 @@ public class VuforiaTest extends LinearOpMode {
 
     public static final String TAG = "Vuforia VuMark Sample";
 
-
-    /**
-     * is the variable we will use to store our instance of the VuforiaOld
-     * localization engine.
-     */
     private VuforiaLocalizer vuforia;
-
-    /**
-     * This is the webcam we are to use. As with other hardware devices such as motors and
-     * servos, this device is identified using the robot configuration tool in the FTC application.
-     */
     private WebcamName webcamName;
 
     @Override public void runOpMode() {
@@ -85,40 +75,17 @@ public class VuforiaTest extends LinearOpMode {
          */
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        /*
-         * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
-         * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
-         */
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
-        // OR...  Do Not Activate the Camera Monitor View, to save power
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        /*
-         * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-         * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-         * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-         * web site at https://developer.vuforia.com/license-manager.
-         *
-         * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-         * random data. As an example, here is a example of a fragment of a valid key:
-         *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-         * Once you've obtained a license key, copy the string from the Vuforia web site
-         * and paste it in to your code on the next line, between the double quotes.
-         */
         parameters.vuforiaLicenseKey = "AeCl8dv/////AAABmU0vhtooEkbCoy9D8hM/5Yh8AhufXZT4nSVVD16Vjh1o/rLFmVyKVPNW3S/lXY0UWmDBpSNPS5yMk6lZoMFhTMoq9BMbmXHJ9KU+uKvC+GVp5cuEo18HvMpLMPPNmIVoXgOv9CqDfnRCOLSCblZf5cRF+E/LNqkZU7dEnEe/rrDq76FjVXruSdMBmUefIhu853VEpgvJPJTNopNjE0yU5TJ3+Uprgldx7fdy//VPG8PfXcaxLj4EJOzEKwJuCNdPS43bio37xbTbnLTzbKmfTqCI6BJpPaK5fXCk7o5xdVewJJbZCA8DDuNX6KUTT//OJ1UEWnMSYw5H1BrWMkytK5Syws7gdsCpYUshsQX7VP51";
 
 
         parameters.cameraName = webcamName;
         this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-        /*
-         * Load the data set containing the VuMarks for skystone detection. There's only one trackable
-         * in this data set: all three of the VuMarks in the game were created from this one template,
-         * but differ in their instance id information.
-         *
-         */
         VuforiaTrackables skystoneTrackables = this.vuforia.loadTrackablesFromAsset("Skystone");
         VuforiaTrackable stoneSkystone = skystoneTrackables.get(0);
         stoneSkystone.setName("SKYSTONE"); // can help in debugging; otherwise not necessary

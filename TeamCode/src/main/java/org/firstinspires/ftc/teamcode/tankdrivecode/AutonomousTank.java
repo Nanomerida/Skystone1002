@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -13,8 +14,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
-import org.firstinspires.ftc.teamcode.BlueVuforia;
-import org.firstinspires.ftc.teamcode.RedVuforia;
+import org.firstinspires.ftc.teamcode.Variables.Reference;
+import org.firstinspires.ftc.teamcode.VuforiaBlue;
+import org.firstinspires.ftc.teamcode.VuforiaRed;
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 
 
@@ -23,11 +25,18 @@ import static java.lang.Math.abs;
 @Autonomous (name = "TankAutonomous", group = "Autonomous")
 
 public class AutonomousTank extends OpMode {
-    HardwareMapMain robot   = new HardwareMapMain();
-    GeneralMethods methods = new GeneralMethods();
+    private HardwareMapMain robot   = new HardwareMapMain();
+    private GeneralMethods methods = new GeneralMethods();
+    private ElapsedTime timer = new ElapsedTime(0);
 
 
     //define methods to be used here
+    private void timeDelay(float delay){ //method fro time delay
+        timer.reset();
+        while(timer.seconds() != delay ){
+            boolean y = false; //i.e, do nothing
+        }
+    }
 
     public double degreesConversion(){
         double theta = this.angles.firstAngle;
@@ -69,6 +78,7 @@ public class AutonomousTank extends OpMode {
     /* Other Variables */
     private VuforiaBlue blockPosBlue = new VuforiaBlue();
     private VuforiaRed blockPosRed = new VuforiaRed();
+    private Reference ref = new Reference();
     public static final double servoDegreesConst = 0.005;
     public static final double clawClosed = 45.0d;
     public static final double clawOpen = 90.0d;
@@ -113,14 +123,25 @@ public class AutonomousTank extends OpMode {
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
+        timeDelay(1.0f);
 
 
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0", "Starting at %7d :%7d",
-                robot.left_front_drive.getCurrentPosition(),
-                robot.right_front_drive.getCurrentPosition());
-        telemetry.update();
+        // Send telemetry message to signify robot waiting;
+            /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
+            telemetry.addData("Say", "The Matrix is Ready");
+            telemetry.addData("Glitches detected:", "0");
+            telemetry.update();
+            timeDelay(2.0f);
+
+
+            telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
+            telemetry.addData("Risk calculated:", ref.vuforiaRisk);
+            telemetry.update();
+            timeDelay(2.0f);
+
+
     }
     @Override
     public void init_loop() {

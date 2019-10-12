@@ -216,7 +216,13 @@ public class AutonomousCode extends OpMode {
         if(goalType == 2) {
             visionStatus.setValue("ENABLED; SEARCHING");
             telemetry.update();
-            int stonePos = blockPosBlue.visionTest(); //outputs skystone position, in integer form.
+            int stonePos = 4;
+            if(goalLibrary[stepNumber][1] == 1) {
+                stonePos = blockPosBlue.visionTest();
+            }
+            else{
+                stonePos = blockPosRed.visionTest();
+            }
             switch(stonePos) {
                 case 0: //first position (left, towards skybridge)
                     visionStatus.setValue("SKYSTONE: TOWARDS BRIDGE");
