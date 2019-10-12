@@ -4,28 +4,20 @@ package org.firstinspires.ftc.teamcode.OKIIIcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServoImpl;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap
-
+import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Outreach TeleOp", group="TeleOp")
 //@Disabled
 public class TeleOp extends OpMode {
-    private org.firstinspires.ftc.teamcode.OKIIIcode.TeleOp robot;
-    private CRServoImpl leftFrontMotor;
-    private CRServoImpl leftBackMotor;
-    private CRServoImpl rightFrontMotor;
-    private CRServoImpl rightBackMotor;
-
+    HardwareMapMain robot = new HardwareMapMain();
     //Creates HardwareMap object robot
-    /**CRGreenHardwareMap robot = new CRGreenHardwareMap(telemetry);*/
+    /**
+     * CRGreenHardwareMap robot = new CRGreenHardwareMap(telemetry);
+     */
     //Initializes with the hardwareMap
-
-
     @Override
     public void init() {
-        robot.init(hardwareMap);
+        robot.init(HardwareMapMain);
     }
 
     @Override
