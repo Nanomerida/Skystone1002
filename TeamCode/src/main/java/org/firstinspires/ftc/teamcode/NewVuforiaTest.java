@@ -114,9 +114,9 @@ public class NewVuforiaTest extends LinearOpMode {
 
     private static int skystonePosition = 4;
 
-    private static final float skystoneMid    = 102.3f; //X positions of skystone positions
-    private static final float skystoneCenter = 98.0f;
-    private static final float skystoneWall   = -107.5f;
+    private final float skystoneMid    = 102.3f; //X positions of skystone positions
+    private final float skystoneCenter = 98.0f;
+    private final float skystoneWall   = -107.5f;
 
     @Override public void runOpMode() {
         /*
@@ -124,11 +124,6 @@ public class NewVuforiaTest extends LinearOpMode {
          */
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
-         * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
-         */
         /*int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId); */
 
