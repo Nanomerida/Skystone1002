@@ -1,11 +1,10 @@
-
 package org.firstinspires.ftc.teamcode.tankdrivecode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -13,37 +12,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
-import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
-import org.firstinspires.ftc.teamcode.Variables.Reference;
-import org.firstinspires.ftc.teamcode.VuforiaBlue;
-import org.firstinspires.ftc.teamcode.VuforiaRed;
-import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
+import org.firstinspires.ftc.teamcode.NewVuforia;
 
 
+import static java.lang.Math.cos; //Ryan's Math Stuff
+import static java.lang.Math.sin;
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 @Autonomous (name = "TankAutonomous", group = "Autonomous")
 
 public class AutonomousTank extends OpMode {
-    private HardwareMapMain robot   = new HardwareMapMain();
-    private GeneralMethods methods = new GeneralMethods();
-    private ElapsedTime timer = new ElapsedTime(0);
+    HardwareMapTank robot   = new HardwareMapTank();
 
 
     //define methods to be used here
-    private void timeDelay(float delay){ //method fro time delay
-        timer.reset();
-        while(timer.seconds() != delay ){
-            boolean y = false; //i.e, do nothing
-        }
-    }
-
-    public double degreesConversion(){
-        double theta = this.angles.firstAngle;
-        if(theta < 0) {
-            theta += 360;
-        }
-        return theta;
+    public double degreeServoConv(double degrees){
+        return degrees * servoDegreesConst;
     }
 
     /*Moving claw to keep up with amr movement */
@@ -55,7 +40,7 @@ public class AutonomousTank extends OpMode {
 
     /* Moving Claw */
     public void armMove(double armPower, double clawPower){ //convert degrees to Servo powers
-        clawPower = methods.degreeServoConv(clawPower);
+        clawPower = degreeServoConv(clawPower);
         robot.main_arm.setPower(armPower);
         robot.claw_level.setPosition(clawPower);
     }
@@ -76,24 +61,24 @@ public class AutonomousTank extends OpMode {
     static final double     TURN_SPEED              = 0.5;
 
     /* Other Variables */
-    private VuforiaBlue blockPosBlue = new VuforiaBlue();
-    private VuforiaRed blockPosRed = new VuforiaRed();
-    private Reference ref = new Reference();
+    private NewVuforia blockPos = new NewVuforia();
     public static final double servoDegreesConst = 0.005;
     public static final double clawClosed = 45.0d;
     public static final double clawOpen = 90.0d;
-    public static final String driveIdle = "IDLE"; /**/
-    public static final String driveMoving = "MOVING"; /**/
-    public static final String driveTurning = "TURNING"; /**/
+    public static final String driveIdle = "IDLE";
+    public static final String driveMoving = "MOVING";
+    public static final String driveTurning = "TURNING";
 
     //IMU STUFF
     BNO055IMU imu;
     Orientation angles;
-    //NOTE: to get heading, do degreesConversion()
+    //NOTE: to get heading, do this.angles.firstAngle
 
 
     @Override
     public void init() {
+        //Set up vuforia
+        blockPos.runOpMode();
         // MORE IMU STUFF
 
         // Set up the parameters with which we will use our IMU. Note that integration
@@ -109,7 +94,7 @@ public class AutonomousTank extends OpMode {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("Status","IMU Initialized, Current Heading %4d",
-                degreesConversion());
+                this.angles.firstAngle);
         telemetry.update();
         /*
          * Initialize the drive system variables.
@@ -123,25 +108,14 @@ public class AutonomousTank extends OpMode {
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
-        timeDelay(1.0f);
 
 
 
         // Send telemetry message to indicate successful Encoder reset
-        // Send telemetry message to signify robot waiting;
-            /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
-            telemetry.addData("Say", "The Matrix is Ready");
-            telemetry.addData("Glitches detected:", "0");
-            telemetry.update();
-            timeDelay(2.0f);
-
-
-            telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
-            telemetry.addData("Risk calculated:", ref.vuforiaRisk);
-            telemetry.update();
-            timeDelay(2.0f);
-
-
+        telemetry.addData("Path0", "Starting at %7d :%7d",
+                robot.left_front_drive.getCurrentPosition(),
+                robot.right_front_drive.getCurrentPosition());
+        telemetry.update();
     }
     @Override
     public void init_loop() {
@@ -175,9 +149,9 @@ public class AutonomousTank extends OpMode {
         /**THIS IS THE PART THAT NEEDS TO BE ADJUSTED PER EACH AUTON*/
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        //encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -192,7 +166,7 @@ public class AutonomousTank extends OpMode {
 
 
         // Determine new target position, and pass to motor controller
-        /*newLeftFrontTarget = robot.left_front_drive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
+        newLeftFrontTarget = robot.left_front_drive.getCurrentPosition() + (int) (leftInches * COUNTS_PER_INCH);
         newLeftBackTarget = robot.left_back_drive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
         newRightFrontTarget = robot.right_front_drive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
         newRightBackTarget = robot.right_back_drive.getCurrentPosition() + (int) (rightInches * COUNTS_PER_INCH);
@@ -210,8 +184,7 @@ public class AutonomousTank extends OpMode {
         robot.leftBackMotor.setPower(Math.abs(speed));
         robot.rightFrontMotor.setPower(Math.abs(speed));
         robot.rightBackMotor.setPower(Math.abs(speed));
-*/
-        /*
+
         // keep looping while we are still active, and there is time left, and both motors are running.
         while (opModeIsActive() &&
                 (runtime.seconds() < timeoutS) &&
@@ -228,6 +201,5 @@ public class AutonomousTank extends OpMode {
         robot.setRunWithEncoders();
 
         sleep(250);   // optional pause after each move
-         */
     }
 }

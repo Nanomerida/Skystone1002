@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.teamcode.tankdrivecode.*;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOpMain", group="TeleOp")
 
 public class TeleOpMain extends OpMode {
     //Crates HardwareMap object robot
-    HardwareMapMain robot = new HardwareMapMain();
+    HardwareMapTank robot = new HardwareMapTank();
 
     public float[] m_v_mult(float[][] m, float[] v) {
         float[] out = new float[4];
