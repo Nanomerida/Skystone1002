@@ -1,24 +1,62 @@
 package org.firstinspires.ftc.teamcode.tankdrivecode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
+import org.firstinspires.ftc.teamcode.Methods.*;
+import org.firstinspires.ftc.teamcode.Variables.*;
 
 
-@TeleOp(name="TankTeleOp", group="TeleOp")
+
+@TeleOp(name="Tank TeleOp", group="TeleOp")
 
 public class TeleOpTank extends OpMode {
     //Crates HardwareMap object robot
-    HardwareMapTank robot = new HardwareMapTank();
-    //Initializes with the hardwareMap
-
+    HardwareMapMain robot = new HardwareMapMain();
+    GeneralMethods methods = new GeneralMethods();
+    Reference ref = new Reference();
+    
+    //method for servo change
+    private void servoChange(String servo, double posChange) {
+        switch(servo){
+            case "claw":
+                robot.claw.setPosition(robot.claw.getPositon() + posChange);
+                break;
+            case "rotate":
+                robot.claw_rotate.setPosition(robot.claw_rotate.getPosition() + posChange);
+                break;
+        }
+    }
+    
+    //method for motor change (not drive)
+    private void motorChange(String motor, double posChange){
+        switch(motor){
+            case "arm":
+                robot.main_arm.setPower(posChange);
+                break;
+            case "slide":
+                robot.slide1.setPower(posChange);
+                robot.slide2.setPower(
+                break;
+        }
+    }
+                    
+                   
+                    
+                    
+                  
     @Override
     public void init() {
+        
         robot.init(hardwareMap);
 
+
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "The Matrix is Ready");    //
+          /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
+        telemetry.addData("Say", "The Matrix is Ready");
+
+        
     }
 
     /*
@@ -33,9 +71,6 @@ public class TeleOpTank extends OpMode {
      */
     @Override
     public void start() {
-        /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
-        telemetry.addData("Glitches in MATRIX detected:", 0);
-        telemetry.update();
     }
 
     /*
@@ -48,8 +83,8 @@ public class TeleOpTank extends OpMode {
          * Right joystick: move arm up/down
          * Button: Y: slide up
          * Button A: slide down
-         * Button LT: open claw
-         * Button RT: close claw
+         * Trigger LT: open claw
+         * Trigger RT: close claw
          *
          */
         /*Things on claw current:
@@ -59,17 +94,71 @@ public class TeleOpTank extends OpMode {
          */
         // Obtain joystick values
         //  robot.hangerServo.setPosition(0);
-        double right = -gamepad1.right_stick_y;
-        double left = -gamepad1.left_stick_y;
+        double rightDrive = -gamepad1.right_stick_y;
+        double leftDrive = -gamepad1.left_stick_y;
+        boolean clawRotateLeft = gamepad2.dpad_left;
+        boolean clawRotateRight = gamepad2.dpad_right;
+        float armMove = gamepad.right_stick_y;
+        float clawOpen = gamepad.left_trigger;
+        float clawClosed = gamepad.right_trigger;
+        boolean slideUp = gamepad.y;
+        boolean slideDown = gamepad.a;
+        
+        
 
         // Set joystick values to motor values on robot
-        robot.left_front_drive.setPower(left);
-        robot.left_back_drive.setPower(left);
-        robot.right_front_drive.setPower(right);
-        robot.right_back_drive.setPower(right);
-
-
-        if gamepad2.
+        robot.left_front_drive.setPower(leftDrive);
+        robot.left_back_drive.setPower(leftDrive);
+        robot.right_front_drive.setPower(rightDrive);
+        robot.right_back_drive.setPower(rightDrive);
+        
+       
+        
+        if(armMove != 0.0){
+            while(armMove != 0.0){
+                motorChange("arm", 0.5 * ref.motorDegreesConst);
+                //put something for claw leveler
+            }
+        }
+        
+        if(clawOpen != 0.0 || clawClosed != 0.0){
+            while(clawOpen != 0.0){
+                servoChange("claw", 0.5 * ref.servoDegreesConst);
+                clawOpen = gamepad.left_trigger;
+            }
+            while(clawClosed != 0.0){
+                servoChange("claw", 0.5 * ref.servoDegreesConst);
+                clawClosed = gamepad.right_trigger;
+            }
+        }
+        
+        
+        if( clawRotateLeft == true || clawRotateRight == true){
+            while(clawRotateLeft) {
+                servoChange("rotate", 0.5);
+                clawRotateLeft = gamepad1.dpad_left;
+            }
+            while(clawRotateRight){
+                servoChange("rotate", 0.5);
+                clawRotateRight = gamepad1.dpad_right;
+            }
+        }
+        
+        if(slideUp != 0.0){
+            while(slideUp != 0.0){
+                motorChange("slide", 0.5 * ref.motorDegreesConst);
+                slideUp = gamepad.y;
+            }
+        }
+        
+        if(slideDown != 0.0){
+            while(slideDown != 0.0){
+                motorChange("slide", -0.5 * ref.motorDegreesConst);
+                slideDown = gamepad2.a;
+            }
+        }
+        
+        
     }
 
     //Ends all motor actions by setting power to 0 when teleOp is finished
@@ -81,5 +170,10 @@ public class TeleOpTank extends OpMode {
         robot.right_back_drive.setPower(0);
 
         robot.main_arm.setPower(0);
+        robot.slide1.setPower(0);
+        robot.slide2.setPower(0);
+        robot.claw_level.setPosition(getPosition());
+        robot.claw_rotate.setPostion(getPosition());
+        robot.claw.setPosition(getPosition());
     }
 }

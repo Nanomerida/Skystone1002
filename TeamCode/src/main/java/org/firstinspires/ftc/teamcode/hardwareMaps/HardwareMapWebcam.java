@@ -1,15 +1,19 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.hardwareMaps;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class WebcamInit {
+/** This is not an OpMode for anything.
+ * This is just a class that contains the declaration/initialization information for the web-cam on vuforia.
+ */
+
+public class HardwareMapWebcam {
 
     public WebcamName webcamName;
     HardwareMap hwMap           =  null;
 
     //constructor
-    public WebcamInit(){
+    public HardwareMapWebcam(){
 
     }
     public void init(HardwareMap ahwMpa){
