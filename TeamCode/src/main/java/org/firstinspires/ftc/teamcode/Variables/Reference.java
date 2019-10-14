@@ -12,6 +12,9 @@ public class Reference {
 
     //Servo Starting Positions
     
+    //Motor Degrees Constant
+    public static final double motorDegreesConst = 0.00277777777d; //degrees to power
+    
     
     //Current Vuforia AI risk factor
     public static final String vuforiaRisk = "LOW-MEDIUM";
