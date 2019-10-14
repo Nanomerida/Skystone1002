@@ -41,6 +41,8 @@ public class TeleOpTank extends OpMode {
                 break;
         }
     }
+
+    private static float speedConst = 1.0f;
                     
                    
                     
@@ -103,17 +105,21 @@ public class TeleOpTank extends OpMode {
         float clawClosed = gamepad.right_trigger;
         boolean slideUp = gamepad.y;
         boolean slideDown = gamepad.a;
+        boolean slowMode = gamepad1.b;
         
-        
+                
 
         // Set joystick values to motor values on robot
-        robot.left_front_drive.setPower(leftDrive);
-        robot.left_back_drive.setPower(leftDrive);
-        robot.right_front_drive.setPower(rightDrive);
-        robot.right_back_drive.setPower(rightDrive);
+        robot.left_front_drive.setPower(leftDrive * speedConst);
+        robot.left_back_drive.setPower(leftDrive * speedConst);
+        robot.right_front_drive.setPower(rightDrive * speedConst);
+        robot.right_back_drive.setPower(rightDrive * speedConst);
         
        
-        
+        if(slowMode != false){
+            speedConst = 0.5f;
+        }
+
         if(armMove != 0.0){
             while(armMove != 0.0){
                 motorChange("arm", 0.5 * ref.motorDegreesConst);
