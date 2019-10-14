@@ -69,33 +69,7 @@ public class TeleOpTank extends OpMode {
         robot.right_back_drive.setPower(right);
 
 
-        //If y is pressed on gamepad2, linear slide is forward
-        if(gamepad2.y){
-            robot.slide.setPower(1.0);
-            robot.slide2.setPower(1.0);
-        }
-        //If a is pressed on gamepad2, linear slide is backward
-        if(gamepad2.a){
-            robot.slide.setPower(-1.0);
-            robot.slide2.setPower(-1.0);
-        }
-        //If lt is pressed on gamepad2, the claw will open
-        if(gamepad2.left_trigger){
-            robot.claw.setPosition(1);
-        }
-        //If rt is pressed on gamepad2, the claw will close
-        if(gamepad2.right_trigger){
-            robot.claw.setPosition(0);
-        }
-        //if the d-pad is moved left on gamepad2, the claw rotates left
-        if(gamepad2.dpad_left){
-            robot.claw_rotate.setPosition()
-        }
-        //if the d-pad is moved right on gamepad2, the claw rotates right
-        if(gamepad2.dpad_right){
-            robot.claw_rotate.setPosition()
-        }
-        if(game)
+        if gamepad2.
     }
 
     //Ends all motor actions by setting power to 0 when teleOp is finished
