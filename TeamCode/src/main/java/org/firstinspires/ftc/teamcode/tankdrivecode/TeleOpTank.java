@@ -151,6 +151,13 @@ public class TeleOpTank extends OpMode {
             }
         }
         
+        if(slideDown != 0.0){
+            while(slideDown != 0.0){
+                motorChange("slide", -0.5 * ref.motorDegreesConst);
+                slideDown = gamepad2.a;
+            }
+        }
+        
         
     }
 
@@ -163,5 +170,10 @@ public class TeleOpTank extends OpMode {
         robot.right_back_drive.setPower(0);
 
         robot.main_arm.setPower(0);
+        robot.slide1.setPower(0);
+        robot.slide2.setPower(0);
+        robot.claw_level.setPosition(getPosition());
+        robot.claw_rotate.setPostion(getPosition());
+        robot.claw.setPosition(getPosition());
     }
 }
