@@ -181,8 +181,10 @@ public class AutonomousCode extends OpMode {
         double goalType = goalLibrary[stepNumber][0]; //Setting goal each time
         newGoal = false;
 
+        switch(goalType) {
+
         /* Position Change */
-        if(goalType == 0){
+        case 0:
             double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
             previousPos[0] = actualPos[0];
             previousPos[1] = actualPos[1]; // set previous position values for next position calculation.
@@ -197,10 +199,11 @@ public class AutonomousCode extends OpMode {
             if(goalReachedPos){
                 newGoal = true;
             }
-        }
+            break;
+       
 
         /* Angle Change */
-        if(goalType == 1) {
+        case 1:
             double[] motorPowerAngle = methods.AngleChange( goalLibrary[stepNumber][1]);
             driveStatus.setValue(driveTurning);
             telemetry.update();
@@ -211,9 +214,10 @@ public class AutonomousCode extends OpMode {
             if(goalReachedAngle){
                 newGoal = true;
             }
-        }
+            break;
+
         /* Vuforia.java :( ugh... */
-        if(goalType == 2) {
+        case 2:
             visionStatus.setValue("ENABLED; SEARCHING");
             telemetry.update();
             int stonePos = 4;
@@ -255,9 +259,10 @@ public class AutonomousCode extends OpMode {
             visionStatus.setValue("DISABLED");
             telemetry.update();
             newGoal = true;
-        }
+            break;
+
         /* Arm Change */
-        if(goalType == 3) {
+        case 3:
             double clawLevelPower = armClawPower(goalLibrary[stepNumber][1]);
             armStatus.setValue("MOVING");
             clawLevelStatus.setValue("MOVING");
@@ -267,9 +272,9 @@ public class AutonomousCode extends OpMode {
             clawLevelStatus.setValue("IDLE");
             telemetry.update();
 
-
-        }
-        if(goalType == 4) { //claw: open is 0, closed is 1
+            break;
+        
+        case 4: //claw: open is 0, closed is 1
             if(goalLibrary[stepNumber][1] == 0){ //open claw
                 clawStatus.setValue("OPENING");
                 telemetry.update();
@@ -282,7 +287,8 @@ public class AutonomousCode extends OpMode {
             }
             clawStatus.setValue("IDLE");
             telemetry.update();
-        }
+            break;
+}
         if(newGoal){
             stepNumber++;
             stepNumb.setValue(stepNumber);
