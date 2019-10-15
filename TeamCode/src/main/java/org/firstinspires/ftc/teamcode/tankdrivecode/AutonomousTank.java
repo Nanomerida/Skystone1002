@@ -60,11 +60,6 @@ public class AutonomousTank extends OpMode {
         robot.claw_level.setPosition(clawPower);
     }
 
-    public void EncoderDrive(double speed, double leftInches, double rightInches, double timeoutS) throws InterruptedException { //nelitha's stuff
-        int newLeftTarget;
-        int newRightTarget;
-        int newHangerTarget;
-    }
 
 
     /**Make sure these measurments are correct*/
@@ -117,13 +112,8 @@ public class AutonomousTank extends OpMode {
          */
         robot.init(hardwareMap);
         robot.resetEncoders(); //obvious
-        //idle();  what is this for?
-        robot.setRunWithoutEncoders(); //do i need to explain?
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
-        timeDelay(1.0f);
 
 
 
@@ -173,6 +163,14 @@ public class AutonomousTank extends OpMode {
         //For Telemetry, use just do it whenever one of these actions is performed.
 
         /**THIS IS THE PART THAT NEEDS TO BE ADJUSTED PER EACH AUTON*/
+        robot.left_front_drive.setTargetPosition(5000);
+        robot.left_back_drive.setTargetPosition(5000);
+        robot.right_front_drive.setTargetPosition(5000);
+        robot.left_back_drive.setTargetPosition(5000);
+        robot.setRunToPosition();
+
+
+
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout

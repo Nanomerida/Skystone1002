@@ -178,117 +178,119 @@ public class AutonomousCode extends OpMode {
         Telemetry.Item currentHeading = telemetry.addData("Current Heading:", degreesConversion());
         telemetry.update();
 
-        double goalType = goalLibrary[stepNumber][0]; //Setting goal each time
+        int goalType = (int) goalLibrary[stepNumber][0]; //Setting goal each time
         newGoal = false;
 
         switch(goalType) {
 
-        /* Position Change */
-        case 0:
-            double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
-            previousPos[0] = actualPos[0];
-            previousPos[1] = actualPos[1]; // set previous position values for next position calculation.
-            double[] motorPowerPos = methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]); //move
-            driveStatus.setValue(driveMoving);
-            telemetry.update();
-            moveDrive(motorPowerPos);
-            driveStatus.setValue(driveIdle);
-            telemetry.update();
-            actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
-            boolean goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary [stepNumber][1], actualPos [1], goalLibrary [stepNumber][2]); //check if we are at position
-            if(goalReachedPos){
-                newGoal = true;
-            }
-            break;
-       
-
-        /* Angle Change */
-        case 1:
-            double[] motorPowerAngle = methods.AngleChange( goalLibrary[stepNumber][1]);
-            driveStatus.setValue(driveTurning);
-            telemetry.update();
-            moveDrive(motorPowerAngle); //move
-            driveStatus.setValue(driveIdle);
-            telemetry.update();
-            boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
-            if(goalReachedAngle){
-                newGoal = true;
-            }
-            break;
-
-        /* Vuforia.java :( ugh... */
-        case 2:
-            visionStatus.setValue("ENABLED; SEARCHING");
-            telemetry.update();
-            int stonePos = 4;
-            if(goalLibrary[stepNumber][1] == 1) {
-                stonePos = blockPosBlue.visionTest();
-            }
-            else{
-                stonePos = blockPosRed.visionTest();
-            }
-            switch(stonePos) {
-                case 0: //first position (left, towards skybridge)
-                    visionStatus.setValue("SKYSTONE: TOWARDS BRIDGE");
-                    telemetry.update();
-                    //go there;
-                    //grab thing;
-                    //go back;
-                    goalLibrary [12][1] = 0;//change steps in library because we know where other Skystone is
-                    goalLibrary [12][2] = 0;
-                    break;
-                case 1: //second position (center)
-                    visionStatus.setValue("SKYSTONE: CENTER");
-                    telemetry.update();
-                    //go there;
-                    //grab thing;
-                    //go back;
-                    goalLibrary [13][0] = 1;
-                    goalLibrary [13][1] = 0; //change steps in library because we know where other Skystone is
-                    break;
-                case 2: //third position (right, towards wall)
-                    visionStatus.setValue("SKYSTONE: TOWARDS WALL");
-                    telemetry.update();
-                    //go there;
-                    //grab thing;
-                    //go back;
-                    goalLibrary [14][1] = 0; //change steps in library because we know where other Skystone is
-                    goalLibrary [14][2] = 0;
-                    break;
-            }
-            visionStatus.setValue("DISABLED");
-            telemetry.update();
-            newGoal = true;
-            break;
-
-        /* Arm Change */
-        case 3:
-            double clawLevelPower = armClawPower(goalLibrary[stepNumber][1]);
-            armStatus.setValue("MOVING");
-            clawLevelStatus.setValue("MOVING");
-            telemetry.update();
-            armMove(goalLibrary[stepNumber][1], clawLevelPower);
-            armStatus.setValue("IDLE");
-            clawLevelStatus.setValue("IDLE");
-            telemetry.update();
-
-            break;
-        
-        case 4: //claw: open is 0, closed is 1
-            if(goalLibrary[stepNumber][1] == 0){ //open claw
-                clawStatus.setValue("OPENING");
+            /* Position Change */
+            case 0:
+                double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
+                previousPos[0] = actualPos[0];
+                previousPos[1] = actualPos[1]; // set previous position values for next position calculation.
+                double[] motorPowerPos = methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]); //move
+                driveStatus.setValue(driveMoving);
                 telemetry.update();
-                robot.claw.setPosition(clawOpen);
-            }
-            else { //close claw
-                clawStatus.setValue("CLOSING");
+                moveDrive(motorPowerPos);
+                driveStatus.setValue(driveIdle);
                 telemetry.update();
-                robot.claw.setPosition(clawClosed);
-            }
-            clawStatus.setValue("IDLE");
-            telemetry.update();
-            break;
-}
+                actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
+                boolean goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
+                if (goalReachedPos) {
+                    newGoal = true;
+                }
+                break;
+
+
+            /* Angle Change */
+            case 1:
+                double[] motorPowerAngle = methods.AngleChange(goalLibrary[stepNumber][1]);
+                driveStatus.setValue(driveTurning);
+                telemetry.update();
+                moveDrive(motorPowerAngle); //move
+                driveStatus.setValue(driveIdle);
+                telemetry.update();
+                boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
+                if (goalReachedAngle) {
+                    newGoal = true;
+                }
+                break;
+
+            /* Vuforia.java :( ugh... */
+            case 2:
+                visionStatus.setValue("ENABLED; SEARCHING");
+                telemetry.update();
+                int stonePos = 4;
+                if (goalLibrary[stepNumber][1] == 1) {
+                    stonePos = blockPosBlue.visionTest();
+                } else {
+                    stonePos = blockPosRed.visionTest();
+                }
+                switch (stonePos) {
+                    case 0: //first position (left, towards skybridge)
+                        visionStatus.setValue("SKYSTONE: TOWARDS BRIDGE");
+                        telemetry.update();
+                        //go there;
+                        //grab thing;
+                        //go back;
+                        goalLibrary[12][1] = 0;//change steps in library because we know where other Skystone is
+                        goalLibrary[12][2] = 0;
+                        break;
+                    case 1: //second position (center)
+                        visionStatus.setValue("SKYSTONE: CENTER");
+                        telemetry.update();
+                        //go there;
+                        //grab thing;
+                        //go back;
+                        goalLibrary[13][0] = 1;
+                        goalLibrary[13][1] = 0; //change steps in library because we know where other Skystone is
+                        break;
+                    case 2: //third position (right, towards wall)
+                        visionStatus.setValue("SKYSTONE: TOWARDS WALL");
+                        telemetry.update();
+                        //go there;
+                        //grab thing;
+                        //go back;
+                        goalLibrary[14][1] = 0; //change steps in library because we know where other Skystone is
+                        goalLibrary[14][2] = 0;
+                        break;
+                }
+                visionStatus.setValue("DISABLED");
+                telemetry.update();
+                newGoal = true;
+                break;
+
+            /* Arm Change */
+            case 3:
+                double clawLevelPower = armClawPower(goalLibrary[stepNumber][1]);
+                armStatus.setValue("MOVING");
+                clawLevelStatus.setValue("MOVING");
+                telemetry.update();
+                armMove(goalLibrary[stepNumber][1], clawLevelPower);
+                armStatus.setValue("IDLE");
+                clawLevelStatus.setValue("IDLE");
+                telemetry.update();
+
+                break;
+
+            case 4: //claw: open is 0, closed is 1
+                if (goalLibrary[stepNumber][1] == 0) { //open claw
+                    clawStatus.setValue("OPENING");
+                    telemetry.update();
+                    robot.claw.setPosition(clawOpen);
+                } else { //close claw
+                    clawStatus.setValue("CLOSING");
+                    telemetry.update();
+                    robot.claw.setPosition(clawClosed);
+                }
+                clawStatus.setValue("IDLE");
+                telemetry.update();
+                break;
+
+            case 5:
+                robot.slide.setTargetPosition(120);
+                break;
+        }
         if(newGoal){
             stepNumber++;
             stepNumb.setValue(stepNumber);

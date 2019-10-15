@@ -79,18 +79,19 @@ public class HardwareMapMain {
         right_back_drive.setPower(0);
 
         slide.setPower(0);
-        slide2.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        left_front_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slide2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        main_arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER); //I don't know what we want for this
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        main_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION); //I don't know what we want for this
 
         // Define and initialize ALL installed servos.
         claw_level.setPosition(START_POSITION_CLAW_LEVELER);
@@ -103,13 +104,7 @@ public class HardwareMapMain {
         left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
 
-    public void setRunWithoutEncoders(){
-        left_front_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setRunToPosition(){
@@ -131,5 +126,11 @@ public class HardwareMapMain {
         left_back_drive.setPower(0);
         right_front_drive.setPower(0);
         right_back_drive.setPower(0);
+    }
+    public void stopArm(){
+        main_arm.setPower(0);
+    }
+    public void stopSlide(){
+        slide.setPower(0);
     }
 }
