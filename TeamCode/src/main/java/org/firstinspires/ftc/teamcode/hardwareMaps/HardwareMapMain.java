@@ -20,7 +20,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Motor channel:  Right Back drive Motor:       "rightBackDrive"
  * Motor channel:  Arm main motor:               "main_arm"
  * Motor channel:  Linear Slide motor:           "slide_motor"
- * Motor channel:  Linear Slide motor 2:         "slide_motor_2"
  * Servo channel:  Servo to control claw level:  "claw_leveler"
  * Servo channel:  Servo to open claw:           "claw"
  * Servo channel:  Servo to rotate claw:         "clawRotate"
@@ -33,7 +32,6 @@ public class HardwareMapMain {
     public DcMotor  right_back_drive = null;
     public DcMotor  main_arm     = null;
     public DcMotor  slide = null;
-    public DcMotor  slide2 = null;
     public Servo    claw_level    = null;
     public Servo    claw   = null;
     public Servo    claw_rotate = null;
@@ -68,11 +66,10 @@ public class HardwareMapMain {
 
         //Arm
         slide = hwMap.get(DcMotor.class, "slide_motor");
-        slide2 = hwMap.get(DcMotor.class, "slide_motor_2");
         main_arm    = hwMap.get(DcMotor.class, "main_arm");
         claw_level = hwMap.get(Servo.class, "claw_leveler");
         claw = hwMap.get(Servo.class, "claw");
-        claw_rotate = hwMap.get(Servo.class, "clawRotate");
+        claw_rotate = hwMap.get(Servo.class, "claw_rotate");
 
 
         // Set all motors to zero power
