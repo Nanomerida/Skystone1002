@@ -186,33 +186,23 @@ public class AutonomousCode extends OpMode {
             /* Position Change */
             case 0:
                 double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
-                previousPos[0] = actualPos[0];
-                previousPos[1] = actualPos[1]; // set previous position values for next position calculation.
-                double[] motorPowerPos = methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]); //move
-                driveStatus.setValue(driveMoving);
-                telemetry.update();
-                moveDrive(motorPowerPos);
-                driveStatus.setValue(driveIdle);
-                telemetry.update();
-                actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
                 boolean goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
-                if (goalReachedPos) {
+                if(goalReachedPos){
                     newGoal = true;
+                }
+                else {
+                    double[] motorPowerPos = methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]);
+                    moveDrive(motorPowerPos);
                 }
                 break;
 
 
             /* Angle Change */
             case 1:
-                double[] motorPowerAngle = methods.AngleChange(goalLibrary[stepNumber][1]);
-                driveStatus.setValue(driveTurning);
-                telemetry.update();
-                moveDrive(motorPowerAngle); //move
-                driveStatus.setValue(driveIdle);
-                telemetry.update();
                 boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
-                if (goalReachedAngle) {
-                    newGoal = true;
+                if(goalReachedAngle){
+                    double[] motorPowerAngle = methods.AngleChange(goalLibrary[stepNumber][1]);
+                    moveDrive(motorPowerAngle);
                 }
                 break;
 

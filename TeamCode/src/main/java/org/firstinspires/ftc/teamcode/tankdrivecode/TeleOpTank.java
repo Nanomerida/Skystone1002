@@ -21,7 +21,7 @@ public class TeleOpTank extends OpMode {
     private void servoChange(String servo, double posChange) {
         switch(servo){
             case "claw":
-                robot.claw.setPosition(robot.claw.getPositon() + posChange);
+                robot.claw.setPosition(robot.claw.getPosition() + posChange);
                 break;
             case "rotate":
                 robot.claw_rotate.setPosition(robot.claw_rotate.getPosition() + posChange);
@@ -36,8 +36,7 @@ public class TeleOpTank extends OpMode {
                 robot.main_arm.setPower(posChange);
                 break;
             case "slide":
-                robot.slide1.setPower(posChange);
-                robot.slide2.setPower(
+                robot.slide.setPower(posChange);
                 break;
         }
     }
@@ -100,11 +99,11 @@ public class TeleOpTank extends OpMode {
         double leftDrive = -gamepad1.left_stick_y;
         boolean clawRotateLeft = gamepad2.dpad_left;
         boolean clawRotateRight = gamepad2.dpad_right;
-        float armMove = gamepad.right_stick_y;
-        float clawOpen = gamepad.left_trigger;
-        float clawClosed = gamepad.right_trigger;
-        boolean slideUp = gamepad.y;
-        boolean slideDown = gamepad.a;
+        float armMove = gamepad2.right_stick_y;
+        float clawOpen = gamepad2.left_trigger;
+        float clawClosed = gamepad2.right_trigger;
+        boolean slideUp = gamepad2.y;
+        boolean slideDown = gamepad2.a;
         boolean slowMode = gamepad1.b;
         
                 
@@ -130,11 +129,11 @@ public class TeleOpTank extends OpMode {
         if(clawOpen != 0.0 || clawClosed != 0.0){
             while(clawOpen != 0.0){
                 servoChange("claw", 0.5 * ref.servoDegreesConst);
-                clawOpen = gamepad.left_trigger;
+                clawOpen = gamepad2.left_trigger;
             }
             while(clawClosed != 0.0){
                 servoChange("claw", 0.5 * ref.servoDegreesConst);
-                clawClosed = gamepad.right_trigger;
+                clawClosed = gamepad2.right_trigger;
             }
         }
         
@@ -150,15 +149,15 @@ public class TeleOpTank extends OpMode {
             }
         }
         
-        if(slideUp != 0.0){
-            while(slideUp != 0.0){
+        if(slideUp){
+            while(slideUp){
                 motorChange("slide", 0.5 * ref.motorDegreesConst);
-                slideUp = gamepad.y;
+                slideUp = gamepad2.y;
             }
         }
         
-        if(slideDown != 0.0){
-            while(slideDown != 0.0){
+        if(slideDown){
+            while(slideDown){
                 motorChange("slide", -0.5 * ref.motorDegreesConst);
                 slideDown = gamepad2.a;
             }
@@ -176,10 +175,9 @@ public class TeleOpTank extends OpMode {
         robot.right_back_drive.setPower(0);
 
         robot.main_arm.setPower(0);
-        robot.slide1.setPower(0);
-        robot.slide2.setPower(0);
-        robot.claw_level.setPosition(getPosition());
-        robot.claw_rotate.setPostion(getPosition());
-        robot.claw.setPosition(getPosition());
+        robot.slide.setPower(0);
+        robot.claw_level.setPosition(0);
+        robot.claw_rotate.setPosition(0);
+        robot.claw.setPosition(0);
     }
 }
