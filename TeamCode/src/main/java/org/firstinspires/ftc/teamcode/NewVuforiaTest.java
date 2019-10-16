@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -200,13 +199,13 @@ public class NewVuforiaTest extends LinearOpMode {
                     skystonePosition = 2;
                 }
                 noFoundSkystone = false;
+                telemetry.addData("Skystone Location", skystonePosition);
+                telemetry.update();
             }
             else {
                 telemetry.addData("Skystone Location:", "Unknown");
                 telemetry.update();
             }
-            telemetry.addData("Skystone Location", skystonePosition);
-            telemetry.update();
         }
         // Disable Tracking when we are done;
         targetsSkyStone.deactivate();

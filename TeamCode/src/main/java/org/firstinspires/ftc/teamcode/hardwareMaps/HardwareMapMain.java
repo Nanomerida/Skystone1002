@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Servo channel:  Servo to control claw level:  "claw_leveler"
  * Servo channel:  Servo to open claw:           "claw"
  * Servo channel:  Servo to rotate claw:         "clawRotate"
+ * Servo channel:  Servo to grab foundation:     "front_servo"
  */
 public class HardwareMapMain {
     /* Public OpMode members. */
@@ -35,10 +36,12 @@ public class HardwareMapMain {
     public Servo    claw_level    = null;
     public Servo    claw   = null;
     public Servo    claw_rotate = null;
+    public Servo    front_servo = null;
 
     public static final double START_POSITION_CLAW       =  0.0 ; //starting pose of main claw servo
     public static final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
     public static final double START_POSITION_CLAW_ROTATER = 0.0;
+    public static final double START_POSITION_FRONT_SERVO =  0.0;
     public static final double ARM_UP_POWER    =  0.45 ; //change this based on what we need
     public static final double ARM_DOWN_POWER  = -0.45 ;
 
@@ -71,6 +74,9 @@ public class HardwareMapMain {
         claw = hwMap.get(Servo.class, "claw");
         claw_rotate = hwMap.get(Servo.class, "claw_rotate");
 
+        //Front Servo
+        front_servo = hwMap.get(Servo.class, "front_servo");
+
 
         // Set all motors to zero power
         left_front_drive.setPower(0);
@@ -97,6 +103,7 @@ public class HardwareMapMain {
         claw_level.setPosition(START_POSITION_CLAW_LEVELER);
         claw.setPosition(START_POSITION_CLAW);
         claw_rotate.setPosition(START_POSITION_CLAW_ROTATER);
+        front_servo.setPosition(START_POSITION_FRONT_SERVO);
     }
 
     public void resetEncoders(){
