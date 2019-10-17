@@ -25,9 +25,9 @@ import static java.lang.Math.abs;
 import static java.lang.Math.PI;
 import static java.lang.Math.round;
 
-@Autonomous (name = "TankAutonomous", group = "Autonomous")
+@Autonomous (name = "AutonBlueSkystone", group = "Autonomous")
 
-public class AutonomousTank extends OpMode {
+public class AutonBlueSkystone extends OpMode {
     private HardwareMapMain robot   = new HardwareMapMain();
     private GeneralMethods methods = new GeneralMethods();
     private ElapsedTime timer = new ElapsedTime(0);
@@ -137,17 +137,17 @@ public class AutonomousTank extends OpMode {
 
         // Send telemetry message to indicate successful Encoder reset
         // Send telemetry message to signify robot waiting;
-            /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
-            telemetry.addData("Say", "The Matrix is Ready");
-            telemetry.addData("Glitches detected:", "0");
-            telemetry.update();
-            timeDelay(2.0f);
+        /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
+        telemetry.addData("Say", "The Matrix is Ready");
+        telemetry.addData("Glitches detected:", "0");
+        telemetry.update();
+        timeDelay(2.0f);
 
 
-            telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
-            telemetry.addData("Risk calculated:", ref.vuforiaRisk);
-            telemetry.update();
-            timeDelay(2.0f);
+        telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
+        telemetry.addData("Risk calculated:", ref.vuforiaRisk);
+        telemetry.update();
+        timeDelay(2.0f);
 
 
     }
