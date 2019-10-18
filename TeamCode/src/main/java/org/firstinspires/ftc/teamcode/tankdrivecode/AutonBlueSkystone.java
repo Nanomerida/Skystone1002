@@ -171,13 +171,14 @@ public class AutonBlueSkystone extends OpMode {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-
+/**This is the portion that must be edited for each Auton*/
         if ( //check for motor movement
                 !robot.left_front_drive.isBusy() || !robot.left_back_drive.isBusy() || !robot.right_front_drive.isBusy() || !robot.right_back_drive.isBusy() || robot.slide.isBusy() || robot.main_arm.isBusy()) {
 
             switch (step) {
                 case 0: //first step
-                    moveDrive(1, 3.9f); // put in drive power and inches desired
+                    moveDrive(1, 26.5f); // put in drive power and inches desired
+                    int skystonePos = blockPosBlue.visionTest(); //Looks for Skystone
                     break;
                 case 1: //second step
                     moveDrive(1, 32.6f);
