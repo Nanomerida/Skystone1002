@@ -38,16 +38,13 @@ public class HardwareMapMain {
     public Servo    claw_rotate = null;
     public Servo    front_servo = null;
 
-    public static final double START_POSITION_CLAW       =  0.0 ; //starting pose of main claw servo
-    public static final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
-    public static final double START_POSITION_CLAW_ROTATER = 0.0;
-    public static final double START_POSITION_FRONT_SERVO =  0.0;
-    public static final double ARM_UP_POWER    =  0.45 ; //change this based on what we need
-    public static final double ARM_DOWN_POWER  = -0.45 ;
+    private static final double START_POSITION_CLAW       =  0.0 ; //starting pose of main claw servo
+    private static final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
+    private static final double START_POSITION_CLAW_ROTATER = 0.0;
+    private static final double START_POSITION_FRONT_SERVO =  0.0;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
-    private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
     public HardwareMapMain(){
@@ -85,6 +82,7 @@ public class HardwareMapMain {
         right_back_drive.setPower(0);
 
         slide.setPower(0);
+        main_arm.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
