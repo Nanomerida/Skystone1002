@@ -78,36 +78,12 @@ public class AutonBlueSkystone extends OpMode {
         robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
     }
 
-    public void turnDrive(double leftInches, double rightInches, double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
-
-        robot.resetEncoders();
-        robot.setRunToPosition();
-
-        robot.left_front_drive.setPower(leftInches);
-        robot.left_back_drive.setPower(leftInches);
-        robot.right_front_drive.setPower(rightInches);
-        robot.right_back_drive.setPower(rightInches);
-
-
-        // Determine new target position, and pass to motor controller
-        newLeftTarget = robot.left_front_drive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-        newRightTarget = robot.right_front_drive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-        robot.left_front_drive.setTargetPosition(newLeftTarget);
-        robot.right_front_drive.setTargetPosition(newRightTarget);
-
-        // Turn On RUN_TO_POSITION
-        robot.left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
 
 
     /**Make sure these measurments are correct*/
     static final double     COUNTS_PER_WHEEL_REV    = 96 ;    // eg: TETRIX Motor Encoder
     static final double     WHEEL_DIAMETER_MM       = 75 ;     // For figuring circumference
-    static final float     COUNTS_PER_INCH         = 2.9452f;
+    static final float     COUNTS_PER_INCH         = 0.0966f;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
@@ -195,29 +171,19 @@ public class AutonBlueSkystone extends OpMode {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-/**This is the portion that must be edited for each Auton*/
+
         if ( //check for motor movement
                 !robot.left_front_drive.isBusy() || !robot.left_back_drive.isBusy() || !robot.right_front_drive.isBusy() || !robot.right_back_drive.isBusy() || robot.slide.isBusy() || robot.main_arm.isBusy()) {
 
             switch (step) {
                 case 0: //first step
-                    moveDrive(1, 26.5f); // put in drive power and inches desired
-                    int skystonePos = blockPosBlue.visionTest(); //Looks for Skystone
-                    //Below will pick up skystone based on position
-                    /*if (skystonePos = 0) {}*/
+                    moveDrive(1, 3.9f); // put in drive power and inches desired
                     break;
                 case 1: //second step
-                    turnDrive(-1, 0, 2);
-                    moveDrive(1,69f);
-                    //This part should release block
+                    moveDrive(1, 32.6f);
                     break;
                 case 2: //third step and so on....
-                    moveDrive(-1, 69f);
-                    turnDrive(0,-1, 2);
-                    //will pick up more skystones?
-                    break;
-                case 3: //first step
-                    moveDrive(1, 40f); // park under Skybridge
+                    moveDrive(1, 29.6f);
                     break;
             }//NOTE: end each step with break;, and still need to make turn method and other controls.
 
