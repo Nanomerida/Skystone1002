@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.tankdrivecode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
@@ -25,15 +26,18 @@ import static java.lang.Math.abs;
 import static java.lang.Math.PI;
 import static java.lang.Math.round;
 
-@Autonomous (name = "TankAutonomous", group = "Autonomous")
+@Autonomous (name = "AutonBlueLinear", group = "Autonomous")
 
-public class AutonomousTank extends OpMode {
+public class AutonBlueLinear extends LinearOpMode {
+
+
+
     private HardwareMapMain robot   = new HardwareMapMain();
     private GeneralMethods methods = new GeneralMethods();
     private ElapsedTime timer = new ElapsedTime(0);
 
 
-    //define methods to be used here
+
     private void timeDelay(float delay){ //method for time delay
         timer.reset();
         while(timer.seconds() != delay ){
@@ -56,10 +60,11 @@ public class AutonomousTank extends OpMode {
         return armPower;
     }
 
-    /* Moving Claw */
-    public void armMove(double armPower, double clawPower){ //convert degrees to Servo powers
+    /* Arm */
+    public void armMove(int armPower, double clawPower){ //convert degrees to Servo powers
         clawPower = methods.degreeServoConv(clawPower);
-        robot.main_arm.setPower(armPower);
+        robot.main_arm.setPower(0.5);
+        robot.main_arm.setTargetPosition(armPower);
         robot.claw_level.setPosition(clawPower);
     }
 
@@ -78,18 +83,46 @@ public class AutonomousTank extends OpMode {
         robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
     }
 
+    public void turnDrive(String direction, double power, float inches) {
+
+        String cc = "cc";
+
+        if(direction.equals(cc)){
+            robot.right_front_drive.setDirection(DcMotor.Direction.REVERSE);
+            robot.right_back_drive.setDirection(DcMotor.Direction.REVERSE);
+        }
+        else{
+            robot.left_front_drive.setDirection(DcMotor.Direction.REVERSE);
+            robot.left_back_drive.setDirection(DcMotor.Direction.REVERSE);
+        }
+        //set desired power
+        robot.left_front_drive.setPower(power);
+        robot.left_back_drive.setPower(power);
+        robot.right_front_drive.setPower(power);
+        robot.right_back_drive.setPower(power);
+
+        //reset encoders before turning
+        robot.resetEncoders();
+        robot.setRunToPosition();
+        //TURN
+        robot.left_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        robot.left_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        robot.right_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+
+    }
+
 
 
     /**Make sure these measurments are correct*/
     static final double     COUNTS_PER_WHEEL_REV    = 96 ;    // eg: TETRIX Motor Encoder
     static final double     WHEEL_DIAMETER_MM       = 75 ;     // For figuring circumference
-    static final float     COUNTS_PER_INCH         = 0.0966f;
+    static final float     COUNTS_PER_INCH         = 2.9452f;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
     /* Other Variables */
     private VuforiaBlue blockPosBlue = new VuforiaBlue();
-    private VuforiaRed blockPosRed = new VuforiaRed();
     private Reference ref = new Reference();
     public static final double servoDegreesConst = 0.005;
     public static final double clawClosed = 45.0d;
@@ -97,7 +130,6 @@ public class AutonomousTank extends OpMode {
     public static final String driveIdle = "IDLE"; /**/
     public static final String driveMoving = "MOVING"; /**/
     public static final String driveTurning = "TURNING"; /**/
-    public static int step = 0;
 
     //IMU STUFF
     BNO055IMU imu;
@@ -106,7 +138,13 @@ public class AutonomousTank extends OpMode {
 
 
     @Override
-    public void init() {
+    public void runOpMode(){
+
+        int skystonePos = 4;
+
+        blockPosBlue.blueInit(); //sets up vuforia
+
+
         // MORE IMU STUFF
 
         // Set up the parameters with which we will use our IMU. Note that integration
@@ -124,74 +162,73 @@ public class AutonomousTank extends OpMode {
         telemetry.addData("Status","IMU Initialized, Current Heading %4d",
                 degreesConversion());
         telemetry.update();
-        /*
-         * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
+
+
         robot.init(hardwareMap);
         robot.resetEncoders(); //obvious
 
-        // Send telemetry message to signify robot waiting;
 
 
-
-        // Send telemetry message to indicate successful Encoder reset
-        // Send telemetry message to signify robot waiting;
-            /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
-            telemetry.addData("Say", "The Matrix is Ready");
-            telemetry.addData("Glitches detected:", "0");
-            telemetry.update();
-            timeDelay(2.0f);
+        /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
+        telemetry.addData("Say", "The Matrix is Ready");
+        telemetry.addData("Glitches detected:", "0");
+        telemetry.update();
+        timeDelay(2.0f);
 
 
-            telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
-            telemetry.addData("Risk calculated:", ref.vuforiaRisk);
-            telemetry.update();
-            timeDelay(2.0f);
+        telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
+        telemetry.addData("Risk calculated:", ref.vuforiaRisk);
+        telemetry.update();
+        timeDelay(2.0f);
 
+        waitForStart();
 
-    }
-    @Override
-    public void init_loop() {
+        //Steps
+        moveDrive(1, 26.5f); // move forward to skystone
 
-    }
-
-
-    @Override
-    public void start() {
-    }
-
-    public void loop() {
-//---------------------------------------------------------------------------------------------------------------------
-        /* NOTE TO 1002 -----> When the vision test is needed, do int skystonePos = blockPos.visionTest();
-         * This will output either 0(closest to bridge), 1(center), or 2(closest to wall).
-         * Also need to set which side of the filed for Vuforia before each match.
-         * -RyanD
-         */
-
-//---------------------------------------------------------------------------------------------------------------------
-
-
-        if ( //check for motor movement
-                !robot.left_front_drive.isBusy() || !robot.left_back_drive.isBusy() || !robot.right_front_drive.isBusy() || !robot.right_back_drive.isBusy() || robot.slide.isBusy() || robot.main_arm.isBusy()) {
-
-            switch (step) {
-                case 0: //first step
-                    moveDrive(1, 3.9f); // put in drive power and inches desired
-                    break;
-                case 1: //second step
-                    moveDrive(1, 32.6f);
-                    break;
-                case 2: //third step and so on....
-                    moveDrive(1, 29.6f);
-                    break;
-            }//NOTE: end each step with break;, and still need to make turn method and other controls.
-
-            step++;
+        robot.resetEncoders();
+        switch (blockPosBlue.visionTest()){ //vuforia
+            case 0: //towards bridge
+                //pick up stone
+                skystonePos = 0;
+                break;
+            case 1: //center
+                //pick up stone
+                skystonePos = 1;
+                break;
+            case 2: //towards wall
+                //pick up stone
+                skystonePos = 2;
+                break;
         }
-    }
-    @Override
-    public void stop() {
-        robot.stopDrive();
+        //each vuforia case should end at the same pos so they can be brought together for the next step.
+
+        //next step
+        robot.resetEncoders();
+        turnDrive("ccw", .5, 10);
+
+        //and so on.
+        robot.resetEncoders();
+        moveDrive(1,69f);
+
+        /*Release block here*/
+
+        robot.resetEncoders();
+        moveDrive(-1, 69f);
+
+        robot.resetEncoders();
+        turnDrive("cc",1, 10);
+
+        //maybe grab other skystone?
+
+        robot.resetEncoders();
+        moveDrive(1, 40f); // park under Skybridge
+
+
+
+
+
+
+
     }
 }

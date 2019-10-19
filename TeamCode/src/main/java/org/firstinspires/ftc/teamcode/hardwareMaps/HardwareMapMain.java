@@ -84,18 +84,24 @@ public class HardwareMapMain {
         slide.setPower(0);
         main_arm.setPower(0);
 
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
+        //Reset ALL encoders
+        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Set the initial run modes
         left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        main_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION); //I don't know what we want for this
+        main_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Define and initialize ALL installed servos.
         claw_level.setPosition(START_POSITION_CLAW_LEVELER);
@@ -110,6 +116,11 @@ public class HardwareMapMain {
         right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     public void setRunToPosition(){
@@ -120,6 +131,12 @@ public class HardwareMapMain {
     }
 
     public void setRunWithEncoders(){
+        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

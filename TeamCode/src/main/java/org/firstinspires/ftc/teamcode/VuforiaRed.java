@@ -161,9 +161,9 @@ public class VuforiaRed {
                 if (targetVisible) {
                     VectorF skystoneCoords = lastLocation.getTranslation();
                     float skystoneX = (skystoneCoords.get(0));
-                    if (abs(skystoneX - skystoneMid) < 30) {
+                    if (abs(skystoneX - skystoneMid) < 50) {
                         skystonePosition = 0;
-                    } else if (abs(skystoneX - skystoneCenter) < 30) {
+                    } else if (abs(skystoneX - skystoneCenter) < 50) {
                         skystonePosition = 1;
                     } else {
                         skystonePosition = 2;

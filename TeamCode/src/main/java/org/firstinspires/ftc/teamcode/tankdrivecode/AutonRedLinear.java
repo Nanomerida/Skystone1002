@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.tankdrivecode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -26,15 +26,16 @@ import static java.lang.Math.abs;
 import static java.lang.Math.PI;
 import static java.lang.Math.round;
 
-@Autonomous (name = "AutonBlueSkystone", group = "Autonomous")
+@Autonomous (name = "AutonRedLinear", group = "Autonomous")
 
-public class AutonBlueSkystone extends OpMode {
+public class AutonRedLinear extends LinearOpMode {
+
+
     private HardwareMapMain robot   = new HardwareMapMain();
     private GeneralMethods methods = new GeneralMethods();
     private ElapsedTime timer = new ElapsedTime(0);
 
 
-    //define methods to be used here
     private void timeDelay(float delay){ //method for time delay
         timer.reset();
         while(timer.seconds() != delay ){
@@ -119,7 +120,7 @@ public class AutonBlueSkystone extends OpMode {
     static final double     TURN_SPEED              = 0.5;
 
     /* Other Variables */
-    private VuforiaBlue blockPosBlue = new VuforiaBlue();
+    private VuforiaRed blockPosRed = new VuforiaRed();
     private Reference ref = new Reference();
     public static final double servoDegreesConst = 0.005;
     public static final double clawClosed = 45.0d;
@@ -127,17 +128,18 @@ public class AutonBlueSkystone extends OpMode {
     public static final String driveIdle = "IDLE"; /**/
     public static final String driveMoving = "MOVING"; /**/
     public static final String driveTurning = "TURNING"; /**/
-    private static int step = 0;
-    private static boolean busy = false;
 
     //IMU STUFF
     BNO055IMU imu;
     Orientation angles;
     //NOTE: to get heading, do degreesConversion()
 
-
     @Override
-    public void init() {
+    public void runOpMode(){
+
+        blockPosRed.redInit(); //sets up vuforia
+
+
         // MORE IMU STUFF
 
         // Set up the parameters with which we will use our IMU. Note that integration
@@ -155,19 +157,12 @@ public class AutonBlueSkystone extends OpMode {
         telemetry.addData("Status","IMU Initialized, Current Heading %4d",
                 degreesConversion());
         telemetry.update();
-        /*
-         * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
-         */
+
+
         robot.init(hardwareMap);
         robot.resetEncoders(); //obvious
 
-        // Send telemetry message to signify robot waiting;
 
-
-
-        // Send telemetry message to indicate successful Encoder reset
-        // Send telemetry message to signify robot waiting;
         /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
         telemetry.addData("Say", "The Matrix is Ready");
         telemetry.addData("Glitches detected:", "0");
@@ -181,76 +176,45 @@ public class AutonBlueSkystone extends OpMode {
         timeDelay(2.0f);
 
 
-    }
-    @Override
-    public void init_loop() {
-
-    }
+        waitForStart();
 
 
-    @Override
-    public void start() {
-    }
-
-    public void loop() {
-//---------------------------------------------------------------------------------------------------------------------
-        /* NOTE TO 1002 -----> When the vision test is needed, do int skystonePos = blockPos.visionTest();
-         * This will output either 0(closest to bridge), 1(center), or 2(closest to wall).
-         * Also need to set which side of the filed for Vuforia before each match.
-         * -RyanD
-         */
-
-//---------------------------------------------------------------------------------------------------------------------
-
-/**This is the portion that must be edited for each Auton*/
-
-/** IMPORTANT !! right before ANY servo movement, set the variable "busy" = true (and set to false after movement */
-
-        if ( //check for ANY motor movement
-                !robot.left_front_drive.isBusy() || !robot.left_back_drive.isBusy() || !robot.right_front_drive.isBusy() || !robot.right_back_drive.isBusy() || robot.slide.isBusy() || robot.main_arm.isBusy() ||
-                !robot.slide.isBusy() || robot.main_arm.isBusy()) {
-
-            switch (step) {
-                case 0: //first step
-                    moveDrive(1, 26.5f); // put in drive power and inches desired
-                    break;
-
-                case 1:
-                    robot.resetEncoders();
-                    switch(blockPosBlue.visionTest()){
-
-                        case 0: //skystone near wall
-                            //move
+        moveDrive(1,10.4f); //first
 
 
-                    }
-                    break;
-
-                case 2: //second step
-                    robot.resetEncoders();
-                    turnDrive("cc", .5, 10);
-                    moveDrive(1,69f);
-                    //This part should release block
-                    break;
-
-                case 3: //third step and so on....
-                    robot.resetEncoders();
-                    moveDrive(-1, 69f);
-                    turnDrive("cc",1, 10);
-                    break;
-
-                case 4:
-                    robot.resetEncoders();
-                    moveDrive(1, 40f); // park under Skybridge
-                    break;
-
-            }//NOTE: end each step with break;, and still need to make turn method and other controls.
-
-            step++;
+        robot.resetEncoders();
+        switch (blockPosRed.visionTest()){ //vuforia
+            case 0: //towards bridge
+                //pick up stone
+                break;
+            case 1: //center
+                //pick up stone
+                break;
+            case 2: //towards wall
+                //pick up stone
+                break;
         }
+
+
+        //each vuforia case should end at the same pos so they can be brought together for the next step.
+
+
+
+        /*go to building zone */
+
+        /*release block here */
+
+        /*go back to quarry */
+
+        /*Maybe get second skystone */
+
+        /* Park under bridge */
+
+
+
     }
-    @Override
-    public void stop() {
-        robot.stopDrive();
-    }
+
+
+
+
 }
