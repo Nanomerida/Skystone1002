@@ -166,6 +166,7 @@ public class AutonBlueLinear extends LinearOpMode {
 
         robot.init(hardwareMap);
         robot.resetEncoders(); //obvious
+        robot.main_arm.setPower(.7);
 
 
 
@@ -189,7 +190,13 @@ public class AutonBlueLinear extends LinearOpMode {
         robot.resetEncoders();
         switch (blockPosBlue.visionTest()){ //vuforia
             case 0: //towards bridge
-                //pick up stone
+                //move there
+                robot.main_arm.setTargetPosition(280); //90 degrees down
+                robot.claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
+                sleep(1000);  //for claw level to move.
+                robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
+                moveDrive(0.5, 12.5f);
+
                 skystonePos = 0;
                 break;
             case 1: //center

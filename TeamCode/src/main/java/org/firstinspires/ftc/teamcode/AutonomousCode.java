@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -17,9 +18,13 @@ import org.firstinspires.ftc.teamcode.Variables.*;
 import org.firstinspires.ftc.teamcode.Methods.*;
 
 import static java.lang.Math.cos; //Ryan's Math Stuff
+import static java.lang.Math.round;
 import static java.lang.Math.sin;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+
+import java.util.HashMap;
+import java.util.concurrent.CountDownLatch;
 
 @Autonomous //Assuming this is right
 //@Disabled
@@ -31,6 +36,9 @@ public class AutonomousCode extends OpMode {
     GoalLibraries library = new GoalLibraries();
     Reference constants = new Reference();
     GeneralMethods methods = new GeneralMethods();
+    MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
+    private ElapsedTime timer = new ElapsedTime(0);
+
 
 
 
@@ -72,16 +80,33 @@ public class AutonomousCode extends OpMode {
         return theta;
     }
 
-    public void moveDrive(double[] powers) { //method to move.
+    public void moveDrivebyPower(double[] powers) { //method to move.
         robot.left_front_drive.setPower(powers[0]);
         robot.left_back_drive.setPower(powers[1]);
         robot.right_front_drive.setPower(powers[2]);
         robot.right_back_drive.setPower(powers[3]);
-        //right, Ima head out.
     }
 
-    public double armClawPower(double armPower){ //write orlando's math here for ar power.
-        telemetry.update();
+    private void moveDrivebyPos(String type, float inches){
+        robot.resetEncoders();
+        robot.setRunToPosition();
+
+
+        robot.left_front_drive.setPower(mecanum.get(type) [0]);
+        robot.left_back_drive.setPower(mecanum.get(type) [1]);
+        robot.right_front_drive.setPower(mecanum.get(type) [2]);
+        robot.right_back_drive.setPower(mecanum.get(type) [3]);
+
+        robot.left_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        robot.left_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        robot.right_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+
+
+        }
+
+    public double armClawPower(double armPower){ //write orlando's math here for claw level power.
+        armPower = ((armPower / (1120 / 360)) /180);
         return armPower;
     }
 
@@ -89,6 +114,30 @@ public class AutonomousCode extends OpMode {
         clawPower = methods.degreeServoConv(clawPower);
         robot.main_arm.setPower(armPower);
         robot.claw_level.setPosition(clawPower);
+    }
+
+
+    private boolean checkIfBusy(){
+        boolean busy = true;
+        if(abs(timer.seconds() - 1.5) <= 0.03 ){ //check to see if 1.5 secs has passed since timer reset (servo command)
+            busy = false;
+        }
+        else if(!robot.left_front_drive.isBusy() || !robot.left_back_drive.isBusy() || !robot.right_front_drive.isBusy() || !robot.right_back_drive.isBusy() || robot.slide.isBusy() || robot.main_arm.isBusy()){
+            busy = false;
+        }
+        return busy;
+
+    }
+
+    private boolean checkOtherBusy(){
+        boolean busy = true;
+        if(abs(timer.seconds() - 1.5) <= 0.03 ){ //check to see if 1.5 secs has passed since timer reset (servo command)
+            busy = false;
+        }
+        if(!robot.slide.isBusy() || !robot.main_arm.isBusy()){
+            busy = false;
+        }
+        return busy;
     }
 
 
@@ -106,12 +155,22 @@ public class AutonomousCode extends OpMode {
     public static boolean newGoal = true; //variable if new goal is desired
     public static double[] previousPos = {0.00d, 0.00d}; //define starting position here. May change based on placement.
     public static final double servoDegreesConst = 0.005;
+    static final float COUNTS_PER_INCH = 2.9452f;
     public static final double clawClosed = 45.0d;
     public static final double clawOpen = 90.0d;
     public static final String driveIdle = "IDLE";
     public static final String driveMoving = "MOVING";
     public static final String driveTurning = "TURNING";
+    public static boolean vuforiaOn = false;
     HardwareMap hardwareMap;
+    private static int stonePos = 4;
+    private static int stepVuf0 = 0;
+    private static int stepVuf1 = 0;
+    private static int stepVuf2 = 0;
+    private static boolean otherThanDriveBusy = false;
+
+    //Gets the HasMap of mecanum movement procedures
+    private HashMap<String, int[]> mecanum = procedures.getMecanum();
     /* Need goal check for angle, similar to position goal check. */
 
 
@@ -122,9 +181,13 @@ public class AutonomousCode extends OpMode {
      */
     @Override
     public void init() {
+
+
+
         //HARDWARE MAP
 
         robot.init(hardwareMap);
+        robot.setRunWithEncoders();
 
         // MORE IMU STUFF
 
@@ -181,41 +244,73 @@ public class AutonomousCode extends OpMode {
         int goalType = (int) goalLibrary[stepNumber][0]; //Setting goal each time
         newGoal = false;
 
-        switch(goalType) {
+        boolean busy = checkIfBusy();
+        otherThanDriveBusy = checkOtherBusy();
+
+
+        if (vuforiaOn = true) {
+            if (stonePos == 0) {
+                if (stepVuf0 == 0 && !busy) {
+                    moveDrivebyPos("strafeL", 8.0f);
+                    stepVuf0 = 1;
+                }
+                if(stepVuf0 == 1 && !busy){
+                    robot.claw.setPosition(90.0);
+                    stepVuf0 = 2;
+                }
+                if(stepVuf0 == 2 && !busy){
+                    armMove(280, 90);
+                }
+
+
+            }
+        }
+
+
+        switch (goalType) {
 
             /* Position Change */
             case 0:
-                double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
-                boolean goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
-                if(goalReachedPos){
-                    newGoal = true;
-                }
-                else {
-                    double[] motorPowerPos = methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]);
-                    moveDrive(motorPowerPos);
+                if(otherThanDriveBusy) {
+                    double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
+                    boolean goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
+                    if (goalReachedPos) {
+                        newGoal = true;
+                    } else {
+                        double[] motorPowerPos = methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]);
+                        moveDrivebyPower(motorPowerPos);
+                    }
                 }
                 break;
 
 
             /* Angle Change */
             case 1:
-                boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
-                if(goalReachedAngle){
-                    double[] motorPowerAngle = methods.AngleChange(goalLibrary[stepNumber][1]);
-                    moveDrive(motorPowerAngle);
+                if(otherThanDriveBusy) {
+
+                    boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
+                    if (goalReachedAngle) {
+                        double[] motorPowerAngle = methods.AngleChange(goalLibrary[stepNumber][1]);
+                        moveDrivebyPower(motorPowerAngle);
+                    }
                 }
                 break;
 
             /* Vuforia.java :( ugh... */
             case 2:
-                visionStatus.setValue("ENABLED; SEARCHING");
-                telemetry.update();
-                int stonePos = 4;
-                if (goalLibrary[stepNumber][1] == 1) {
-                    stonePos = blockPosBlue.visionTest();
-                } else {
-                    stonePos = blockPosRed.visionTest();
+                if (!vuforiaOn) {
+
+                    visionStatus.setValue("ENABLED; SEARCHING");
+                    telemetry.update();
+                    if (goalLibrary[stepNumber][1] == 1) {
+                        stonePos = blockPosBlue.visionTest();
+                    } else {
+                        stonePos = blockPosRed.visionTest();
+                    }
+                    vuforiaOn = true;
                 }
+
+
                 switch (stonePos) {
                     case 0: //first position (left, towards skybridge)
                         visionStatus.setValue("SKYSTONE: TOWARDS BRIDGE");
@@ -245,21 +340,15 @@ public class AutonomousCode extends OpMode {
                         goalLibrary[14][2] = 0;
                         break;
                 }
-                visionStatus.setValue("DISABLED");
-                telemetry.update();
                 newGoal = true;
                 break;
 
             /* Arm Change */
             case 3:
-                double clawLevelPower = armClawPower(goalLibrary[stepNumber][1]);
-                armStatus.setValue("MOVING");
-                clawLevelStatus.setValue("MOVING");
-                telemetry.update();
-                armMove(goalLibrary[stepNumber][1], clawLevelPower);
-                armStatus.setValue("IDLE");
-                clawLevelStatus.setValue("IDLE");
-                telemetry.update();
+                if(!busy) {
+                    double clawLevelPower = armClawPower(goalLibrary[stepNumber][1]);
+                    armMove(goalLibrary[stepNumber][1], clawLevelPower);
+                }
 
                 break;
 
@@ -267,10 +356,12 @@ public class AutonomousCode extends OpMode {
                 if (goalLibrary[stepNumber][1] == 0) { //open claw
                     clawStatus.setValue("OPENING");
                     telemetry.update();
+                    timer.reset();
                     robot.claw.setPosition(clawOpen);
                 } else { //close claw
                     clawStatus.setValue("CLOSING");
                     telemetry.update();
+                    timer.reset();
                     robot.claw.setPosition(clawClosed);
                 }
                 clawStatus.setValue("IDLE");
@@ -281,7 +372,7 @@ public class AutonomousCode extends OpMode {
                 robot.slide.setTargetPosition(120);
                 break;
         }
-        if(newGoal){
+        if (newGoal) {
             stepNumber++;
             stepNumb.setValue(stepNumber);
         }
@@ -290,11 +381,11 @@ public class AutonomousCode extends OpMode {
 
 
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
-    }
+        /*
+         * Code to run ONCE after the driver hits STOP
+         */
+        @Override
+        public void stop() {
+        }
 }
 
