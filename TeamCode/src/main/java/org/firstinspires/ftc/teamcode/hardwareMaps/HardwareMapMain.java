@@ -93,15 +93,6 @@ public class HardwareMapMain {
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        //Set the initial run modes
-        left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        main_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Define and initialize ALL installed servos.
         claw_level.setPosition(START_POSITION_CLAW_LEVELER);
@@ -115,11 +106,6 @@ public class HardwareMapMain {
         left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     }
 

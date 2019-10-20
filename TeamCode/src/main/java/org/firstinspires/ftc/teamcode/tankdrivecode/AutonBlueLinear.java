@@ -67,6 +67,14 @@ public class AutonBlueLinear extends LinearOpMode {
         robot.main_arm.setTargetPosition(armPower);
         robot.claw_level.setPosition(clawPower);
     }
+    private boolean driveBusy(){
+        boolean busy = false;
+
+        if(robot.left_front_drive.isBusy() || robot.left_back_drive.isBusy() || robot.right_front_drive.isBusy() || robot.right_back_drive.isBusy()){
+            busy = true;
+        }
+        return  busy;
+    }
 
     private void moveDrive(double power, float inches){
         robot.resetEncoders();
@@ -95,20 +103,24 @@ public class AutonBlueLinear extends LinearOpMode {
             robot.left_front_drive.setDirection(DcMotor.Direction.REVERSE);
             robot.left_back_drive.setDirection(DcMotor.Direction.REVERSE);
         }
+
+        robot.resetEncoders();
+
+
         //set desired power
         robot.left_front_drive.setPower(power);
         robot.left_back_drive.setPower(power);
         robot.right_front_drive.setPower(power);
         robot.right_back_drive.setPower(power);
 
-        //reset encoders before turning
-        robot.resetEncoders();
-        robot.setRunToPosition();
         //TURN
         robot.left_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
         robot.left_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
         robot.right_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
         robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+
+        robot.setRunToPosition();
+
 
     }
 
@@ -193,9 +205,14 @@ public class AutonBlueLinear extends LinearOpMode {
                 //move there
                 robot.main_arm.setTargetPosition(280); //90 degrees down
                 robot.claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
-                sleep(1000);  //for claw level to move.
+                while(robot.main_arm.isBusy()) {
+                    sleep(1);
+                }//wait for arm
                 robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
                 moveDrive(0.5, 12.5f);
+                while(driveBusy()){
+                    sleep(1);
+                }
 
                 skystonePos = 0;
                 break;
