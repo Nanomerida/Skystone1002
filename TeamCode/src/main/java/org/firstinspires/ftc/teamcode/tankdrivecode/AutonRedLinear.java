@@ -65,6 +65,16 @@ public class AutonRedLinear extends LinearOpMode {
         robot.claw_level.setPosition(clawPower);
     }
 
+    private boolean driveBusy(){
+        boolean busy = false;
+
+        if(robot.left_front_drive.isBusy() || robot.left_back_drive.isBusy() || robot.right_front_drive.isBusy() || robot.right_back_drive.isBusy()){
+            busy = true;
+        }
+        return busy;
+    }
+
+
     private void moveDrive(double power, float inches){
         robot.resetEncoders();
         robot.setRunToPosition();
@@ -80,9 +90,12 @@ public class AutonRedLinear extends LinearOpMode {
         robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
     }
 
-    public void turnDrive(String direction, double power, float inches) {
+    public void turnDrive(String direction, double power, double degrees) {
 
-        String cc = "cc";
+
+        String cc = "cw";
+
+        double inches = (degrees * degreesToRadians) * ROBOT_WHEEL_DIST_INCHES;
 
         if(direction.equals(cc)){
             robot.right_front_drive.setDirection(DcMotor.Direction.REVERSE);
@@ -92,33 +105,38 @@ public class AutonRedLinear extends LinearOpMode {
             robot.left_front_drive.setDirection(DcMotor.Direction.REVERSE);
             robot.left_back_drive.setDirection(DcMotor.Direction.REVERSE);
         }
+
+        robot.resetEncoders();
+
+
         //set desired power
         robot.left_front_drive.setPower(power);
         robot.left_back_drive.setPower(power);
         robot.right_front_drive.setPower(power);
         robot.right_back_drive.setPower(power);
 
-        //reset encoders before turning
-        robot.resetEncoders();
-        robot.setRunToPosition();
         //TURN
-        robot.left_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        robot.left_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        robot.right_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        robot.left_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        robot.left_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        robot.right_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        robot.right_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
 
+        robot.setRunToPosition();
     }
 
 
 
     /**Make sure these measurments are correct*/
+
+    static final double     ROBOT_WHEEL_DIST_INCHES = 8.5f;     // distance from center of robot to wheels
     static final double     COUNTS_PER_WHEEL_REV    = 96 ;    // eg: TETRIX Motor Encoder
-    static final double     WHEEL_DIAMETER_MM       = 75 ;     // For figuring circumference
+    static final double     WHEEL_DIAMETER_MM       = 96 ;     // For figuring circumference
     static final float     COUNTS_PER_INCH         = 2.9452f;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
     /* Other Variables */
+    public static final double degreesToRadians = 180.0 / Math.PI;
     private VuforiaRed blockPosRed = new VuforiaRed();
     private Reference ref = new Reference();
     public static final double servoDegreesConst = 0.005;
@@ -135,6 +153,8 @@ public class AutonRedLinear extends LinearOpMode {
 
     @Override
     public void runOpMode(){
+
+        int skystonePos = 4;
 
         blockPosRed.redInit(); //sets up vuforia
 
@@ -178,41 +198,75 @@ public class AutonRedLinear extends LinearOpMode {
         waitForStart();
 
 
-        moveDrive(1,10.4f); //first
-
+        //Steps
+        moveDrive(1, 26.5f); // move forward to skystone
 
         robot.resetEncoders();
-        switch (blockPosRed.visionTest()){ //vuforia
+        int testResult = blockPosRed.visionTest();
+        switch (testResult){ //vuforia
             case 0: //towards bridge
-                //pick up stone
+                //move there
+                robot.main_arm.setTargetPosition(280); //90 degrees down
+                robot.claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
+                while(robot.main_arm.isBusy()) {
+                    sleep(1);
+                }//wait for arm
+                robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
+                moveDrive(0.5, 12.5f);
+                while(driveBusy()){
+                    sleep(1);
+                }
+
+                skystonePos = 0;
                 break;
             case 1: //center
                 //pick up stone
+                skystonePos = 1;
                 break;
             case 2: //towards wall
                 //pick up stone
+                skystonePos = 2;
+                break;
+        }
+        //each vuforia case should end at the same pos so they can be brought together for the next step.
+
+        //next step
+        turnDrive("cw", .5, 90);
+
+        //and so on.
+        moveDrive(1,69f);
+        robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
+
+        moveDrive(-1, 69f);
+
+        turnDrive("ccw",0.5, 90);
+        switch (testResult){ //vuforia
+            case 0:
+                //Pick up stone 1
+                break;
+            case 1:
+                //Pick up stone 2
+                break;
+            case 2:
+                //pick up stone 1
                 break;
         }
 
+        turnDrive("cw", .5, 90);
 
-        //each vuforia case should end at the same pos so they can be brought together for the next step.
+        //and so on.
+        moveDrive(1,69f);
+        robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
+
+        moveDrive(-1, 40f); // park under Skybridge
 
 
 
-        /*go to building zone */
 
-        /*release block here */
-
-        /*go back to quarry */
-
-        /*Maybe get second skystone */
-
-        /* Park under bridge */
 
 
 
     }
-
 
 
 

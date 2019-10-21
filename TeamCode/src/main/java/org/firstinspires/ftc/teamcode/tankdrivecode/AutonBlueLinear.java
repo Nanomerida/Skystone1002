@@ -91,9 +91,11 @@ public class AutonBlueLinear extends LinearOpMode {
         robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
     }
 
-    public void turnDrive(String direction, double power, float inches) {
+    public void turnDrive(String direction, double power, double degrees) {
 
-        String cc = "cc";
+        String cc = "cw";
+
+        double inches = (degrees * degreesToRadians) * ROBOT_WHEEL_DIST_INCHES;
 
         if(direction.equals(cc)){
             robot.right_front_drive.setDirection(DcMotor.Direction.REVERSE);
@@ -114,26 +116,26 @@ public class AutonBlueLinear extends LinearOpMode {
         robot.right_back_drive.setPower(power);
 
         //TURN
-        robot.left_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        robot.left_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        robot.right_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        robot.left_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        robot.left_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        robot.right_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        robot.right_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
 
         robot.setRunToPosition();
-
-
     }
 
 
 
     /**Make sure these measurments are correct*/
+    static final double     ROBOT_WHEEL_DIST_INCHES = 8.5f;     // distance from center of robot to wheels
     static final double     COUNTS_PER_WHEEL_REV    = 96 ;    // eg: TETRIX Motor Encoder
-    static final double     WHEEL_DIAMETER_MM       = 75 ;     // For figuring circumference
+    static final double     WHEEL_DIAMETER_MM       = 90 ;     // For figuring circumference
     static final float     COUNTS_PER_INCH         = 2.9452f;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
     /* Other Variables */
+    public static final double degreesToRadians = 180.0 / Math.PI;
     private VuforiaBlue blockPosBlue = new VuforiaBlue();
     private Reference ref = new Reference();
     public static final double servoDegreesConst = 0.005;
@@ -199,8 +201,8 @@ public class AutonBlueLinear extends LinearOpMode {
         //Steps
         moveDrive(1, 26.5f); // move forward to skystone
 
-        robot.resetEncoders();
-        switch (blockPosBlue.visionTest()){ //vuforia
+        int testResult = blockPosBlue.visionTest();
+        switch (testResult){ //vuforia
             case 0: //towards bridge
                 //move there
                 robot.main_arm.setTargetPosition(280); //90 degrees down
@@ -228,25 +230,34 @@ public class AutonBlueLinear extends LinearOpMode {
         //each vuforia case should end at the same pos so they can be brought together for the next step.
 
         //next step
-        robot.resetEncoders();
-        turnDrive("ccw", .5, 10);
+        turnDrive("ccw", .5, 90);
 
         //and so on.
-        robot.resetEncoders();
         moveDrive(1,69f);
+        robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
 
-        /*Release block here*/
-
-        robot.resetEncoders();
         moveDrive(-1, 69f);
 
-        robot.resetEncoders();
-        turnDrive("cc",1, 10);
+        turnDrive("cw",0.5, 90);
+        switch (testResult){ //vuforia
+            case 0:
+                //Pick up stone 1
+                break;
+            case 1:
+                //Pick up stone 2
+                break;
+            case 2:
+                //pick up stone 1
+                break;
+        }
 
-        //maybe grab other skystone?
+        turnDrive("ccw", .5, 90);
 
-        robot.resetEncoders();
-        moveDrive(1, 40f); // park under Skybridge
+        //and so on.
+        moveDrive(1,69f);
+        robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
+
+        moveDrive(-1, 40f); // park under Skybridge
 
 
 
