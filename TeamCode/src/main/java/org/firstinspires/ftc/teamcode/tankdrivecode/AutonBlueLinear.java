@@ -108,7 +108,6 @@ public class AutonBlueLinear extends LinearOpMode {
 
         robot.resetEncoders();
 
-
         //set desired power
         robot.left_front_drive.setPower(power);
         robot.left_back_drive.setPower(power);
