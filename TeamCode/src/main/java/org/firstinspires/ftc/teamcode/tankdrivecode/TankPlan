@@ -13,17 +13,21 @@ Current Plan for Tank Autonomous and TeleOp:
 ============================================
 Blue Side:
 
-1.
+1. Drive Forward form predetermined starting Position 
 
-2.
+2. Use Vuforia to test the leftmost two stones (nearest the bridge) for the Skystone.
 
-3.
+3. Have branches for each skystone location, and go to each.
 
-4.
+4. Pick up the Skystone, and turn towards skysbridge.
 
-5.
+5. Move under skybridge, carrying Skystone. Make sure to stop at the same place for each vuforia branch.
 
-6.
+6. Release skystone, and maybe return for the other one.
+
+(Next steps, not planned)
+7.
+
 
 
 =============================================
