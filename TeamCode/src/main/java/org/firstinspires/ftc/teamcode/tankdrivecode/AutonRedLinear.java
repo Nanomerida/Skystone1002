@@ -199,7 +199,7 @@ public class AutonRedLinear extends LinearOpMode {
 
 
         //Steps
-        moveDrive(1, 26.5f); // move forward to skystone
+        moveDrive(0.8, 26.5f); // move forward to skystone
 
         robot.resetEncoders();
         int testResult = blockPosRed.visionTest();
@@ -212,7 +212,7 @@ public class AutonRedLinear extends LinearOpMode {
                     sleep(1);
                 }//wait for arm
                 robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
-                moveDrive(0.5, 12.5f);
+                moveDrive(0.5, 6.5f);
                 while(driveBusy()){
                     sleep(1);
                 }
@@ -220,11 +220,41 @@ public class AutonRedLinear extends LinearOpMode {
                 skystonePos = 0;
                 break;
             case 1: //center
-                //pick up stone
+                //move there
+                robot.main_arm.setTargetPosition(280); //90 degrees down
+                robot.claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
+                while(robot.main_arm.isBusy()) {
+                    sleep(1);
+                }//wait for arm
+                robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
+                turnDrive("ccw", 0.3, 20.0f);
+                while (driveBusy()){
+                    sleep(1);
+                }
+                moveDrive(0.5, 6.5f);
+                while(driveBusy()){
+                    sleep(1);
+                }
+                while(driveBusy()){
+                    sleep(1);
+                }
                 skystonePos = 1;
                 break;
             case 2: //towards wall
-                //pick up stone
+                robot.main_arm.setTargetPosition(280); //90 degrees down
+                robot.claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
+                while(robot.main_arm.isBusy()) {
+                    sleep(1);
+                }//wait for arm
+                robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
+                turnDrive("cc", 0.3, 20);
+                while(driveBusy()){
+                    sleep(1);
+                }
+                moveDrive(0.5, 6.5f);
+                while(driveBusy()){
+                    sleep(1);
+                }
                 skystonePos = 2;
                 break;
         }

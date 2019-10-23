@@ -209,8 +209,8 @@ public class AutonBlueLinear extends LinearOpMode {
                 while(robot.main_arm.isBusy()) {
                     sleep(1);
                 }//wait for arm
-                robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
-                moveDrive(0.5, 12.5f);
+                robot.claw.setPosition(0.0 * servoDegreesConst); //open claw
+                moveDrive(0.5, 6.5f);
                 while(driveBusy()){
                     sleep(1);
                 }
