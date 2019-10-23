@@ -232,9 +232,11 @@ public class AutonBlueLinear extends LinearOpMode {
         turnDrive("ccw", .5, 90);
 
         //and so on.
-        moveDrive(1,69f);
+        moveDrive(1,65f);
+        turnDrive("cw", 0.5, 35);
         robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
 
+        turnDrive("ccw", 0.5, 35);
         moveDrive(-1, 69f);
 
         turnDrive("cw",0.5, 90);

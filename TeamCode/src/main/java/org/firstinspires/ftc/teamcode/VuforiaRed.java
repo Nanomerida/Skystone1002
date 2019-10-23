@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -57,7 +56,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapWebcam;
 
 
-@Autonomous(name="SKYSTONE Vuforia Nav Webcam", group ="Concept")
 //@Disabled
 public class VuforiaRed {
 

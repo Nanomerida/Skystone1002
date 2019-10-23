@@ -14,6 +14,7 @@ public class TeleOpTest extends LinearOpMode {
     public DcMotor  right_front_drive = null;
     public DcMotor  right_back_drive = null;
 
+    private boolean slowModeOn = false;
 
     private static float speedConst = 1.0f;
 
@@ -33,8 +34,13 @@ public class TeleOpTest extends LinearOpMode {
 
             boolean slowMode = gamepad1.b;
 
-            if(slowMode){
+            if(slowMode && !slowModeOn){
                 speedConst = 0.5f;
+                slowModeOn = true;
+            }
+            if(slowMode && slowModeOn){
+                speedConst = 1.0f;
+                slowModeOn = false;
             }
 
             double rightDrive = -gamepad1.right_stick_y;
