@@ -30,8 +30,7 @@ public class TeleOpAlternate extends OpMode {
 
     private static final double START_POSITION_CLAW       =  0.0 ; //starting pose of main claw servo
     private static final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
-    private static final double START_POSITION_CLAW_ROTATER = 0.0;
-    private static float currentRotate = (float) START_POSITION_CLAW_ROTATOR;
+    private static final double START_POSITION_CLAW_ROTATER = 0.5; 
 
     HardwareMap hwMap           =  null;
 
@@ -63,12 +62,8 @@ public class TeleOpAlternate extends OpMode {
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        // Define and initialize ALL installed servos.
-        claw_level.setPosition(START_POSITION_CLAW_LEVELER);
-        claw.setPosition(START_POSITION_CLAW);
-        claw_rotate.setPosition(START_POSITION_CLAW_ROTATER);
+        
+        
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -103,8 +98,6 @@ public class TeleOpAlternate extends OpMode {
 
     @Override
     public void loop() {
-        // Obtain joystick values
-        //  robot.hangerServo.setPosition(0);
         double right = -gamepad1.right_stick_y;
         double left = -gamepad1.left_stick_y;
 
@@ -118,20 +111,20 @@ public class TeleOpAlternate extends OpMode {
         main_arm.setPower(gamepad2.right_stick_y);
 
         if(gamepad2.a) {
-            slide.setPower(-0.5);
+            slide.setPower(-0.2);
         } else {
             slide.setPower(0.0);
         }
 
         if(gamepad2.y){
-            slide.setPower(0.5);
+            slide.setPower(0.2);
         } else {
             slide.setPower(0.0);
         }
 
         if(gamepad2.dpad_left)  claw_rotate.setPosition(0); //think this is horizontal to robot
 
-        if(gamepad2.dpad_right) claw_rotate.setPosition(.5);
+        if(gamepad2.dpad_right) claw_rotate.setPosition(.5); //and i think this is vertical to the robot
 
         if(gamepad2.left_trigger) claw.setPosition(0.277); //130 degrees from 180 (closed)
 
