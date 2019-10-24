@@ -79,7 +79,7 @@ public class TeleOpAlternate extends OpMode {
         right_back_drive.setPower(0);
         
         main_arm.setPower(0);
-        slide.setPower(0)
+        slide.setPower(0);
         
     }
 
@@ -126,9 +126,9 @@ public class TeleOpAlternate extends OpMode {
 
         if(gamepad2.dpad_right) claw_rotate.setPosition(.5); //and i think this is vertical to the robot
 
-        if(gamepad2.left_trigger) claw.setPosition(0.277); //130 degrees from 180 (closed)
+        if(gamepad2.left_trigger>1) claw.setPosition(0.277); //130 degrees from 180 (closed)
 
-        if(gamepad2.right_trigger) claw.setPosition(1); // Full open 
+        if(gamepad2.right_trigger>1) claw.setPosition(1); // Full open
     }
 
     @Override
