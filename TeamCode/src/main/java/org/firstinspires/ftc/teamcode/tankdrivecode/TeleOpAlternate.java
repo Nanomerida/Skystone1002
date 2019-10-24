@@ -31,6 +31,7 @@ public class TeleOpAlternate extends OpMode {
     private static final double START_POSITION_CLAW       =  0.0 ; //starting pose of main claw servo
     private static final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
     private static final double START_POSITION_CLAW_ROTATER = 0.0;
+    private static float currentRotate = (float) START_POSITION_CLAW_ROTATOR;
 
     HardwareMap hwMap           =  null;
 
@@ -53,18 +54,6 @@ public class TeleOpAlternate extends OpMode {
         claw = hwMap.get(Servo.class, "claw");
         claw_rotate = hwMap.get(Servo.class, "claw_rotate");
 
-        //Front Servo
-
-
-        // Set all motors to zero power
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
-
-        slide.setPower(0);
-        main_arm.setPower(0);
-
         //Reset ALL encoders
         left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -73,6 +62,7 @@ public class TeleOpAlternate extends OpMode {
 
         //slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         // Define and initialize ALL installed servos.
@@ -86,6 +76,16 @@ public class TeleOpAlternate extends OpMode {
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         main_arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        
+        left_front_drive.setPower(0);
+        left_back_drive.setPower(0);
+        right_front_drive.setPower(0);
+        right_back_drive.setPower(0);
+        
+        main_arm.setPower(0);
+        slide.setPower(0)
+        
     }
 
 
@@ -95,6 +95,10 @@ public class TeleOpAlternate extends OpMode {
 
     @Override
     public void start() {
+        
+        claw_level.setPosition(START_POSITION_CLAW_LEVELER);
+        claw.setPosition(START_POSITION_CLAW);
+        claw_rotate.setPosition(START_POSITION_CLAW_ROTATER);
     }
 
     @Override
@@ -114,24 +118,24 @@ public class TeleOpAlternate extends OpMode {
         main_arm.setPower(gamepad2.right_stick_y);
 
         if(gamepad2.a) {
-            slide.setPower(-1.0);
+            slide.setPower(-0.5);
         } else {
             slide.setPower(0.0);
         }
 
         if(gamepad2.y){
-            slide.setPower(1.0);
+            slide.setPower(0.5);
         } else {
             slide.setPower(0.0);
         }
 
-        if(gamepad2.dpad_left) claw_rotate.setPosition(0);
+        if(gamepad2.dpad_left)  claw_rotate.setPosition(0); //think this is horizontal to robot
 
-        if(gamepad2.dpad_right) claw_rotate.setPosition(1);
+        if(gamepad2.dpad_right) claw_rotate.setPosition(.5);
 
-        if(gamepad2.left_bumper) claw.setPosition(0.5);
+        if(gamepad2.left_trigger) claw.setPosition(0.277); //130 degrees from 180 (closed)
 
-        if(gamepad2.right_bumper) claw.setPosition(0);
+        if(gamepad2.right_trigger) claw.setPosition(1); // Full open 
     }
 
     @Override
@@ -143,7 +147,9 @@ public class TeleOpAlternate extends OpMode {
 
         main_arm.setPower(0);
         slide.setPower(0);
+        /*
         claw_rotate.setPosition(0);
         claw.setPosition(0);
+        */
     }
 }
