@@ -7,6 +7,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
@@ -29,6 +31,23 @@ import static java.lang.Math.round;
 @Autonomous (name = "AutonBlueLinear", group = "Autonomous")
 
 public class AutonBlueLinear extends LinearOpMode {
+
+
+    public DcMotor  left_front_drive   = null;
+    public DcMotor  left_back_drive  = null;
+    public DcMotor  right_front_drive = null;
+    public DcMotor  right_back_drive = null;
+    public DcMotor  main_arm     = null;
+    public DcMotor  slide = null;
+    public Servo claw_level    = null;
+    public Servo    claw   = null;
+    public Servo    claw_rotate = null;
+
+    private final double START_POSITION_CLAW       =  1.0 ; //starting pose of main claw servo
+    private final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
+    private final double START_POSITION_CLAW_ROTATER = 0.0;
+
+    HardwareMap hwMap           =  null;
 
 
 
@@ -63,32 +82,49 @@ public class AutonBlueLinear extends LinearOpMode {
     /* Arm */
     public void armMove(int armPower, double clawPower){ //convert degrees to Servo powers
         clawPower = methods.degreeServoConv(clawPower);
-        robot.main_arm.setPower(0.5);
-        robot.main_arm.setTargetPosition(armPower);
-        robot.claw_level.setPosition(clawPower);
+        main_arm.setPower(0.5);
+        main_arm.setTargetPosition(armPower);
+        claw_level.setPosition(clawPower);
     }
+    private void resetDrive(){
+        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void setRunToPosition(){
+        left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+
     private boolean driveBusy(){
         boolean busy = false;
 
-        if(robot.left_front_drive.isBusy() || robot.left_back_drive.isBusy() || robot.right_front_drive.isBusy() || robot.right_back_drive.isBusy()){
+        if(left_front_drive.isBusy() || left_back_drive.isBusy() || right_front_drive.isBusy() || right_back_drive.isBusy()){
             busy = true;
         }
         return  busy;
     }
 
     private void moveDrive(double power, float inches){
-        robot.resetEncoders();
-        robot.setRunToPosition();
+        resetDrive();
 
-        robot.left_front_drive.setPower(power);
-        robot.left_back_drive.setPower(power);
-        robot.right_front_drive.setPower(power);
-        robot.right_back_drive.setPower(power);
+        left_front_drive.setPower(power);
+        left_back_drive.setPower(power);
+        right_front_drive.setPower(power);
+        right_back_drive.setPower(power);
 
-        robot.left_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        robot.left_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        robot.right_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        robot.right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        left_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        left_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        right_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+        right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
+
+        setRunToPosition();
+
     }
 
     public void turnDrive(String direction, double power, double degrees) {
@@ -98,29 +134,29 @@ public class AutonBlueLinear extends LinearOpMode {
         double inches = (degrees * degreesToRadians) * ROBOT_WHEEL_DIST_INCHES;
 
         if(direction.equals(cc)){
-            robot.right_front_drive.setDirection(DcMotor.Direction.REVERSE);
-            robot.right_back_drive.setDirection(DcMotor.Direction.REVERSE);
+            right_front_drive.setDirection(DcMotor.Direction.REVERSE);
+            right_back_drive.setDirection(DcMotor.Direction.REVERSE);
         }
         else{
-            robot.left_front_drive.setDirection(DcMotor.Direction.REVERSE);
-            robot.left_back_drive.setDirection(DcMotor.Direction.REVERSE);
+            left_front_drive.setDirection(DcMotor.Direction.REVERSE);
+            left_back_drive.setDirection(DcMotor.Direction.REVERSE);
         }
 
-        robot.resetEncoders();
+        resetDrive();
 
         //set desired power
-        robot.left_front_drive.setPower(power);
-        robot.left_back_drive.setPower(power);
-        robot.right_front_drive.setPower(power);
-        robot.right_back_drive.setPower(power);
+        left_front_drive.setPower(power);
+        left_back_drive.setPower(power);
+        right_front_drive.setPower(power);
+        right_back_drive.setPower(power);
 
         //TURN
-        robot.left_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
-        robot.left_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
-        robot.right_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
-        robot.right_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        left_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        left_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        right_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        right_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
 
-        robot.setRunToPosition();
+        setRunToPosition();
     }
 
 
@@ -138,11 +174,6 @@ public class AutonBlueLinear extends LinearOpMode {
     private VuforiaBlue blockPosBlue = new VuforiaBlue();
     private Reference ref = new Reference();
     public static final double servoDegreesConst = 0.005;
-    public static final double clawClosed = 45.0d;
-    public static final double clawOpen = 90.0d;
-    public static final String driveIdle = "IDLE"; /**/
-    public static final String driveMoving = "MOVING"; /**/
-    public static final String driveTurning = "TURNING"; /**/
 
     //IMU STUFF
     BNO055IMU imu;
@@ -151,7 +182,7 @@ public class AutonBlueLinear extends LinearOpMode {
 
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException{
 
         int skystonePos = 4;
 
@@ -169,7 +200,7 @@ public class AutonBlueLinear extends LinearOpMode {
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         telemetry.addData("Status","IMU Initialized, Current Heading %4d",
@@ -177,9 +208,41 @@ public class AutonBlueLinear extends LinearOpMode {
         telemetry.update();
 
 
-        robot.init(hardwareMap);
-        robot.resetEncoders(); //obvious
-        robot.main_arm.setPower(.7);
+
+        //Initialize motors
+        left_front_drive  = hwMap.get(DcMotor.class, "leftFrontDrive");
+        left_back_drive = hwMap.get(DcMotor.class, "leftBackDrive");
+        right_front_drive = hwMap.get(DcMotor.class, "rightFrontDrive");
+        right_back_drive = hwMap.get(DcMotor.class, "rightBackDrive");
+
+        //Arm
+        slide = hwMap.get(DcMotor.class, "slide_motor");
+        main_arm    = hwMap.get(DcMotor.class, "main_arm");
+        claw_level = hwMap.get(Servo.class, "claw_leveler");
+        claw = hwMap.get(Servo.class, "claw");
+        claw_rotate = hwMap.get(Servo.class, "claw_rotate");
+
+
+        /* Reset all encoders */
+        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        left_front_drive.setPower(0);
+        left_back_drive.setPower(0);
+        right_front_drive.setPower(0);
+        right_back_drive.setPower(0);
+
+        slide.setPower(0);
+        main_arm.setPower(0);
+
+
+
 
 
 
@@ -197,6 +260,11 @@ public class AutonBlueLinear extends LinearOpMode {
 
         waitForStart();
 
+
+        claw_level.setPosition(START_POSITION_CLAW_LEVELER);
+        claw.setPosition(START_POSITION_CLAW);
+        claw_rotate.setPosition(START_POSITION_CLAW_ROTATER);
+
         //Steps
         moveDrive(1, 26.5f); // move forward to skystone
 
@@ -204,12 +272,12 @@ public class AutonBlueLinear extends LinearOpMode {
         switch (testResult){ //vuforia
             case 0: //towards bridge
                 //move there
-                robot.main_arm.setTargetPosition(280); //90 degrees down
-                robot.claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
-                while(robot.main_arm.isBusy()) {
+                main_arm.setTargetPosition(280); //90 degrees down
+                claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
+                while(main_arm.isBusy()) {
                     sleep(1);
                 }//wait for arm
-                robot.claw.setPosition(0.0 * servoDegreesConst); //open claw
+                claw.setPosition(0.0 * servoDegreesConst); //open claw
                 moveDrive(0.5, 6.5f);
                 while(driveBusy()){
                     sleep(1);
@@ -218,6 +286,26 @@ public class AutonBlueLinear extends LinearOpMode {
                 skystonePos = 0;
                 break;
             case 1: //center
+
+                //move there
+                main_arm.setTargetPosition(280); //90 degrees down
+                claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
+                while(main_arm.isBusy()) {
+                    sleep(1);
+                }//wait for arm
+                claw.setPosition(120.0 * servoDegreesConst); //open claw
+                turnDrive("ccw", 0.3, 20.0f);
+                while (driveBusy()){
+                    sleep(1);
+                }
+                moveDrive(0.5, 6.5f);
+                while(driveBusy()){
+                    sleep(1);
+                }
+                while(driveBusy()){
+                    sleep(1);
+                }
+                skystonePos = 1;
                 //pick up stone
                 skystonePos = 1;
                 break;
@@ -234,7 +322,7 @@ public class AutonBlueLinear extends LinearOpMode {
         //and so on.
         moveDrive(1,65f);
         turnDrive("cw", 0.5, 35);
-        robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
+        claw.setPosition(90.0 * servoDegreesConst); //open claw
 
         turnDrive("ccw", 0.5, 35);
         moveDrive(-1, 69f);
@@ -256,7 +344,7 @@ public class AutonBlueLinear extends LinearOpMode {
 
         //and so on.
         moveDrive(1,69f);
-        robot.claw.setPosition(90.0 * servoDegreesConst); //open claw
+        claw.setPosition(90.0 * servoDegreesConst); //open claw
 
         moveDrive(-1, 40f); // park under Skybridge
 
