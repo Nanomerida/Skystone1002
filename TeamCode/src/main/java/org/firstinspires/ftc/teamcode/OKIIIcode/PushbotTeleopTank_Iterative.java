@@ -58,13 +58,13 @@ import org.firstinspires.ftc.teamcode.hardwareMaps.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Pushbot: Teleop Tank", group="Pushbot")
+@TeleOp(name="Pushbot: Teleop Tank", group="TeleOp")
 //@Disabled
 public class PushbotTeleopTank_Iterative extends OpMode{
 
     /* Declare OpMode members. */
     HardwarePushbot robot       = new HardwarePushbot(); // use the class created to define a Pushbot's hardware
-    DigitalChannel limitSwitch;
+    //DigitalChannel limitSwitch;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -76,10 +76,10 @@ public class PushbotTeleopTank_Iterative extends OpMode{
          */
         robot.init(hardwareMap);
         // get a reference to our digitalTouch object.
-        limitSwitch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+        //limitSwitch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
 
         // set the digital channel to input.
-        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+        //limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");    //
@@ -118,22 +118,26 @@ public class PushbotTeleopTank_Iterative extends OpMode{
 
         // Use gamepad left & right Bumpers to open and close the claw
         if (gamepad1.right_bumper) {
+            robot.intake1.setPower(-1);
+            robot.intake2.setPower(-1);
+        }
+        else if (gamepad1.left_bumper){
             robot.intake1.setPower(1);
             robot.intake2.setPower(1);
         }
-        else if (gamepad1.left_bumper){
-            robot.intake1.setPower(-1);
-            robot.intake2.setPower(-1);
+        else{
+            robot.intake1.setPower(0);
+            robot.intake2.setPower(0);
         }
 
         // Use gamepad buttons to move the arm up (Y) and down (A)
 
-        if (gamepad1.left_trigger>1) {
-            if (!limitSwitch.getState()) {
+        if (gamepad1.right_trigger>0) {
+            //if (!limitSwitch.getState()) {
                 robot.arm.setPower(1);
-            }
+            //}
         }
-        else if (gamepad1.right_trigger>1) {
+        else if (gamepad1.left_trigger>0) {
             robot.arm.setPower(-1);
         }
         else {
@@ -150,6 +154,14 @@ public class PushbotTeleopTank_Iterative extends OpMode{
      */
     @Override
     public void stop() {
+        robot.leftFDrive.setPower(0);
+        robot.leftBDrive.setPower(0);
+        robot.rightFDrive.setPower(0);
+        robot.rightBDrive.setPower(0);
+
+        robot.arm.setPower(0);
+        robot.intake1.setPower(0);
+        robot.intake2.setPower(0);
     }
 }
 

@@ -62,7 +62,7 @@ public class HardwarePushbot
     public DcMotor  arm     = null;
     public DcMotor  intake1     = null;
     public DcMotor  intake2     = null;
-    public DigitalChannel limitSwitch;
+    //public DigitalChannel limitSwitch;
 
 
     /* local OpMode members. */
@@ -87,7 +87,7 @@ public class HardwarePushbot
         arm    = hwMap.get(DcMotor.class, "arm");
         intake1    = hwMap.get(DcMotor.class, "intake1");
         intake2    = hwMap.get(DcMotor.class, "intake2");
-        limitSwitch = hwMap.get(DigitalChannel.class, "limitSwitch");
+        //limitSwitch = hwMap.get(DigitalChannel.class, "limitSwitch");
         leftFDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         leftBDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         rightFDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
@@ -95,7 +95,7 @@ public class HardwarePushbot
         arm.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         intake1.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         intake2.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+        //limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         // Set all motors to zero power
         leftFDrive.setPower(0);
