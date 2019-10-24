@@ -62,7 +62,7 @@ public class HardwarePushbot
     public DcMotor  arm     = null;
     public DcMotor  intake1     = null;
     public DcMotor  intake2     = null;
-    public DigitalChannel limitSwitch = null;
+    public DigitalChannel limitSwitch;
 
 
     /* local OpMode members. */

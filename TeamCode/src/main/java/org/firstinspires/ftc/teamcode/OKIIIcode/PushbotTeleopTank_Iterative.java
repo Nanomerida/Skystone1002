@@ -42,6 +42,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwarePushbot;
 
+
 /**
  * This file provides basic Telop driving for a Pushbot robot.
  * The code is structured as an Iterative OpMode
@@ -63,8 +64,7 @@ public class PushbotTeleopTank_Iterative extends OpMode{
 
     /* Declare OpMode members. */
     HardwarePushbot robot       = new HardwarePushbot(); // use the class created to define a Pushbot's hardware
-    double          clawOffset  = 0.0 ;                  // Servo mid position
-    final double    CLAW_SPEED  = 0.02 ;                 // sets rate to move servo
+    DigitalChannel limitSwitch;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -75,6 +75,11 @@ public class PushbotTeleopTank_Iterative extends OpMode{
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
+        // get a reference to our digitalTouch object.
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+
+        // set the digital channel to input.
+        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");    //
@@ -122,12 +127,11 @@ public class PushbotTeleopTank_Iterative extends OpMode{
         }
 
         // Use gamepad buttons to move the arm up (Y) and down (A)
-        /*public boolean switch(){
-            return limitSwitch.getState();
-        }*/
+
         if (gamepad1.left_trigger>1) {
-           // if ()
-             //   robot.arm.setPower(1);
+            if (!limitSwitch.getState()) {
+                robot.arm.setPower(1);
+            }
         }
         else if (gamepad1.right_trigger>1) {
             robot.arm.setPower(-1);
