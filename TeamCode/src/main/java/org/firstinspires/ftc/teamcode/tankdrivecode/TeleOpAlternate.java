@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 import org.firstinspires.ftc.teamcode.Methods.*;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Variables.*;
 public class TeleOpAlternate extends OpMode {
 
     HardwareMapMain robot = new HardwareMapMain();
+/*    HardwareMapMain robot = new HardwareMapMain();
     GeneralMethods methods = new GeneralMethods();
     Reference ref = new Reference();
 
@@ -26,11 +28,13 @@ public class TeleOpAlternate extends OpMode {
     public DcMotor  slide = null;
     public Servo claw_level    = null;
     public Servo    claw   = null;
-    public Servo    claw_rotate = null;
+    public Servo    claw_rotate = null;*/
 
     private static final double START_POSITION_CLAW       =  0.0 ; //starting pose of main claw servo
     private static final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
-    private static final double START_POSITION_CLAW_ROTATER = 0.5; 
+    private static final double START_POSITION_CLAW_ROTATER = 0.5;
+    private boolean slowModeOn = false;
+    private boolean prevX = false;
 
     HardwareMap hwMap           =  null;
 
@@ -39,8 +43,8 @@ public class TeleOpAlternate extends OpMode {
 
     @Override
     public void init() {
-
-
+        robot.init(hardwareMap);
+/*
         left_front_drive  = hwMap.get(DcMotor.class, "leftFrontDrive");
         left_back_drive = hwMap.get(DcMotor.class, "leftBackDrive");
         right_front_drive = hwMap.get(DcMotor.class, "rightFrontDrive");
@@ -80,7 +84,7 @@ public class TeleOpAlternate extends OpMode {
         
         main_arm.setPower(0);
         slide.setPower(0);
-        
+        */
     }
 
 
@@ -90,10 +94,7 @@ public class TeleOpAlternate extends OpMode {
 
     @Override
     public void start() {
-        
-        claw_level.setPosition(START_POSITION_CLAW_LEVELER);
-        claw.setPosition(START_POSITION_CLAW);
-        claw_rotate.setPosition(START_POSITION_CLAW_ROTATER);
+
     }
 
     @Override
@@ -101,45 +102,56 @@ public class TeleOpAlternate extends OpMode {
         double right = -gamepad1.right_stick_y;
         double left = -gamepad1.left_stick_y;
 
+        if(gamepad1.x && !prevX) slowModeOn = !slowModeOn;
+
+        float speed = (slowModeOn) ? 0.5f : 1.0f;
+
         // Set joystick values to motor values on robot
-        left_front_drive.setPower(left);
-        left_back_drive.setPower(left);
-        right_front_drive.setPower(right);
-        right_back_drive.setPower(right);
+        robot.left_front_drive.setPower(left * speed);
+        robot.left_back_drive.setPower(left * speed);
+        robot.right_front_drive.setPower(right * speed);
+        robot.right_back_drive.setPower(right * speed);
 
         //DOES THIS WORK?
-        main_arm.setPower(gamepad2.right_stick_y);
+        robot.main_arm.setPower(gamepad2.right_stick_y);
 
         if(gamepad2.a) {
-            slide.setPower(-0.2);
+            robot.slide.setPower(-0.2);
         } else {
-            slide.setPower(0.0);
+            robot.slide.setPower(0.0);
         }
 
         if(gamepad2.y){
-            slide.setPower(0.2);
+            robot.slide.setPower(0.2);
         } else {
-            slide.setPower(0.0);
+            robot.slide.setPower(0.0);
         }
 
-        if(gamepad2.dpad_left)  claw_rotate.setPosition(0); //think this is horizontal to robot
+        if(gamepad2.dpad_up) robot.claw_level.setPosition(robot.claw_level.getPosition() + 0.03);
 
-        if(gamepad2.dpad_right) claw_rotate.setPosition(.5); //and i think this is vertical to the robot
+        if(gamepad2.dpad_down) robot.claw_level.setPosition(robot.claw_level.getPosition() - 0.03);
 
-        if(gamepad2.left_trigger>1) claw.setPosition(0.277); //130 degrees from 180 (closed)
 
-        if(gamepad2.right_trigger>1) claw.setPosition(1); // Full open
-    }
+        if(gamepad2.dpad_left)  robot.claw_rotate.setPosition(0); //think this is horizontal to robot
+
+        if(gamepad2.dpad_right) robot.claw_rotate.setPosition(0.5); //and i think this is vertical to the robot
+
+        if(gamepad2.left_trigger>1) robot.claw.setPosition(0.5); //130 degrees from 180 (closed)
+
+        if(gamepad2.right_trigger>1) robot.claw.setPosition(0); // Full open
+
+        // update prevX
+        prevX = gamepad1.x;    }
 
     @Override
     public void stop() {
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
+        robot.left_front_drive.setPower(0);
+        robot.left_back_drive.setPower(0);
+        robot.right_front_drive.setPower(0);
+        robot.right_back_drive.setPower(0);
 
-        main_arm.setPower(0);
-        slide.setPower(0);
+        robot.main_arm.setPower(0);
+        robot.slide.setPower(0);
         /*
         claw_rotate.setPosition(0);
         claw.setPosition(0);

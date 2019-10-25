@@ -266,7 +266,7 @@ public class AutonBlueLinear extends LinearOpMode {
         //Steps
         moveDrive(1, 26.5f); // move forward to skystone
 
-        int testResult = blockPosBlue.visionTest();
+      /*  int testResult = blockPosBlue.visionTest();
         switch (testResult){ //vuforia
             case 0: //towards bridge
                 //move there
@@ -310,8 +310,16 @@ public class AutonBlueLinear extends LinearOpMode {
                 //pick up stone
                 skystonePos = 2;
                 break;
-        }
+        }*/
         //each vuforia case should end at the same pos so they can be brought together for the next step.
+
+// Degree constant is 3.111...
+        //Grab stone
+        claw.setPosition(0);
+        main_arm.setPower(0.4);
+        main_arm.setTargetPosition(62);
+        claw_level.setPosition(1);
+        claw.setPosition(0.5);
 
         //next step
         turnDrive("ccw", .5, 90);
@@ -322,7 +330,7 @@ public class AutonBlueLinear extends LinearOpMode {
         waitForDrive();
 
         turnDrive("cw", 0.5, 35);
-        claw.setPosition(90.0 * servoDegreesConst); //open claw
+        claw.setPosition(0); //open claw
         waitForDrive();
 
         turnDrive("ccw", 0.5, 35);
@@ -332,7 +340,7 @@ public class AutonBlueLinear extends LinearOpMode {
         waitForDrive();
 
         turnDrive("cw",0.5, 90);
-        switch (testResult){ //vuforia
+        /*switch (testResult){ //vuforia
             case 0:
                 //Pick up stone 1
                 break;
@@ -342,14 +350,19 @@ public class AutonBlueLinear extends LinearOpMode {
             case 2:
                 //pick up stone 1
                 break;
-        }
+        } */
+
+        //Pick Up Stone
+        claw.setPosition(0);
+        claw.setPosition(0.5);
 
         turnDrive("ccw", .5, 90);
         waitForDrive();
 
         //and so on.
         moveDrive(1,69f);
-        claw.setPosition(90.0 * servoDegreesConst); //open claw
+        //claw.setPosition(90.0 * servoDegreesConst); //open claw
+        claw.setPosition(1);
         waitForDrive();
 
         moveDrive(-1, 40f); // park under Skybridge
