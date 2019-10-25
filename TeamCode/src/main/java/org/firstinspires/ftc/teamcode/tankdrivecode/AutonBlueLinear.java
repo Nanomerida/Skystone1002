@@ -101,14 +101,12 @@ public class AutonBlueLinear extends LinearOpMode {
     }
 
 
-    private boolean driveBusy(){
-        boolean busy = false;
-
-        if(left_front_drive.isBusy() || left_back_drive.isBusy() || right_front_drive.isBusy() || right_back_drive.isBusy()){
-            busy = true;
+    private void waitForDrive(){
+        while(left_front_drive.isBusy() || left_back_drive.isBusy() || right_front_drive.isBusy() || right_back_drive.isBusy()){
+            sleep(1);
         }
-        return  busy;
     }
+
 
     private void moveDrive(double power, float inches){
         resetDrive();
@@ -278,10 +276,13 @@ public class AutonBlueLinear extends LinearOpMode {
                     sleep(1);
                 }//wait for arm
                 claw.setPosition(0.0 * servoDegreesConst); //open claw
+
+                //turn
+                //then turn again to face stone
+                //the drive forward.
+
                 moveDrive(0.5, 6.5f);
-                while(driveBusy()){
-                    sleep(1);
-                }
+                waitForDrive();
 
                 skystonePos = 0;
                 break;
@@ -294,17 +295,13 @@ public class AutonBlueLinear extends LinearOpMode {
                     sleep(1);
                 }//wait for arm
                 claw.setPosition(120.0 * servoDegreesConst); //open claw
+
                 turnDrive("ccw", 0.3, 20.0f);
-                while (driveBusy()){
-                    sleep(1);
-                }
+                waitForDrive();
+
                 moveDrive(0.5, 6.5f);
-                while(driveBusy()){
-                    sleep(1);
-                }
-                while(driveBusy()){
-                    sleep(1);
-                }
+                waitForDrive();
+
                 skystonePos = 1;
                 //pick up stone
                 skystonePos = 1;
@@ -318,14 +315,21 @@ public class AutonBlueLinear extends LinearOpMode {
 
         //next step
         turnDrive("ccw", .5, 90);
+        waitForDrive();
 
         //and so on.
         moveDrive(1,65f);
+        waitForDrive();
+
         turnDrive("cw", 0.5, 35);
         claw.setPosition(90.0 * servoDegreesConst); //open claw
+        waitForDrive();
 
         turnDrive("ccw", 0.5, 35);
+        waitForDrive();
+
         moveDrive(-1, 69f);
+        waitForDrive();
 
         turnDrive("cw",0.5, 90);
         switch (testResult){ //vuforia
@@ -341,10 +345,12 @@ public class AutonBlueLinear extends LinearOpMode {
         }
 
         turnDrive("ccw", .5, 90);
+        waitForDrive();
 
         //and so on.
         moveDrive(1,69f);
         claw.setPosition(90.0 * servoDegreesConst); //open claw
+        waitForDrive();
 
         moveDrive(-1, 40f); // park under Skybridge
 

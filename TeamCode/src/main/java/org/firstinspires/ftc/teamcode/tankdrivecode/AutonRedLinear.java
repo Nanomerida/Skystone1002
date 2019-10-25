@@ -98,13 +98,10 @@ public class AutonRedLinear extends LinearOpMode {
         right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    private boolean driveBusy(){
-        boolean busy = false;
-
-        if(left_front_drive.isBusy() || left_back_drive.isBusy() || right_front_drive.isBusy() || right_back_drive.isBusy()){
-            busy = true;
+    private void waitForDrive(){
+        while(left_front_drive.isBusy() || left_back_drive.isBusy() || right_front_drive.isBusy() || right_back_drive.isBusy()){
+            sleep(1);
         }
-        return busy;
     }
 
 
@@ -271,58 +268,61 @@ public class AutonRedLinear extends LinearOpMode {
 
         //Steps
         moveDrive(0.8, 26.5f); // move forward to skystone
+        waitForDrive();
 
-        resetDrive();
         int testResult = blockPosRed.visionTest();
         switch (testResult){ //vuforia
             case 0: //towards bridge
                 //move there
+                main_arm.setPower(0.4);
                 main_arm.setTargetPosition(280); //90 degrees down
+                main_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
                 while(main_arm.isBusy()) {
                     sleep(1);
                 }//wait for arm
                 claw.setPosition(90.0 * servoDegreesConst); //open claw
+
                 moveDrive(0.5, 6.5f);
-                while(driveBusy()){
-                    sleep(1);
-                }
+                waitForDrive();
 
                 skystonePos = 0;
                 break;
             case 1: //center
                 //move there
+                main_arm.setPower(0.4);
                 main_arm.setTargetPosition(280); //90 degrees down
+                main_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
                 while(main_arm.isBusy()) {
                     sleep(1);
                 }//wait for arm
                 claw.setPosition(90.0 * servoDegreesConst); //open claw
+
                 turnDrive("ccw", 0.3, 20.0f);
-                while (driveBusy()){
-                    sleep(1);
-                }
+                waitForDrive();
+
                 moveDrive(0.5, 6.5f);
-                while(driveBusy()){
-                    sleep(1);
-                }
+                waitForDrive();
+
                 skystonePos = 1;
                 break;
             case 2: //towards wall
+                main_arm.setPower(0.4);
                 main_arm.setTargetPosition(280); //90 degrees down
+                main_arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 claw_level.setPosition(90.0 * servoDegreesConst); //claw level at 90 to match arm
                 while(main_arm.isBusy()) {
                     sleep(1);
                 }//wait for arm
                 claw.setPosition(90.0 * servoDegreesConst); //open claw
+
                 turnDrive("cc", 0.3, 20);
-                while(driveBusy()){
-                    sleep(1);
-                }
+                waitForDrive();
+
                 moveDrive(0.5, 6.5f);
-                while(driveBusy()){
-                    sleep(1);
-                }
+                waitForDrive();
+
                 skystonePos = 2;
                 break;
         }
@@ -330,15 +330,26 @@ public class AutonRedLinear extends LinearOpMode {
 
         //next step
         turnDrive("cw", .5, 90);
+        waitForDrive();
 
         moveDrive(1,65f);
+        waitForDrive();
+
         turnDrive("ccw", 0.5, 35);
-        claw.setPosition(90.0 * servoDegreesConst); //open claw
+        waitForDrive();
+
+        claw.setPosition(90.0 * servoDegreesConst); //open claw to release stone
+        sleep(1000);
 
         turnDrive("cw", 0.5, 35);
+        waitForDrive();
+
         moveDrive(-1, 69f);
+        waitForDrive();
 
         turnDrive("ccw",0.5, 90);
+        waitForDrive();
+
         switch (testResult){ //vuforia
             case 0:
                 //Pick up stone 1
@@ -352,10 +363,12 @@ public class AutonRedLinear extends LinearOpMode {
         }
 
         turnDrive("cw", .5, 90);
+        waitForDrive();
 
         //and so on.
         moveDrive(1,69f);
         claw.setPosition(90.0 * servoDegreesConst); //open claw
+        waitForDrive();
 
         moveDrive(-1, 40f); // park under Skybridge
 

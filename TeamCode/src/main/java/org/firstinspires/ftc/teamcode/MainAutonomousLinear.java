@@ -146,7 +146,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
 
 
-        setRunUsingEncoder();
+        setRunToPosition();
 
     }
 
@@ -176,6 +176,12 @@ public class MainAutonomousLinear extends LinearOpMode {
         return busy;
     }
 
+    private void waitForDrive(){
+        while(!left_front_drive.isBusy() || !left_back_drive.isBusy() || !right_front_drive.isBusy() || !right_back_drive.isBusy()){
+            //literally do nothing
+        }
+    }
+
     private double[][] goalLibrary = library.goalLibraryBBF;
 
     //0 is a position change in format {0, x, y}
@@ -202,6 +208,8 @@ public class MainAutonomousLinear extends LinearOpMode {
     private static int stepVuf1 = 0;
     private static int stepVuf2 = 0;
     private static boolean otherThanDriveBusy = false;
+    private static boolean goalReachedPos = false;
+    private static boolean goalReachedAngle = false;
 
 
     //Gets the HasMap of mecanum movement procedures
@@ -330,30 +338,28 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Position Change */
                 case 0:
-                    if (otherThanDriveBusy) {
+                    do {
                         double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
-                        boolean goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
-                        if (goalReachedPos) {
-                            newGoal = true;
-                        } else {
-                            double[] motorPowerPos = methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]);
-                            moveDrivebyPower(motorPowerPos);
+                        goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
+                        if (!goalReachedPos) {
+                            moveDrivebyPower(methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]));
                         }
                     }
+                    while(!goalReachedPos);
+                    newGoal = true;
                     break;
 
 
 
                 /* Angle Change */
                 case 1:
-                    if (otherThanDriveBusy) {
-
+                    do {
                         boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
                         if (goalReachedAngle) {
-                            double[] motorPowerAngle = methods.AngleChange(goalLibrary[stepNumber][1]);
-                            moveDrivebyPower(motorPowerAngle);
+                            moveDrivebyPower(methods.AngleChange(goalLibrary[stepNumber][1]));
                         }
                     }
+                    while(!goalReachedAngle);
                     break;
 
 
@@ -361,8 +367,6 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Vuforia.java :( ugh... */
                 case 2:
-                    if (!vuforiaOn) {
-
                         visionStatus.setValue("ENABLED; SEARCHING");
                         telemetry.update();
                         if (goalLibrary[stepNumber][1] == 1) {
@@ -370,8 +374,42 @@ public class MainAutonomousLinear extends LinearOpMode {
                         } else {
                             stonePos = blockPosRed.visionTest();
                         }
-                        vuforiaOn = true;
-                    }
+
+                        if(goalLibrary[stepNumber][1] == 1){ //for blue side
+                            switch(stonePos){
+                                case 0: //bridge
+                                    moveDrivebyPos("strafeL", 6.5f); //NEED TO REDUCE POWER FOR STRAFE
+                                    waitForDrive();
+
+                                    //open claw, move arm up, etc
+
+                                    moveDrivebyPos("forward", 12.5f);
+                                    waitForDrive();
+
+                                    //close claw
+
+                                    moveDrivebyPos("baackward", 12.5f);
+                                    waitForDrive();
+
+                                    break;
+                                case 1: //center
+                                    //open claw, move arm up, etc
+
+                                    moveDrivebyPos("forward", 12.5f);
+                                    waitForDrive();
+
+                                    //close claw
+
+                                    moveDrivebyPos("backward", 12.5f);
+                                    waitForDrive();
+
+                                    break;
+                                case 2: //wall
+                                    break;
+
+                            }
+
+                        }
 
 
                     switch (stonePos) {
