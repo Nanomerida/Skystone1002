@@ -25,6 +25,8 @@ public class TeleOpAlternate extends OpMode {
     public DcMotor  left_back_drive  = null;
     public DcMotor  right_front_drive = null;
     public DcMotor  right_back_drive = null;
+    
+    public Servo claw = null;
 
     private boolean slowModeOn = false;
     private boolean prevX = false;
@@ -41,6 +43,8 @@ public class TeleOpAlternate extends OpMode {
         left_back_drive = hardwareMap.get(DcMotor.class, "leftBackDrive");
         right_front_drive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         right_back_drive = hardwareMap.get(DcMotor.class, "rightBackDrive");
+        
+        claw = hardwareMap.get(Servo.class, "claw");
 
 
         //Reset ALL encoders
@@ -83,6 +87,14 @@ public class TeleOpAlternate extends OpMode {
         left_back_drive.setPower(left * speed);
         right_front_drive.setPower(right * speed);
         right_back_drive.setPower(right * speed);
+        
+        if(gamepad2.a){
+            claw.setPosition(0);
+        }
+        
+        if(gamepad2.b){
+            claw.setPosition(0.5);
+        }
 /*
         //DOES THIS WORK?
         main_arm.setPower(gamepad2.right_stick_y);
