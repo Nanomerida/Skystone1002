@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Methods.*;
 import org.firstinspires.ftc.teamcode.Variables.*;
 
 
-@TeleOp(name="TeleOpAlternate", group="TeleOp")
+@TeleOp(name="ACTUAL TELEOP", group="TeleOp")
 public class TeleOpAlternate extends OpMode {
 
 
@@ -25,11 +25,6 @@ public class TeleOpAlternate extends OpMode {
     public DcMotor  left_back_drive  = null;
     public DcMotor  right_front_drive = null;
     public DcMotor  right_back_drive = null;
-    public DcMotor  main_arm     = null;
-    public DcMotor  slide = null;
-    public Servo claw_level    = null;
-    public Servo    claw   = null;
-    public Servo    claw_rotate = null;
 
     private boolean slowModeOn = false;
     private boolean prevX = false;
@@ -47,21 +42,12 @@ public class TeleOpAlternate extends OpMode {
         right_front_drive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         right_back_drive = hardwareMap.get(DcMotor.class, "rightBackDrive");
 
-        //Arm
-        slide = hardwareMap.get(DcMotor.class, "slide_motor");
-        main_arm    = hardwareMap.get(DcMotor.class, "main_arm");
-        claw_level = hardwareMap.get(Servo.class, "claw_leveler");
-        claw = hardwareMap.get(Servo.class, "claw");
-        claw_rotate = hardwareMap.get(Servo.class, "claw_rotate");
 
         //Reset ALL encoders
         left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
         
 
@@ -69,9 +55,6 @@ public class TeleOpAlternate extends OpMode {
         left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        main_arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
     }
@@ -84,7 +67,6 @@ public class TeleOpAlternate extends OpMode {
     @Override
     public void start() {
 
-        claw.setPosition(0.5);
     }
 
     @Override
@@ -125,7 +107,7 @@ public class TeleOpAlternate extends OpMode {
         if(gamepad2.dpad_left)  claw_rotate.setPosition(0); //think this is horizontal to robot
 
         if(gamepad2.dpad_right) claw_rotate.setPosition(0.5); //and i think this is vertical to the robot
-*/
+
         if(gamepad2.left_trigger>0.9) claw.setPosition(0.5); //130 degrees from 180 (closed)
 
         if(gamepad2.right_trigger>0.9) claw.setPosition(0); // Full open*/
@@ -140,8 +122,7 @@ public class TeleOpAlternate extends OpMode {
         right_front_drive.setPower(0);
         right_back_drive.setPower(0);
 
-        main_arm.setPower(0);
-        slide.setPower(0);
+    
         /*
         claw_rotate.setPosition(0);
         claw.setPosition(0);
