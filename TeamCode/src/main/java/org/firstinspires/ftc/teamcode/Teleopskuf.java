@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name="Tank TeleOp Test", group="Autonomous")
+@TeleOp(name="ACTUAL TELEOP-- wheels", group="teleop")
 
 
-public class TeleOpTest extends LinearOpMode {
+public class Teleopskuf extends LinearOpMode {
 
     public DcMotor left_front_drive   = null;
     public DcMotor  left_back_drive  = null;
@@ -30,18 +30,8 @@ public class TeleOpTest extends LinearOpMode {
 
         waitForStart();
 
-        left_back_drive.setPower(1);
-        left_front_drive.setPower(1);
-        right_back_drive.setPower(1);
-        right_front_drive.setPower(1);
 
-        sleep(1000);
-        left_back_drive.setPower(0);
-        left_front_drive.setPower(0);
-        right_back_drive.setPower(0);
-        right_front_drive.setPower(0);
 
-/*
         while(opModeIsActive()){
 
             boolean slowMode = gamepad1.b;
@@ -62,8 +52,8 @@ public class TeleOpTest extends LinearOpMode {
             left_front_drive.setPower(leftDrive * speedConst);
             left_back_drive.setPower(leftDrive * speedConst);
             right_front_drive.setPower(rightDrive * speedConst);
-            right_back_drive.setPower(rightDrive * speedConst);*/
-        //}
+            right_back_drive.setPower(rightDrive * speedConst);
+        }
 
     }
 }

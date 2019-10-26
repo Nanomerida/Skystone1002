@@ -267,6 +267,7 @@ public class AutonRedLinear extends LinearOpMode {
 
 
         //Steps
+        slide.setPower(-1);
         moveDrive(0.8, 26.5f); // move forward to skystone
         waitForDrive();
 

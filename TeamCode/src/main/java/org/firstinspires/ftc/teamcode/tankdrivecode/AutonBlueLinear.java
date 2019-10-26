@@ -264,7 +264,9 @@ public class AutonBlueLinear extends LinearOpMode {
         claw_rotate.setPosition(START_POSITION_CLAW_ROTATER);
 
         //Steps
+        slide.setPower(-1);
         moveDrive(1, 26.5f); // move forward to skystone
+        waitForDrive();
 
       /*  int testResult = blockPosBlue.visionTest();
         switch (testResult){ //vuforia
