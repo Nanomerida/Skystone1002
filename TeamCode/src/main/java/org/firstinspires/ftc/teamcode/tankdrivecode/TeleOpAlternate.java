@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Methods.*;
 import org.firstinspires.ftc.teamcode.Variables.*;
 
 
-@TeleOp(name="ACTUAL TELEOP", group="TeleOp")
+@TeleOp(name="YES, ACTUAL TELEOP", group="TeleOp")
 public class TeleOpAlternate extends OpMode {
 
 
@@ -26,7 +26,7 @@ public class TeleOpAlternate extends OpMode {
     public DcMotor  right_front_drive = null;
     public DcMotor  right_back_drive = null;
     
-    public Servo claw = null;
+    public DcMotor claw = null;
 
     private boolean slowModeOn = false;
     private boolean prevX = false;
@@ -43,8 +43,7 @@ public class TeleOpAlternate extends OpMode {
         left_back_drive = hardwareMap.get(DcMotor.class, "leftBackDrive");
         right_front_drive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         right_back_drive = hardwareMap.get(DcMotor.class, "rightBackDrive");
-        
-        claw = hardwareMap.get(Servo.class, "claw");
+        claw = hardwareMap.get(DcMotor.class, "claw");
 
 
         //Reset ALL encoders
@@ -52,6 +51,7 @@ public class TeleOpAlternate extends OpMode {
         left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        claw.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
         
 
@@ -59,6 +59,7 @@ public class TeleOpAlternate extends OpMode {
         left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        claw.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
     }
@@ -88,12 +89,16 @@ public class TeleOpAlternate extends OpMode {
         right_front_drive.setPower(right * speed);
         right_back_drive.setPower(right * speed);
         
-        if(gamepad2.a){
-            claw.setPosition(0);
+        if(gamepad2.right_trigger>0.5){
+            claw.setPower(0.5);
+        } else {
+            claw.setPower(0);
         }
         
-        if(gamepad2.b){
-            claw.setPosition(0.5);
+        if(gamepad2.left_trigger>0.5){
+            claw.setPower(-0.5);
+        } else {
+            claw.setPower(0);
         }
 /*
         //DOES THIS WORK?
@@ -133,6 +138,7 @@ public class TeleOpAlternate extends OpMode {
         left_back_drive.setPower(0);
         right_front_drive.setPower(0);
         right_back_drive.setPower(0);
+        claw.setPower(0);
 
     
         /*
