@@ -36,7 +36,7 @@ public class BlueLoadingZone extends LinearOpMode {
     public DcMotor left_back_drive = null;
     public DcMotor right_front_drive = null;
     public DcMotor right_back_drive = null;
-    public Servo    claw   = null;
+    //public Servo    claw   = null;
     public DcMotor slide = null;
     public DcMotor main_arm = null;
 
@@ -55,6 +55,82 @@ public class BlueLoadingZone extends LinearOpMode {
     private Reference ref = new Reference();
     public static final double SERVODEGREES = 0.005;
 
+    private void setRunToPosition() {
+        left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    private void resetDrive() {
+        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+    private void waitForDrive() {
+
+        while (left_front_drive.isBusy() || left_back_drive.isBusy() || right_front_drive.isBusy() || right_back_drive.isBusy()) {
+            sleep(1);
+        }
+    }
+
+    private void moveDrive(float power, float inches) {
+        resetDrive();
+
+        left_front_drive.setPower(power);
+        left_back_drive.setPower(power);
+        right_front_drive.setPower(power);
+        right_back_drive.setPower(power);
+
+        left_front_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
+        left_back_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
+        right_front_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
+        right_back_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
+
+    }
+
+    public void turnDrive(String direction, double power, double degrees) {
+
+        String cc = "cw";
+
+        double inches = (degrees * degreesToRadians) * ROBOT_WHEEL_DIST_INCHES;
+
+        if(direction.equals(cc)){
+            right_front_drive.setDirection(DcMotor.Direction.REVERSE);
+            right_back_drive.setDirection(DcMotor.Direction.REVERSE);
+        }
+        else{
+            left_front_drive.setDirection(DcMotor.Direction.REVERSE);
+            left_back_drive.setDirection(DcMotor.Direction.REVERSE);
+        }
+
+        resetDrive();
+
+        //set desired power
+        left_front_drive.setPower(power);
+        left_back_drive.setPower(power);
+        right_front_drive.setPower(power);
+        right_back_drive.setPower(power);
+
+        //TURN
+        left_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        left_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        right_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        right_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+
+        setRunToPosition();
+
+        waitForDrive();
+
+        left_front_drive.setDirection(DcMotor.Direction.FORWARD);
+        left_back_drive.setDirection(DcMotor.Direction.FORWARD);
+        right_front_drive.setDirection(DcMotor.Direction.FORWARD);
+        right_back_drive.setDirection(DcMotor.Direction.FORWARD);
+
+    }
+
+
     //IMU STUFF
     BNO055IMU imu;
     Orientation angles;
@@ -70,7 +146,16 @@ public class BlueLoadingZone extends LinearOpMode {
         main_arm = hardwareMap.get(DcMotor.class, "main_arm");
         slide = hardwareMap.get(DcMotor.class, "slide");
 
-        claw = hardwareMap.get(Servo.class,"claw");
+        left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        waitForStart();
+
+        moveDrive(1.0f, );
+
 
 
 
