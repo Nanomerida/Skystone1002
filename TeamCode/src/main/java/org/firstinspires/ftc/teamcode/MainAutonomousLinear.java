@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,7 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
-import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 import org.firstinspires.ftc.teamcode.Variables.*;
 import org.firstinspires.ftc.teamcode.Methods.*;
 
@@ -29,12 +27,12 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 import java.util.HashMap;
-import java.util.concurrent.CountDownLatch;
-
+import java.util.ArrayList;
 
 
 @Autonomous(name = "Main Auto Linear", group = "Autonomous")
 @Disabled
+
 public class MainAutonomousLinear extends LinearOpMode {
 
 
@@ -62,15 +60,10 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
     private final double START_POSITION_CLAW       =  1.0 ; //starting pose of main claw servo
-    private final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
-    private final double START_POSITION_CLAW_ROTATER = 0.0;
-
-    HardwareMap hwMap           =  null;
-
 
     //IMU STUFF
-    BNO055IMU imu;
-    public Orientation angles;
+    private BNO055IMU imu;
+    private Orientation angles;
 
     private double[] AbsolutePosition(double PrevX, double PrevY) {
         double[] PreviousPosition = {PrevX, PrevY};
@@ -95,7 +88,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     }
 
 
-    public double degreesConversion(){
+    private double degreesConversion(){
         double theta = this.angles.firstAngle;
         if(theta < 0) {
             theta += 360;
@@ -104,35 +97,60 @@ public class MainAutonomousLinear extends LinearOpMode {
     }
 
     private void resetDrive(){
-        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        for(DcMotor motor : driveMotors){
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        /*left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); */
     }
 
     private void moveDrivebyPower(double[] powers) { //method to move.
-        left_front_drive.setPower(powers[0]);
+        int x = 0;
+        for(DcMotor motor : driveMotors){
+            motor.setPower(powers[x]);
+            x++;
+        }
+
+        /* left_front_drive.setPower(powers[0]);
         left_back_drive.setPower(powers[1]);
         right_front_drive.setPower(powers[2]);
         right_back_drive.setPower(powers[3]);
+
+         */
+    }
+    private void stopDrive(){
+        for(DcMotor motor : driveMotors){
+            motor.setPower(0);
+        }
     }
 
     public void setRunToPosition(){
-        left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        for(DcMotor motor : driveMotors){
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        /*left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION); */
     }
 
     public void setRunUsingEncoder(){
-        left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        stopDrive();
+        for(DcMotor motor : driveMotors){
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        /*left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
     }
 
     private void moveDrivebyPos(String type, float inches){
+        //set the
         resetDrive();
+        setRunToPosition();
 
 
         left_front_drive.setPower(mecanum.get(type) [0]);
@@ -146,15 +164,9 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
 
 
-        setRunToPosition();
 
     }
 
-    public void armMove(double armPower, double clawPower){ //convert to 1-0
-        clawPower = methods.degreeServoConv(clawPower);
-        main_arm.setPower(armPower);
-        claw_level.setPosition(clawPower);
-    }
 
     private boolean checkIfBusy(){
         boolean busy = true;
@@ -163,17 +175,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         }
         return busy;
 
-    }
-
-    private boolean checkOtherBusy(){
-        boolean busy = true;
-        if(abs(timer.seconds() - 1.5) <= 0.03 ){ //check to see if 1.5 secs has passed since timer reset (servo command)
-            busy = false;
-        }
-        if(!slide.isBusy() || !main_arm.isBusy()){
-            busy = false;
-        }
-        return busy;
     }
 
     private void waitForDrive(){
@@ -193,21 +194,10 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
     public static int stepNumber = 0;
-    public static boolean newGoal = true; //variable if new goal is desired
     public static double[] previousPos = {0.00d, 0.00d}; //define starting position here. May change based on placement.
     public static final double servoDegreesConst = 0.005;
-    static final float COUNTS_PER_INCH = 2.9452f;
-    public static final float clawClosed = 120.0f;
-    public static final float clawOpen = 180.0f;
-    public static final String driveIdle = "IDLE";
-    public static final String driveMoving = "MOVING";
-    public static final String driveTurning = "TURNING";
-    public static boolean vuforiaOn = false;
-    private static int stonePos = 4;
-    private static int stepVuf0 = 0;
-    private static int stepVuf1 = 0;
-    private static int stepVuf2 = 0;
-    private static boolean otherThanDriveBusy = false;
+    private final float COUNTS_PER_INCH = 2.9452f; /**Needs to be updated!!!!!!! */
+    private static int stonePos = -1;
     private static boolean goalReachedPos = false;
     private static boolean goalReachedAngle = false;
 
@@ -215,24 +205,26 @@ public class MainAutonomousLinear extends LinearOpMode {
     //Gets the HasMap of mecanum movement procedures
     private HashMap<String, int[]> mecanum = procedures.getMecanum();
 
+    //Creates list to hold motors
+    private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();
+
 
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         //Initialize motors
-        left_front_drive  = hwMap.get(DcMotor.class, "leftFrontDrive");
-        left_back_drive = hwMap.get(DcMotor.class, "leftBackDrive");
-        right_front_drive = hwMap.get(DcMotor.class, "rightFrontDrive");
-        right_back_drive = hwMap.get(DcMotor.class, "rightBackDrive");
+        left_front_drive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
+        left_back_drive = hardwareMap.get(DcMotor.class, "leftBackDrive");
+        right_front_drive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
+        right_back_drive = hardwareMap.get(DcMotor.class, "rightBackDrive");
 
         //Arm
-        slide = hwMap.get(DcMotor.class, "slide_motor");
-        main_arm    = hwMap.get(DcMotor.class, "main_arm");
-        claw_level = hwMap.get(Servo.class, "claw_leveler");
-        claw = hwMap.get(Servo.class, "claw");
-        claw_rotate = hwMap.get(Servo.class, "claw_rotate");
+        slide = hardwareMap.get(DcMotor.class, "slide_motor");
+        main_arm    = hardwareMap.get(DcMotor.class, "main_arm");
+
+
 
 
         left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -244,13 +236,13 @@ public class MainAutonomousLinear extends LinearOpMode {
         main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
+        //adds motors to ArrayList
+        driveMotors.add(left_front_drive);
+        driveMotors.add(left_back_drive);
+        driveMotors.add(right_front_drive);
+        driveMotors.add(right_back_drive);
 
-        slide.setPower(0);
-        main_arm.setPower(0);
+
 
 
 
@@ -266,7 +258,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
-        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
@@ -276,25 +268,11 @@ public class MainAutonomousLinear extends LinearOpMode {
         waitForStart();
 
 
-        claw_level.setPosition(START_POSITION_CLAW_LEVELER);
-        claw.setPosition(START_POSITION_CLAW);
-        claw_rotate.setPosition(START_POSITION_CLAW_ROTATER);
-
 
         /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
         telemetry.addData("Glitches in MATRIX detected:", 0);
         telemetry.update();
 
-
-
-        Telemetry.Item driveStatus = telemetry.addData("Drive Base Status:", driveIdle); //drive status
-        Telemetry.Item armStatus = telemetry.addData("Arm Motor Status:", "IDLE");
-        Telemetry.Item clawLevelStatus = telemetry.addData("Claw Level Servo Status:", "IDLE");
-        Telemetry.Item clawStatus = telemetry.addData("Claw Servo Status:", "IDLE");
-        Telemetry.Item visionStatus = telemetry.addData("Vision Testing Status:", "DISABLED"); //first item
-        Telemetry.Item stepNumb = telemetry.addData("Current Step Number", stepNumber);
-        Telemetry.Item currentHeading = telemetry.addData("Current Heading:", degreesConversion());
-        telemetry.update();
 
         //HERE IS WHERE WE CAN PUT THE ORIGINAL OP MODE MECANUM CODE LOOP().
         //SOME THINGS CAN BE CHANGED DUE TO A LINEAR OP SETTING
@@ -304,32 +282,11 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
             int goalType = (int) goalLibrary[stepNumber][0]; //Setting goal each time
-            newGoal = false;
-
-            boolean busy = checkIfBusy();
-            otherThanDriveBusy = checkOtherBusy();
 
 
 
 
             //OLD VUFORIA CODE, needs changed
-            if (vuforiaOn = true) {
-                if (stonePos == 0) {
-                    if (stepVuf0 == 0 && !busy) {
-                        moveDrivebyPos("strafeL", 8.0f);
-                        stepVuf0 = 1;
-                    }
-                    if(stepVuf0 == 1 && !busy){
-                        claw.setPosition(90.0);
-                        stepVuf0 = 2;
-                    }
-                    if(stepVuf0 == 2 && !busy){
-                        //move arm
-                    }
-
-
-                }
-            }
 
 
             //OLD SWITCH STATEMENT
@@ -346,7 +303,7 @@ public class MainAutonomousLinear extends LinearOpMode {
                         }
                     }
                     while(!goalReachedPos);
-                    newGoal = true;
+                    stopDrive();
                     break;
 
 
@@ -360,6 +317,7 @@ public class MainAutonomousLinear extends LinearOpMode {
                         }
                     }
                     while(!goalReachedAngle);
+                    stopDrive();
                     break;
 
 
@@ -367,7 +325,7 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Vuforia.java :( ugh... */
                 case 2:
-                        visionStatus.setValue("ENABLED; SEARCHING");
+                        telemetry.addData("Vision:", "Searching");
                         telemetry.update();
                         if (goalLibrary[stepNumber][1] == 1) {
                             stonePos = blockPosBlue.visionTest();
@@ -388,8 +346,11 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                                     //close claw
 
-                                    moveDrivebyPos("baackward", 12.5f);
+                                    moveDrivebyPos("backward", 12.5f);
                                     waitForDrive();
+
+                                    goalLibrary[12][1] = 0;//change steps in library because we know where other Skystone is
+                                    goalLibrary[12][2] = 0;
 
                                     break;
                                 case 1: //center
@@ -403,80 +364,66 @@ public class MainAutonomousLinear extends LinearOpMode {
                                     moveDrivebyPos("backward", 12.5f);
                                     waitForDrive();
 
+                                    goalLibrary[13][0] = 1;
+                                    goalLibrary[13][1] = 0; //change steps in library because we know where other Skystone is
+
                                     break;
                                 case 2: //wall
+                                    //move there
+                                    //get stone
+
+                                    goalLibrary[14][1] = 0; //change steps in library because we know where other Skystone is
+                                    goalLibrary[14][2] = 0;
+
                                     break;
 
                             }
 
                         }
 
+                        else{
+                            switch (stonePos){
+                                case 0:
+                                    //move there
 
-                    switch (stonePos) {
-                        case 0: //first position (left, towards skybridge)
-                            visionStatus.setValue("SKYSTONE: TOWARDS BRIDGE");
-                            telemetry.update();
-                            //go there;
-                            //grab thing;
-                            //go back;
-                            goalLibrary[12][1] = 0;//change steps in library because we know where other Skystone is
-                            goalLibrary[12][2] = 0;
-                            break;
-                        case 1: //second position (center)
-                            visionStatus.setValue("SKYSTONE: CENTER");
-                            telemetry.update();
-                            //go there;
-                            //grab thing;
-                            //go back;
-                            goalLibrary[13][0] = 1;
-                            goalLibrary[13][1] = 0; //change steps in library because we know where other Skystone is
-                            break;
-                        case 2: //third position (right, towards wall)
-                            visionStatus.setValue("SKYSTONE: TOWARDS WALL");
-                            telemetry.update();
-                            //go there;
-                            //grab thing;
-                            //go back;
-                            goalLibrary[14][1] = 0; //change steps in library because we know where other Skystone is
-                            goalLibrary[14][2] = 0;
-                            break;
-                    }
-                    newGoal = true;
+
+                                    goalLibrary[12][1] = 0;//change steps in library because we know where other Skystone is
+                                    goalLibrary[12][2] = 0;
+                                    break;
+                                case 1:
+                                    //move there
+
+                                    goalLibrary[13][0] = 1;
+                                    goalLibrary[13][1] = 0; //change steps in library because we know where other Skystone is
+                                    break;
+                                case 2:
+                                    //move there
+
+                                    goalLibrary[14][1] = 0; //change steps in library because we know where other Skystone is
+                                    goalLibrary[14][2] = 0;
+                                    break;
+
+                            }
+                        }
                     break;
 
+                    //MAYBE INTAKE HERE:
                 case 3:
-                    if (!busy) {
-                        double clawLevelPower = 0; //armClawPower(goalLibrary[stepNumber][1]);
-                        armMove(goalLibrary[stepNumber][1], clawLevelPower);
-                    }
-
+                    //do something
                     break;
 
-                case 4: //claw: open is 0, closed is 1
-                    if (goalLibrary[stepNumber][1] == 0) { //open claw
-                        clawStatus.setValue("OPENING");
-                        telemetry.update();
-                        timer.reset();
-                        claw.setPosition(clawOpen);
-                    } else { //close claw
-                        clawStatus.setValue("CLOSING");
-                        telemetry.update();
-                        timer.reset();
-                        claw.setPosition(clawClosed);
-                    }
-                    clawStatus.setValue("IDLE");
-                    telemetry.update();
 
-
-                case 5:
+                //SLIDE MOTOR:
+                case 4:
+                    slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     slide.setTargetPosition(120);
+                    slide.setPower(0.4);
+                    while(slide.isBusy()){
+                        sleep(1);
+                    }
                     break;
             }
-
-            if (newGoal) {
-                stepNumber++;
-                stepNumb.setValue(stepNumber);
-            }
+            stepNumber++;
             telemetry.update();
 
 
