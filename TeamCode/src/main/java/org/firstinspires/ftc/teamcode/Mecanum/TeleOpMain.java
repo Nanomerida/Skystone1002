@@ -17,12 +17,6 @@ public class TeleOpMain extends OpMode {
     public DcMotor right_back_drive = null;
     public DcMotor lift_motor = null;
 
-
-
-
-
-    //Crates HardwareMap object robot
-
     public float[] m_v_mult(float[][] m, float[] v) {
         float[] out = new float[4];
         out[0] = v[0] * m[0][0] + v[1] * m[1][0] + v[2] * m[2][0];
@@ -50,7 +44,6 @@ public class TeleOpMain extends OpMode {
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         lift_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
     }
 
@@ -89,11 +82,6 @@ public class TeleOpMain extends OpMode {
         left_back_drive.setPower(outputs[2]);
         right_front_drive.setPower(outputs[0]);
         right_back_drive.setPower(outputs[1]);
-
-
-
-
-
 
     }
 }
