@@ -1,12 +1,10 @@
-package org.firstinspires.ftc.teamcode.tankdrivecode;
+package org.firstinspires.ftc.teamcode.OldCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
@@ -17,18 +15,16 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 import org.firstinspires.ftc.teamcode.Variables.Reference;
-import org.firstinspires.ftc.teamcode.VuforiaBlue;
-import org.firstinspires.ftc.teamcode.VuforiaRed;
+import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaRed;
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 
 
 import static java.lang.Math.abs;
-import static java.lang.Math.PI;
 import static java.lang.Math.round;
 
-@Autonomous (name = "AutonBlueSkystone", group = "Autonomous")
+@Autonomous (name = "TankAutonomous", group = "Autonomous")
 
-public class AutonBlueSkystone extends OpMode {
+public class AutonRedSkystone extends OpMode {
     private HardwareMapMain robot   = new HardwareMapMain();
     private GeneralMethods methods = new GeneralMethods();
     private ElapsedTime timer = new ElapsedTime(0);
@@ -57,11 +53,10 @@ public class AutonBlueSkystone extends OpMode {
         return armPower;
     }
 
-    /* Arm */
-    public void armMove(int armPower, double clawPower){ //convert degrees to Servo powers
+    /* Moving Claw */
+    public void armMove(double armPower, double clawPower){ //convert degrees to Servo powers
         clawPower = methods.degreeServoConv(clawPower);
-        robot.main_arm.setPower(0.5);
-        robot.main_arm.setTargetPosition(armPower);
+        robot.main_arm.setPower(armPower);
         robot.claw_level.setPosition(clawPower);
     }
 
@@ -114,12 +109,12 @@ public class AutonBlueSkystone extends OpMode {
     /**Make sure these measurments are correct*/
     static final double     COUNTS_PER_WHEEL_REV    = 96 ;    // eg: TETRIX Motor Encoder
     static final double     WHEEL_DIAMETER_MM       = 75 ;     // For figuring circumference
-    static final float     COUNTS_PER_INCH         = 2.9452f;
+    static final float     COUNTS_PER_INCH         = 0.0966f;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
     /* Other Variables */
-    private VuforiaBlue blockPosBlue = new VuforiaBlue();
+    private VuforiaRed blockPosRed = new VuforiaRed();
     private Reference ref = new Reference();
     public static final double servoDegreesConst = 0.005;
     public static final double clawClosed = 45.0d;
@@ -127,8 +122,7 @@ public class AutonBlueSkystone extends OpMode {
     public static final String driveIdle = "IDLE"; /**/
     public static final String driveMoving = "MOVING"; /**/
     public static final String driveTurning = "TURNING"; /**/
-    private static int step = 0;
-    private static boolean busy = false;
+    public static int step = 0;
 
     //IMU STUFF
     BNO055IMU imu;
@@ -168,17 +162,17 @@ public class AutonBlueSkystone extends OpMode {
 
         // Send telemetry message to indicate successful Encoder reset
         // Send telemetry message to signify robot waiting;
-        /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
-        telemetry.addData("Say", "The Matrix is Ready");
-        telemetry.addData("Glitches detected:", "0");
-        telemetry.update();
-        timeDelay(2.0f);
+            /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
+            telemetry.addData("Say", "The Matrix is Ready");
+            telemetry.addData("Glitches detected:", "0");
+            telemetry.update();
+            timeDelay(2.0f);
 
 
-        telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
-        telemetry.addData("Risk calculated:", ref.vuforiaRisk);
-        telemetry.update();
-        timeDelay(2.0f);
+            telemetry.addData("Calculating Risk of Vuforia AI Taking Control .......", "....");
+            telemetry.addData("Risk calculated:", ref.vuforiaRisk);
+            telemetry.update();
+            timeDelay(2.0f);
 
 
     }
@@ -202,48 +196,27 @@ public class AutonBlueSkystone extends OpMode {
 
 //---------------------------------------------------------------------------------------------------------------------
 
-/**This is the portion that must be edited for each Auton*/
 
-/** IMPORTANT !! right before ANY servo movement, set the variable "busy" = true (and set to false after movement */
-
-        if ( //check for ANY motor movement
-                !robot.left_front_drive.isBusy() || !robot.left_back_drive.isBusy() || !robot.right_front_drive.isBusy() || !robot.right_back_drive.isBusy() || robot.slide.isBusy() || robot.main_arm.isBusy() ||
-                !robot.slide.isBusy() || robot.main_arm.isBusy()) {
+        if ( //check for motor movement
+                !robot.left_front_drive.isBusy() || !robot.left_back_drive.isBusy() || !robot.right_front_drive.isBusy() || !robot.right_back_drive.isBusy() || robot.slide.isBusy() || robot.main_arm.isBusy()) {
 
             switch (step) {
-                case 0: //first step
-                    moveDrive(1, 26.5f); // put in drive power and inches desired
+                case 0: //first step (move)
+                    moveDrive(1, 3.9f); // put in drive power and inches desired
                     break;
-
-                case 1:
+                case 1: //second step (vuforia)
                     robot.resetEncoders();
-                    switch(blockPosBlue.visionTest()){
+                    switch(blockPosRed.visionTest()){
 
                         case 0: //skystone near wall
                             //move
-
-
                     }
+                    moveDrive(1, 32.6f);
                     break;
-
-                case 2: //second step
+                case 2: //third step and so on....
                     robot.resetEncoders();
-                    turnDrive("cc", .5, 10);
-                    moveDrive(1,69f);
-                    //This part should release block
+                    moveDrive(1, 29.6f);
                     break;
-
-                case 3: //third step and so on....
-                    robot.resetEncoders();
-                    moveDrive(-1, 69f);
-                    turnDrive("cc",1, 10);
-                    break;
-
-                case 4:
-                    robot.resetEncoders();
-                    moveDrive(1, 40f); // park under Skybridge
-                    break;
-
             }//NOTE: end each step with break;, and still need to make turn method and other controls.
 
             step++;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OldCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -16,6 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
+import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
+import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaRed;
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 import org.firstinspires.ftc.teamcode.Variables.*;
 import org.firstinspires.ftc.teamcode.Methods.*;
@@ -27,7 +29,6 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 import java.util.HashMap;
-import java.util.concurrent.CountDownLatch;
 
 @Autonomous //Assuming this is right
 //@Disabled

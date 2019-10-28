@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Mecanum;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,6 +18,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.teamcode.Variables.*;
 import org.firstinspires.ftc.teamcode.Methods.*;
+import org.firstinspires.ftc.teamcode.CRVuforia.*;
 
 import static java.lang.Math.cos; //Ryan's Math Stuff
 import static java.lang.Math.round;
@@ -51,19 +51,21 @@ public class MainAutonomousLinear extends LinearOpMode {
     public DcMotor  left_back_drive  = null;
     public DcMotor  right_front_drive = null;
     public DcMotor  right_back_drive = null;
+    public DcMotor  left_y_encoder = null;
+    public DcMotor  right_y_encoder = null;
+    public DcMotor  x_encoder = null;
     public DcMotor  main_arm     = null;
     public DcMotor  slide = null;
-    public Servo claw_level    = null;
     public Servo    claw   = null;
-    public Servo    claw_rotate = null;
 
 
 
     private final double START_POSITION_CLAW       =  1.0 ; //starting pose of main claw servo
 
     //IMU STUFF
-    private BNO055IMU imu;
+    public BNO055IMU imu;
     private Orientation angles;
+
 
     private double[] AbsolutePosition(double PrevX, double PrevY) {
         double[] PreviousPosition = {PrevX, PrevY};
@@ -71,11 +73,10 @@ public class MainAutonomousLinear extends LinearOpMode {
         double[] XEncoderPosition = new double[2];
         double[] YEncoderPosition = new double[2];
         double ConvRate = (PI * 90) / 208076.8;
-        double Heading = degreesConversion();
-        double[] WeirdOrlandoMathsX = {sin(Heading), cos(Heading)};
-        double[] WeirdOrlandoMathsY = {cos(Heading), sin(Heading)};
-        double XClicks = 0.0d; //"encoders detected since previous iteration X"};
-        double YClicks = 0.0d; //{"encoders detected since previous iteration Y"};
+        double[] WeirdOrlandoMathsX = {sin(degreesConversion()), cos(degreesConversion())};
+        double[] WeirdOrlandoMathsY = {cos(degreesConversion()), sin(degreesConversion())};
+        int XClicks = ticksX(); //"encoders detected since previous iteration X"};
+        int YClicks = ((ticksLeftY() + ticksRightY()) / 2); //{"encoders detected since previous iteration Y"};
         for(int i = 0; i < 2; i++) {
             XEncoderPosition[i] = ConvRate * XClicks * WeirdOrlandoMathsX[i];
             YEncoderPosition[i] = ConvRate * YClicks * WeirdOrlandoMathsY[i];
@@ -84,7 +85,27 @@ public class MainAutonomousLinear extends LinearOpMode {
             CurrentPosition[k] = XEncoderPosition[k] + YEncoderPosition[k] + PreviousPosition[k];
         }
         //something here to reset encoder readings.
+        /** DO this */
         return CurrentPosition;
+    }
+
+
+    private int ticksLeftY(){
+        int deltaTicks;
+        deltaTicks = (previousTicksYLeft - left_y_encoder.getCurrentPosition());
+        return deltaTicks;
+    }
+
+    private int ticksRightY(){
+        int deltaTicks;
+        deltaTicks = (previousTicksYRight - right_y_encoder.getCurrentPosition());
+        return deltaTicks;
+    }
+
+    private int ticksX(){
+        int deltaTicks;
+        deltaTicks = (previousTicksX - x_encoder.getCurrentPosition());
+        return deltaTicks;
     }
 
 
@@ -198,6 +219,9 @@ public class MainAutonomousLinear extends LinearOpMode {
     public static final double servoDegreesConst = 0.005;
     private final float COUNTS_PER_INCH = 2.9452f; /**Needs to be updated!!!!!!! */
     private static int stonePos = -1;
+    private static int previousTicksYLeft = 0;
+    private static int previousTicksYRight = 0;
+    private static int previousTicksX = 0;
     private static boolean goalReachedPos = false;
     private static boolean goalReachedAngle = false;
 
@@ -224,6 +248,10 @@ public class MainAutonomousLinear extends LinearOpMode {
         slide = hardwareMap.get(DcMotor.class, "slide_motor");
         main_arm    = hardwareMap.get(DcMotor.class, "main_arm");
 
+        left_y_encoder = hardwareMap.get(DcMotor.class, "left_y_encoder");
+        right_y_encoder = hardwareMap.get(DcMotor.class, "right_y_encoder");
+        x_encoder = hardwareMap.get(DcMotor.class, "x_encoder");
+
 
 
 
@@ -235,12 +263,24 @@ public class MainAutonomousLinear extends LinearOpMode {
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        left_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        x_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        left_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        x_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         //adds motors to ArrayList
         driveMotors.add(left_front_drive);
         driveMotors.add(left_back_drive);
         driveMotors.add(right_front_drive);
         driveMotors.add(right_back_drive);
+
+        blockPosBlue.blueInit();
+        blockPosRed.redInit();
+
 
 
 
@@ -265,6 +305,8 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
 
+
+
         waitForStart();
 
 
@@ -281,15 +323,11 @@ public class MainAutonomousLinear extends LinearOpMode {
         while(opModeIsActive()){
 
 
+
             int goalType = (int) goalLibrary[stepNumber][0]; //Setting goal each time
 
-
-
-
-            //OLD VUFORIA CODE, needs changed
-
-
             //OLD SWITCH STATEMENT
+
             switch(goalType) {
 
 

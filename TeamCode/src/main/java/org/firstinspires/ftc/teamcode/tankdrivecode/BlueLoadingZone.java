@@ -3,29 +3,17 @@ package org.firstinspires.ftc.teamcode.tankdrivecode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
-import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 import org.firstinspires.ftc.teamcode.Variables.Reference;
-import org.firstinspires.ftc.teamcode.VuforiaBlue;
-import org.firstinspires.ftc.teamcode.VuforiaRed;
-import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
+import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
 
 
 import static java.lang.Math.abs;
-import static java.lang.Math.PI;
 import static java.lang.Math.round;
 
 @Autonomous (name = "BlueLoadingZone", group = "Autonomous")

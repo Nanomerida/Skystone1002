@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.Methods;
 
-import static java.lang.Math.cos; //Ryan's Math Stuff
-import static java.lang.Math.sin;
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
-import org.firstinspires.ftc.teamcode.AutonomousCode;
+import org.firstinspires.ftc.teamcode.OldCode.AutonomousCode;
 import org.firstinspires.ftc.teamcode.Variables.Reference;
 
 public class GeneralMethods {
