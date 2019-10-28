@@ -56,7 +56,6 @@ public class MainAutonomousLinear extends LinearOpMode {
     public DcMotor  x_encoder = null;
     public DcMotor  main_arm     = null;
     public DcMotor  slide = null;
-    public Servo    claw   = null;
 
 
 
@@ -75,8 +74,8 @@ public class MainAutonomousLinear extends LinearOpMode {
         double ConvRate = (PI * 90) / 208076.8;
         double[] WeirdOrlandoMathsX = {sin(degreesConversion()), cos(degreesConversion())};
         double[] WeirdOrlandoMathsY = {cos(degreesConversion()), sin(degreesConversion())};
-        int XClicks = ticksX(); //"encoders detected since previous iteration X"};
-        int YClicks = ((ticksLeftY() + ticksRightY()) / 2); //{"encoders detected since previous iteration Y"};
+        int XClicks = ticksX();
+        int YClicks = ((ticksLeftY() + ticksRightY()) / 2);
         for(int i = 0; i < 2; i++) {
             XEncoderPosition[i] = ConvRate * XClicks * WeirdOrlandoMathsX[i];
             YEncoderPosition[i] = ConvRate * YClicks * WeirdOrlandoMathsY[i];
@@ -84,8 +83,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         for(int k = 0; k < 2; k++) {
             CurrentPosition[k] = XEncoderPosition[k] + YEncoderPosition[k] + PreviousPosition[k];
         }
-        //something here to reset encoder readings.
-        /** DO this */
+        resetEncoders();
         return CurrentPosition;
     }
 
@@ -106,6 +104,12 @@ public class MainAutonomousLinear extends LinearOpMode {
         int deltaTicks;
         deltaTicks = (previousTicksX - x_encoder.getCurrentPosition());
         return deltaTicks;
+    }
+
+    private void resetEncoders(){
+        previousTicksYLeft = left_y_encoder.getCurrentPosition();
+        previousTicksYRight = right_y_encoder.getCurrentPosition();
+        previousTicksX = x_encoder.getCurrentPosition();
     }
 
 
