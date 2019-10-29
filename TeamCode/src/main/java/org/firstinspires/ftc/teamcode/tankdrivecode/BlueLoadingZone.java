@@ -119,8 +119,7 @@ public class BlueLoadingZone extends LinearOpMode {
 
         waitForStart();
 
-        moveDrive(1.0f, 26);
-        waitForDrive();
+        moveDrive(1.0f, 26);         waitForDrive();
         sleep(500);
 
         turnDrive("cw", 0.5f, 90);

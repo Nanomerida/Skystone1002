@@ -24,8 +24,8 @@ public class TeleOpAlternate extends OpMode {
     public DcMotor left_drive   = null;
     public DcMotor  right_drive = null;
     
-    public DcMotor arm = null;
-    public Servo claw = null;
+    //public DcMotor arm = null;
+    //public Servo claw = null;
 
     private boolean slowModeOn = false;
     private boolean prevX = false;
@@ -40,19 +40,19 @@ public class TeleOpAlternate extends OpMode {
 
         left_drive  = hardwareMap.get(DcMotor.class, "leftDrive");
         right_drive = hardwareMap.get(DcMotor.class, "rightDrive");
-        arm = hardwareMap.get(DcMotor.class, "arm");
+        //arm = hardwareMap.get(DcMotor.class, "arm");
 
 
         //Reset ALL encoders
         left_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         
         
 
         left_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
     }
@@ -79,7 +79,7 @@ public class TeleOpAlternate extends OpMode {
         // Set joystick values to motor values on robot
         left_drive.setPower(left * speed);
         right_drive.setPower(right * speed);
-
+/*
         //moves the arm
         if(gamepad2.right_trigger>0.5){
             arm.setPower(0.5);
@@ -103,7 +103,7 @@ public class TeleOpAlternate extends OpMode {
             claw.setPosition(0.5);
         } else {
             claw.setPosition(0.0);
-        }
+        }*/
 
 
         // update prevX
@@ -114,6 +114,6 @@ public class TeleOpAlternate extends OpMode {
     public void stop() {
         left_drive.setPower(0);
         right_drive.setPower(0);
-        arm.setPower(0);
+        //arm.setPower(0);
     }
 }
