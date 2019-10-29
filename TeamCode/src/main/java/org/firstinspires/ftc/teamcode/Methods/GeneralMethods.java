@@ -5,7 +5,7 @@ import static java.lang.Math.abs;
 import org.firstinspires.ftc.teamcode.OldCode.AutonomousCode;
 import org.firstinspires.ftc.teamcode.Variables.Reference;
 
-public class GeneralMethods {
+public class GeneralMethods  implements MecanumMovement{
 
     public GeneralMethods(){
 
@@ -13,7 +13,7 @@ public class GeneralMethods {
     AutonomousCode heading = new AutonomousCode();
     Reference vars = new Reference();
 
-    // Position change method for mecanum
+    // Position change method for mecanun
     public double[] PositionChange(double Xg, double Xa, double Yg, double Ya) { /**/
         double[] MoveYBasePower = {1.0000d, 1.0000d, 1.0000d, 1.0000d};                             //Base Motor Power for Y movement
         double[] MoveXBasePower = {1.0000d, -1.0000d, -1.0000d, 1.0000};                            //Base Motor Power for X movement
@@ -46,7 +46,8 @@ public class GeneralMethods {
 
     //Goal check method for position
     public boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg) { /**/
-        boolean reachedGoal = false;
+        boolean
+                reachedGoal = false;
         if(abs(Xg - Xa) < 0.1) {
             reachedGoal = true;
             if (abs(Yg - Ya) < 0.1) {

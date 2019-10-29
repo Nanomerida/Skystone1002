@@ -193,19 +193,50 @@ public class MainAutonomousLinear extends LinearOpMode {
     }
 
 
-    private boolean checkIfBusy(){
-        boolean busy = true;
-        if(!left_front_drive.isBusy() || !left_back_drive.isBusy() || !right_front_drive.isBusy() || !right_back_drive.isBusy()){
-            busy = false;
-        }
-        return busy;
-
-    }
-
     private void waitForDrive(){
         while(!left_front_drive.isBusy() || !left_back_drive.isBusy() || !right_front_drive.isBusy() || !right_back_drive.isBusy()){
             //literally do nothing
         }
+    }
+
+
+    private void MovePosition(){
+        do {
+            double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
+            goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
+            if (!goalReachedPos) {
+                moveDrivebyPower(methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]));
+            }
+            previousPos[0] = actualPos[0];
+            previousPos[1] = actualPos[1];
+        }
+        while(!goalReachedPos);
+        stopDrive();
+    }
+
+    private void MoveOdomPosition(double GoalX, double GoalY){
+        do {
+            double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
+            goalReachedPos = methods.GoalCheckPos(actualPos[0], GoalX, actualPos[1], GoalY); //check if we are at position
+            if (!goalReachedPos) {
+                moveDrivebyPower(methods.PositionChange(actualPos[0], GoalX, actualPos[2], GoalY));
+            }
+            previousPos[0] = actualPos[0];
+            previousPos[1] = actualPos[1];
+        }
+        while(!goalReachedPos);
+        stopDrive();
+    }
+
+    private void MoveAngle(){
+        do {
+            boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
+            if (goalReachedAngle) {
+                moveDrivebyPower(methods.AngleChange(goalLibrary[stepNumber][1]));
+            }
+        }
+        while(!goalReachedAngle);
+        stopDrive();
     }
 
     private double[][] goalLibrary = library.goalLibraryBBF;
@@ -337,29 +368,13 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Position Change */
                 case 0:
-                    do {
-                        double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
-                        goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
-                        if (!goalReachedPos) {
-                            moveDrivebyPower(methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]));
-                        }
-                    }
-                    while(!goalReachedPos);
-                    stopDrive();
+                    MovePosition();
                     break;
-
 
 
                 /* Angle Change */
                 case 1:
-                    do {
-                        boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
-                        if (goalReachedAngle) {
-                            moveDrivebyPower(methods.AngleChange(goalLibrary[stepNumber][1]));
-                        }
-                    }
-                    while(!goalReachedAngle);
-                    stopDrive();
+                    MoveAngle();
                     break;
 
 
@@ -378,17 +393,20 @@ public class MainAutonomousLinear extends LinearOpMode {
                         if(goalLibrary[stepNumber][1] == 1){ //for blue side
                             switch(stonePos){
                                 case 0: //bridge
-                                    moveDrivebyPos("strafeL", 6.5f); //NEED TO REDUCE POWER FOR STRAFE
+                                    MoveOdomPosition(17.0d, 17.0d); /*change this */
                                     waitForDrive();
 
                                     //open claw, move arm up, etc
 
-                                    moveDrivebyPos("forward", 12.5f);
+                                    MoveOdomPosition(17.0d, 17.0d);
                                     waitForDrive();
 
                                     //close claw
 
-                                    moveDrivebyPos("backward", 12.5f);
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
+                                    MoveOdomPosition(17.0d, 17.0d);
                                     waitForDrive();
 
                                     goalLibrary[12][1] = 0;//change steps in library because we know where other Skystone is
@@ -398,12 +416,12 @@ public class MainAutonomousLinear extends LinearOpMode {
                                 case 1: //center
                                     //open claw, move arm up, etc
 
-                                    moveDrivebyPos("forward", 12.5f);
+                                    MoveOdomPosition(17.0d, 17.0d);
                                     waitForDrive();
 
                                     //close claw
 
-                                    moveDrivebyPos("backward", 12.5f);
+                                    MoveOdomPosition(17.0d, 17.0d);
                                     waitForDrive();
 
                                     goalLibrary[13][0] = 1;
@@ -411,8 +429,19 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                                     break;
                                 case 2: //wall
-                                    //move there
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
                                     //get stone
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
 
                                     goalLibrary[14][1] = 0; //change steps in library because we know where other Skystone is
                                     goalLibrary[14][2] = 0;
@@ -423,23 +452,68 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                         }
 
-                        else{
+                        else{ //Red side
                             switch (stonePos){
                                 case 0:
-                                    //move there
+
+                                    MoveOdomPosition(17.0d, 17.0d); /*change this */
+                                    waitForDrive();
+
+                                    //open claw, move arm up, etc
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
+                                    //close claw
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
 
 
                                     goalLibrary[12][1] = 0;//change steps in library because we know where other Skystone is
                                     goalLibrary[12][2] = 0;
                                     break;
                                 case 1:
-                                    //move there
+                                    MoveOdomPosition(17.0d, 17.0d); /*change this */
+                                    waitForDrive();
+
+                                    //open claw, move arm up, etc
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
+                                    //close claw
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
 
                                     goalLibrary[13][0] = 1;
                                     goalLibrary[13][1] = 0; //change steps in library because we know where other Skystone is
                                     break;
                                 case 2:
-                                    //move there
+                                    MoveOdomPosition(17.0d, 17.0d); /*change this */
+                                    waitForDrive();
+
+                                    //open claw, move arm up, etc
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
+                                    //close claw
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
+                                    MoveOdomPosition(17.0d, 17.0d);
+                                    waitForDrive();
+
 
                                     goalLibrary[14][1] = 0; //change steps in library because we know where other Skystone is
                                     goalLibrary[14][2] = 0;
