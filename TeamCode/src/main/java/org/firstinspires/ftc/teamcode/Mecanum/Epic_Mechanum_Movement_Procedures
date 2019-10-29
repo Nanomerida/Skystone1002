@@ -1,5 +1,5 @@
 //HOLA
-public class Epic_Mechanum_Movement_Procedures{
+/*public class Epic_Mechanum_Movement_Procedures{
     float forward = {
             robot.rightFrontMotor.setPower(1);
             robot.rightBackMotor.setPower(1);
@@ -46,3 +46,38 @@ public class Epic_Mechanum_Movement_Procedures{
             robot.leftFrontMotor.setPower(-1);
      }
 }
+
+forward = gamepad1.left_stick_y
+left = gamepad1.right_stick_x
+
+left_front_drive.setPower(forward);
+left_back_drive.setPower(forward);
+right_front_drive.setPower(forward);
+right_back_drive.setPower(forward);
+
+if left > 0 {
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
