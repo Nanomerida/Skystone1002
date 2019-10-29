@@ -20,19 +20,17 @@ import static java.lang.Math.round;
 
 public class BlueLoadingZone extends LinearOpMode {
 
-    public DcMotor left_front_drive = null;
-    public DcMotor left_back_drive = null;
-    public DcMotor right_front_drive = null;
-    public DcMotor right_back_drive = null;
+    public DcMotor left_drive = null;
+    public DcMotor right_drive = null;
     //public Servo    claw   = null;
     //public DcMotor slide = null;
     //public DcMotor main_arm = null;
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    static final double ROBOT_WHEEL_DIST_INCHES = 8.5f;     // distance from center of robot to wheels
-    static final double COUNTS_PER_WHEEL_REV = 96;    // eg: TETRIX Motor Encoder
-    static final double WHEEL_DIAMETER_MM = 90;     // For figuring circumference
+    static final double ROBOT_WHEEL_DIST_INCHES = 14.3f;     // distance from center of robot to wheels
+    static final double COUNTS_PER_WHEEL_REV = 288;    // eg: TETRIX Motor Encoder
+    static final double WHEEL_DIAMETER_MM = 88.9;     // For figuring circumference
     static final float COUNTS_PER_INCH = 2.9452f;
     static final double DRIVE_SPEED = 0.6;
     static final double TURN_SPEED = 0.5;
@@ -44,21 +42,16 @@ public class BlueLoadingZone extends LinearOpMode {
     public static final double SERVODEGREES = 0.005;
 
     private void setRunToPosition() {
-        left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private void resetDrive() {
-        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     private void waitForDrive() {
-
-        while (left_front_drive.isBusy() || left_back_drive.isBusy() || right_front_drive.isBusy() || right_back_drive.isBusy()) {
+        while (left_drive.isBusy() || right_drive.isBusy()) {
             sleep(1);
         }
     }
@@ -66,15 +59,11 @@ public class BlueLoadingZone extends LinearOpMode {
     private void moveDrive(float power, float inches) {
         resetDrive();
 
-        left_front_drive.setPower(power);
-        left_back_drive.setPower(power);
-        right_front_drive.setPower(-power);
-        right_back_drive.setPower(-power);
+        left_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
+        right_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
-        left_back_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
-        right_front_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
-        right_back_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
+        left_drive.setPower(power);
+        right_drive.setPower(-power);
 
         setRunToPosition();
 
@@ -97,17 +86,12 @@ public class BlueLoadingZone extends LinearOpMode {
 
         resetDrive();
 
-        //set desired power
-        left_front_drive.setPower(power * speedLeft);
-        left_back_drive.setPower(power * speedLeft);
-        right_front_drive.setPower(power * speedRight);
-        right_back_drive.setPower(power * speedRight);
+        left_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        right_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
 
-        //TURN
-        left_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
-        left_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
-        right_front_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
-        right_back_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        //set desired power
+        left_drive.setPower(power * speedLeft);
+        right_drive.setPower(power * speedRight);
 
         setRunToPosition();
 
@@ -125,14 +109,12 @@ public class BlueLoadingZone extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        left_front_drive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        left_back_drive = hardwareMap.get(DcMotor.class, "leftBackDrive");
-        right_front_drive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
-        right_back_drive = hardwareMap.get(DcMotor.class, "rightBackDrive");
+        left_drive  = hardwareMap.get(DcMotor.class, "leftDrive");
+        right_drive = hardwareMap.get(DcMotor.class, "rightDrive");
         //main_arm = hardwareMap.get(DcMotor.class, "main_arm");
         //slide = hardwareMap.get(DcMotor.class, "slide");
 
-
+//set target position, power, set run to position, wait for drive
 
 
         waitForStart();
