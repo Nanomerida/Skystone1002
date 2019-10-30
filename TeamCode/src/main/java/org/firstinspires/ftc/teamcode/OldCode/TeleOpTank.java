@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OldCode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 import org.firstinspires.ftc.teamcode.Methods.*;
 import org.firstinspires.ftc.teamcode.Variables.*;
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Variables.*;
 
 
 @TeleOp(name="Tank TeleOp", group="TeleOp")
-
+@Disabled
 public class TeleOpTank extends OpMode {
     //Crates HardwareMap object robot
     HardwareMapMain robot = new HardwareMapMain();
