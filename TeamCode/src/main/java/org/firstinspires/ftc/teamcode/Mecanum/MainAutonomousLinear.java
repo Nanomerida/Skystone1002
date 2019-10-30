@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -34,8 +35,6 @@ import java.util.ArrayList;
 @Disabled
 
 public class MainAutonomousLinear extends LinearOpMode {
-
-
 
     VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
     VuforiaRed blockPosRed = new VuforiaRed(); //creates an instance of the vuforia red side file
@@ -172,26 +171,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
     }
 
-    private void moveDrivebyPos(String type, float inches){
-        //set the
-        resetDrive();
-        setRunToPosition();
-
-
-        left_front_drive.setPower(mecanum.get(type) [0]);
-        left_back_drive.setPower(mecanum.get(type) [1]);
-        right_front_drive.setPower(mecanum.get(type) [2]);
-        right_back_drive.setPower(mecanum.get(type) [3]);
-
-        left_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        left_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        right_front_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        right_back_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-
-
-
-    }
-
 
     private void waitForDrive(){
         while(!left_front_drive.isBusy() || !left_back_drive.isBusy() || !right_front_drive.isBusy() || !right_back_drive.isBusy()){
@@ -259,6 +238,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     private static int previousTicksX = 0;
     private static boolean goalReachedPos = false;
     private static boolean goalReachedAngle = false;
+
 
 
     //Gets the HasMap of mecanum movement procedures
@@ -356,6 +336,8 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
         while(opModeIsActive()){
+
+            telemetry.addData("Heading:", degreesConversion());
 
 
 
