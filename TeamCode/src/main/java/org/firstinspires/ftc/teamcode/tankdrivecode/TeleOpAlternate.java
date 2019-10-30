@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Methods.*;
 import org.firstinspires.ftc.teamcode.Variables.*;
 
 
-@TeleOp(name="YES, ACTUAL TELEOP", group="TeleOp")
+@TeleOp(name="Tank TeleOp", group="TeleOp")
 public class TeleOpAlternate extends OpMode {
 
 

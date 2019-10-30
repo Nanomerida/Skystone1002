@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
-@Autonomous (name = "BlueLoadingZone", group = "Autonomous")
+@Autonomous (name = "BlueLoadingZoneTank", group = "Autonomous")
 
 public class BlueLoadingZone extends LinearOpMode {
 
@@ -52,7 +52,7 @@ public class BlueLoadingZone extends LinearOpMode {
     }
     private void waitForDrive() {
         while (left_drive.isBusy() || right_drive.isBusy()) {
-            sleep(1);
+            sleep(400);
         }
     }
 
@@ -66,6 +66,8 @@ public class BlueLoadingZone extends LinearOpMode {
         right_drive.setPower(-power);
 
         setRunToPosition();
+
+        waitForDrive();
 
     }
 
@@ -118,27 +120,35 @@ public class BlueLoadingZone extends LinearOpMode {
 
 
         waitForStart();
+        sleep(10000);
+//line up robot to left line of foam tile
+        moveDrive(1.0f, 26);
 
-        moveDrive(1.0f, 26);         waitForDrive();
-        sleep(500);
 
-        turnDrive("cw", 0.5f, 90);
-        waitForDrive();
-        sleep(500);
+  /*      switch (blockPosBlue) {
+            case 0:
+                turnDrive("ccw", 0.5f, 90);
+                moveDrive(1f,3.5f);
+                turnDrive("ccw",0.5f,90);
+                //arm.setPower(1);
+                //claw.setPosition(-0.5);
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+        }*/
 
-        moveDrive(0.7f, 25);
-        waitForDrive();
+        moveDrive(0.7f, 47);
+        //claw.setPosition(0.5);
+
+        moveDrive(-0.7f, 25);
 
         resetDrive();
 
-
-
-
-
-
-
-
-
+        left_drive.setPower(0);
+        right_drive.setPower(0);
+        //arm.setPower(0);
     }
 
 
