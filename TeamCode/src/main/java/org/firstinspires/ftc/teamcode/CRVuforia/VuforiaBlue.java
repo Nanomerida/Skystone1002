@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 import static java.lang.Math.abs;
 
+import java.io.*;
+
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
@@ -140,6 +142,7 @@ public class VuforiaBlue {
         targetsSkyStone.activate();
         boolean noFoundSkystone = true;
         searchTime.reset();
+        try{
         while (searchTime.seconds() != 7) {
             while (noFoundSkystone) {
 
@@ -169,9 +172,15 @@ public class VuforiaBlue {
                 }
             }
         }
-
+        } catch (IllegalArgumentException e){
+            skystonePosition = 4;
+        }
+            
+        finally{
+            
         // Disable Tracking when we are done;
         targetsSkyStone.deactivate();
         return skystonePosition;
+        }
     }
 }

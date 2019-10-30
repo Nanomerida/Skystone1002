@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -55,6 +56,8 @@ public class MainAutonomousLinear extends LinearOpMode {
     public DcMotor  x_encoder = null;
     public DcMotor  main_arm     = null;
     public DcMotor  slide = null;
+    public CRServo intake_wheel_left = null;
+    public CRServo intake_wheel_right = null;
 
 
 
@@ -266,6 +269,10 @@ public class MainAutonomousLinear extends LinearOpMode {
         left_y_encoder = hardwareMap.get(DcMotor.class, "left_y_encoder");
         right_y_encoder = hardwareMap.get(DcMotor.class, "right_y_encoder");
         x_encoder = hardwareMap.get(DcMotor.class, "x_encoder");
+        
+        //Intake wheels
+        intake_wheel_left = hardwareMap.get(CRServo.class, "intake_wheel_left");
+        intake_wheel_right = hardwareMap.get(CRServo.class, "intake_wheel_right");
 
 
 
@@ -285,6 +292,8 @@ public class MainAutonomousLinear extends LinearOpMode {
         left_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         right_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         x_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        
+        intake_wheel_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         //adds motors to ArrayList
@@ -507,7 +516,11 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                     //MAYBE INTAKE HERE:
                 case 3:
-                    //do something
+                    intake_wheel_left.setPower(1);
+                    intake_wheel_right.setPower(1);
+                    sleep(1000);
+                    intake_wheel_left.setPower(0);
+                    intake_wheel_right.setPower(0);
                     break;
 
 
