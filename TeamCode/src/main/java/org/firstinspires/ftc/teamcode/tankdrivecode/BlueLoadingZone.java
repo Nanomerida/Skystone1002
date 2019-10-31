@@ -59,13 +59,19 @@ public class BlueLoadingZone extends LinearOpMode {
     private void moveDrive(float power, float inches) {
         resetDrive();
 
+        //FYI: might go after setPower
+        setRunToPosition();
+
+
         left_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
         right_drive.setTargetPosition( round(inches / COUNTS_PER_INCH));
+
+
+
 
         left_drive.setPower(power);
         right_drive.setPower(-power);
 
-        setRunToPosition();
 
         waitForDrive();
 
@@ -120,9 +126,10 @@ public class BlueLoadingZone extends LinearOpMode {
 
 
         waitForStart();
-        sleep(10000);
+        /**sleep(10000);
 //line up robot to left line of foam tile
-        moveDrive(1.0f, 26);
+        moveDrive(1.0f, 26);*/
+        moveDrive(1f,6);
 
 
   /*      switch (blockPosBlue) {
@@ -138,7 +145,7 @@ public class BlueLoadingZone extends LinearOpMode {
             case 2:
                 break;
         }*/
-
+/**
         moveDrive(0.7f, 47);
         //claw.setPosition(0.5);
 
@@ -148,7 +155,7 @@ public class BlueLoadingZone extends LinearOpMode {
 
         left_drive.setPower(0);
         right_drive.setPower(0);
-        //arm.setPower(0);
+        //arm.setPower(0);*/
     }
 
 
