@@ -14,7 +14,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 import org.firstinspires.ftc.teamcode.Variables.Reference;
-import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaRed;
+import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 
 
@@ -146,7 +146,7 @@ public class AutonRedLinear extends LinearOpMode {
 
     /* Other Variables */
     public static final double degreesToRadians = 180.0 / Math.PI;
-    private VuforiaRed blockPosRed = new VuforiaRed();
+    private VuforiaBlue blockPosRed = new VuforiaBlue();
     private Reference ref = new Reference();
     public static final double servoDegreesConst = 0.005;
 
@@ -162,7 +162,7 @@ public class AutonRedLinear extends LinearOpMode {
 
         int skystonePos = 4;
 
-        blockPosRed.redInit(); //sets up vuforia
+        blockPosRed.blueInit(); //sets up vuforia
 
 
         // MORE IMU STUFF

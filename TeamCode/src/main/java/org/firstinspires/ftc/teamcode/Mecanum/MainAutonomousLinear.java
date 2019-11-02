@@ -7,17 +7,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import org.firstinspires.ftc.teamcode.Variables.*;
 import org.firstinspires.ftc.teamcode.Methods.*;
@@ -39,12 +39,12 @@ import java.util.ArrayList;
 public class MainAutonomousLinear extends LinearOpMode {
 
     VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
-    VuforiaRed blockPosRed = new VuforiaRed(); //creates an instance of the vuforia red side file
     GoalLibraries library = new GoalLibraries();
     Reference constants = new Reference();
     GeneralMethods methods = new GeneralMethods();
     MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
     private ElapsedTime timer = new ElapsedTime(0);
+    Telemetry telem;
 
 
 
@@ -55,10 +55,10 @@ public class MainAutonomousLinear extends LinearOpMode {
     public DcMotor  left_y_encoder = null;
     public DcMotor  right_y_encoder = null;
     public DcMotor  x_encoder = null;
-    public DcMotor  main_arm     = null;
     public DcMotor  slide = null;
     public CRServo intake_wheel_left = null;
     public CRServo intake_wheel_right = null;
+    public WebcamName webcam = null;
 
 
 
@@ -251,11 +251,15 @@ public class MainAutonomousLinear extends LinearOpMode {
     //Creates list to hold motors
     private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();
 
+    ShowTelemetry showTelemetry = new ShowTelemetry(telem);
+
 
 
 
     @Override
     public void runOpMode() {
+
+        showTelemetry.startTelemetry();
 
         //Initialize motors
         left_front_drive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
@@ -265,7 +269,6 @@ public class MainAutonomousLinear extends LinearOpMode {
 
         //Arm
         slide = hardwareMap.get(DcMotor.class, "slide_motor");
-        main_arm    = hardwareMap.get(DcMotor.class, "main_arm");
 
         left_y_encoder = hardwareMap.get(DcMotor.class, "left_y_encoder");
         right_y_encoder = hardwareMap.get(DcMotor.class, "right_y_encoder");
@@ -274,6 +277,11 @@ public class MainAutonomousLinear extends LinearOpMode {
         //Intake wheels
         intake_wheel_left = hardwareMap.get(CRServo.class, "intake_wheel_left");
         intake_wheel_right = hardwareMap.get(CRServo.class, "intake_wheel_right");
+
+        //Webcam
+        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        blockPosBlue.blueInit(webcam);
+
 
 
 
@@ -284,7 +292,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         left_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -303,8 +310,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         driveMotors.add(right_front_drive);
         driveMotors.add(right_back_drive);
 
-        blockPosBlue.blueInit();
-        blockPosRed.redInit();
 
 
 
@@ -336,9 +341,12 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
 
+
+
         /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
-        telemetry.addData("Glitches in MATRIX detected:", 0);
-        telemetry.update();
+
+        showTelemetry.telemetryMessage("Glitches in MATRIX detected:", 0);
+        showTelemetry.updateTelemetry();
 
 
         //HERE IS WHERE WE CAN PUT THE ORIGINAL OP MODE MECANUM CODE LOOP().
@@ -347,7 +355,7 @@ public class MainAutonomousLinear extends LinearOpMode {
 
         while(opModeIsActive()){
 
-            telemetry.addData("Heading:", degreesConversion());
+            showTelemetry.massTelemetryUpdate("GOOD", "DISABLED", stepNumber, degreesConversion(), "GOOD");
 
 
 
@@ -374,18 +382,18 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Vuforia.java :( ugh... */
                 case 2:
-                        telemetry.addData("Vision:", "Searching");
-                        telemetry.update();
+                        showTelemetry.setVisionStatus("Searching");
+                        showTelemetry.updateTelemetry();
+
                         if (goalLibrary[stepNumber][1] == 1) {
                             stonePos = blockPosBlue.visionTest();
-                        } else {
-                            stonePos = blockPosRed.visionTest();
                         }
                         if(stonePos == 4) stonePos = 1;
 
                         if(goalLibrary[stepNumber][1] == 1){ //for blue side
                             switch(stonePos){
                                 case 0: //bridge
+
                                     MoveOdomPosition(17.0d, 17.0d); /*change this */
                                     waitForDrive();
 

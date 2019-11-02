@@ -79,21 +79,11 @@ public class NewVuforiaTestTest extends LinearOpMode {
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
     private static final float mmPerInch        = 25.4f;
-    private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
 
     // Constant for Stone Target
     private static final float stoneZ = 2.00f * mmPerInch;
 
     // Constants for the center support targets
-    private static final float bridgeZ = 6.42f * mmPerInch;
-    private static final float bridgeY = 23 * mmPerInch;
-    private static final float bridgeX = 5.18f * mmPerInch;
-    private static final float bridgeRotY = 59;                                 // Units are degrees
-    private static final float bridgeRotZ = 180;
-
-    // Constants for perimeter targets
-    private static final float halfField = 72 * mmPerInch;
-    private static final float quadField  = 36 * mmPerInch;
 
     // Class Members
     private OpenGLMatrix lastLocation = null;
@@ -104,6 +94,9 @@ public class NewVuforiaTestTest extends LinearOpMode {
      * servos, this device is identified using the robot configuration tool in the FTC application.
      */
     WebcamName webcamName = null;
+
+    private static final int skystoneMid = -100; //X positions of skystone positions
+    private static final int skystoneCenter = 100;
 
     private boolean targetVisible = false;
     private float phoneXRotate    = 0;
@@ -322,6 +315,15 @@ public class NewVuforiaTestTest extends LinearOpMode {
             if (targetVisible) {
                 // express position (translation) of robotgy in inches.
                 VectorF translation = lastLocation.getTranslation();
+                if((skystoneMid - translation.get(0)) < (skystoneCenter - translation.get(0))){
+                    telemetry.addData("Skystone Target:", "Towards Bridge");
+                    telemetry.update();
+                }
+                else{
+                    telemetry.addData("Skystone Target:", "Center");
+                    telemetry.update();
+                }
+
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0), translation.get(1), translation.get(2));
             }

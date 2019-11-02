@@ -41,7 +41,7 @@ public class TeleOpMain extends OpMode {
         lift_motor = hardwareMap.get(DcMotor.class, "lift_motor");
 
         intake_wheel_left = hardwareMap.get(CRServo.class, "intake_wheel_left");
-        intake_wheel_right = hardwareMap.get(CRServo.class, "intake")
+        intake_wheel_right = hardwareMap.get(CRServo.class, "intake");
 
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -62,6 +62,12 @@ public class TeleOpMain extends OpMode {
     }
 
     public void loop() {
+
+        telemetry.addLine("Motor Powers | ")
+                .addData("Left Front:", left_front_drive.getPower())
+                .addData("Left Back:", left_back_drive.getPower())
+                .addData("Right Front:", right_front_drive.getPower())
+                .addData("Right Back:", right_back_drive.getPower());
 
         if (gamepad2.right_bumper) {
             lift_motor.setPower(0.5);

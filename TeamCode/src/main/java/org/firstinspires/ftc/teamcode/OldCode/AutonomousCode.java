@@ -17,7 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
-import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaRed;
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 import org.firstinspires.ftc.teamcode.Variables.*;
 import org.firstinspires.ftc.teamcode.Methods.*;
@@ -36,7 +35,6 @@ public class AutonomousCode extends OpMode {
 
     HardwareMapMain robot = new HardwareMapMain(); //need to define the hardware map
     VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
-    VuforiaRed blockPosRed = new VuforiaRed(); //creates an instance of the vuforia red side file
     GoalLibraries library = new GoalLibraries();
     Reference constants = new Reference();
     GeneralMethods methods = new GeneralMethods();
@@ -376,8 +374,6 @@ public class AutonomousCode extends OpMode {
                     telemetry.update();
                     if (goalLibrary[stepNumber][1] == 1) {
                         stonePos = blockPosBlue.visionTest();
-                    } else {
-                        stonePos = blockPosRed.visionTest();
                     }
                     vuforiaOn = true;
                 }
