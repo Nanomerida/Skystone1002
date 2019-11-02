@@ -141,34 +141,39 @@ public class VuforiaRed {
         targetsSkyStone.activate();
         boolean noFoundSkystone = true;
         searchTime.reset();
-        while (searchTime.seconds() != 7) {
-            while (noFoundSkystone) {
+        try {
+            while (searchTime.seconds() != 7) {
+                while (noFoundSkystone) {
 
-                // check all the trackable targets to see which one (if any) is visible.
-                targetVisible = false;
-                for (VuforiaTrackable trackable : allTrackables) {
-                    if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
-                        OpenGLMatrix skystonePositionCoords = ((VuforiaTrackableDefaultListener) trackable.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
+                    // check all the trackable targets to see which one (if any) is visible.
+                    targetVisible = false;
+                    for (VuforiaTrackable trackable : allTrackables) {
+                        if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                            OpenGLMatrix skystonePositionCoords = ((VuforiaTrackableDefaultListener) trackable.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
 
-                        targetVisible = true;
+                            targetVisible = true;
 
-                        lastLocation = skystonePositionCoords;
-                        break;
+                            lastLocation = skystonePositionCoords;
+                            break;
+                        }
                     }
-                }
-                if (targetVisible) {
-                    VectorF skystoneCoords = lastLocation.getTranslation();
-                    float skystoneX = (skystoneCoords.get(0));
-                    if (abs(skystoneX - skystoneMid) < 50) {
-                        skystonePosition = 0;
-                    } else if (abs(skystoneX - skystoneCenter) < 50) {
-                        skystonePosition = 1;
-                    } else {
-                        skystonePosition = 2;
+                    if (targetVisible) {
+                        VectorF skystoneCoords = lastLocation.getTranslation();
+                        float skystoneX = (skystoneCoords.get(0));
+                        if (abs(skystoneX - skystoneMid) < 50) {
+                            skystonePosition = 0;
+                        } else if (abs(skystoneX - skystoneCenter) < 50) {
+                            skystonePosition = 1;
+                        } else {
+                            skystonePosition = 2;
+                        }
+                        noFoundSkystone = false;
                     }
-                    noFoundSkystone = false;
                 }
             }
+        }
+        catch (NullPointerException e){
+            skystonePosition = 4;
         }
 
         // Disable Tracking when we are done;

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -313,7 +314,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         x_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         
-        intake_wheel_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake_wheel_right.setDirection(CRServo.Direction.REVERSE);
 
 
         //adds motors to ArrayList
@@ -398,6 +399,7 @@ public class MainAutonomousLinear extends LinearOpMode {
                         } else {
                             stonePos = blockPosRed.visionTest();
                         }
+                        if(stonePos == 4) stonePos = 1;
 
                         if(goalLibrary[stepNumber][1] == 1){ //for blue side
                             switch(stonePos){
@@ -536,7 +538,7 @@ public class MainAutonomousLinear extends LinearOpMode {
                 case 3:
                     intake_wheel_left.setPower(1);
                     intake_wheel_right.setPower(1);
-                    sleep(1000);
+                    sleep(2000);
                     intake_wheel_left.setPower(0);
                     intake_wheel_right.setPower(0);
                     break;

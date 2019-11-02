@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mecanum;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,6 +17,8 @@ public class TeleOpMain extends OpMode {
     public DcMotor right_front_drive = null;
     public DcMotor right_back_drive = null;
     public DcMotor lift_motor = null;
+    public CRServo intake_wheel_left = null;
+    public CRServo intake_wheel_right = null;
 
     public float[] m_v_mult(float[][] m, float[] v) {
         float[] out = new float[4];
@@ -36,6 +39,9 @@ public class TeleOpMain extends OpMode {
         right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
         lift_motor = hardwareMap.get(DcMotor.class, "lift_motor");
+
+        intake_wheel_left = hardwareMap.get(CRServo.class, "intake_wheel_left");
+        intake_wheel_right = hardwareMap.get(CRServo.class, "intake")
 
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
