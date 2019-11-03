@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -20,13 +21,17 @@ import static java.lang.Math.round;
 
 public class BlueLoadingZone extends LinearOpMode {
 
+
     public DcMotor left_drive = null;
     public DcMotor right_drive = null;
     //public Servo    claw   = null;
     //public DcMotor slide = null;
     //public DcMotor main_arm = null;
+    public WebcamName webcam = null;
 
-    private ElapsedTime runtime = new ElapsedTime();
+
+
+
 
     static final double ROBOT_WHEEL_DIST_INCHES = 14.3f;     // distance from center of robot to wheels
     static final double COUNTS_PER_WHEEL_REV = 288;    // eg: TETRIX Motor Encoder
@@ -35,12 +40,21 @@ public class BlueLoadingZone extends LinearOpMode {
     static final double DRIVE_SPEED = 0.6;
     static final double TURN_SPEED = 0.5;
 
+
+
+
+
     /* Other Variables */
     public static final double degreesToRadians = 180.0 / Math.PI;
     private VuforiaBlue blockPosBlue = new VuforiaBlue();
+    private ElapsedTime runtime = new ElapsedTime();
     private Reference ref = new Reference();
     public static final double SERVODEGREES = 0.005;
 
+
+
+
+    //Methods
     private void setRunToPosition() {
         left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -114,6 +128,9 @@ public class BlueLoadingZone extends LinearOpMode {
     Orientation angles;
     //NOTE: to get heading, do degreesConversion()
 
+
+
+    //Actual Code that runs during Auton
     @Override
     public void runOpMode() {
 
@@ -121,6 +138,9 @@ public class BlueLoadingZone extends LinearOpMode {
         right_drive = hardwareMap.get(DcMotor.class, "rightDrive");
         //main_arm = hardwareMap.get(DcMotor.class, "main_arm");
         //slide = hardwareMap.get(DcMotor.class, "slide");
+        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        blockPosBlue.blueInit(webcam);
 
 //set target position, power, set run to position, wait for drive
 
