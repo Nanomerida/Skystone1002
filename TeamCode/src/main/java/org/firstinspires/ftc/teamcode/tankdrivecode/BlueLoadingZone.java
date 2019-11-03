@@ -27,7 +27,7 @@ public class BlueLoadingZone extends LinearOpMode {
     //public Servo    claw   = null;
     //public DcMotor slide = null;
     //public DcMotor main_arm = null;
-    public WebcamName webcam = null;
+    //public WebcamName webcam = null;
 
 
 
@@ -138,9 +138,9 @@ public class BlueLoadingZone extends LinearOpMode {
         right_drive = hardwareMap.get(DcMotor.class, "rightDrive");
         //main_arm = hardwareMap.get(DcMotor.class, "main_arm");
         //slide = hardwareMap.get(DcMotor.class, "slide");
-        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        //webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        blockPosBlue.blueInit(webcam);
+        //blockPosBlue.blueInit(webcam);
 
 //set target position, power, set run to position, wait for drive
 
