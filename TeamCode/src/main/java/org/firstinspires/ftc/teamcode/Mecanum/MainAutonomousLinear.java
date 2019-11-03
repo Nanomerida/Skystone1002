@@ -39,7 +39,6 @@ import java.util.ArrayList;
 public class MainAutonomousLinear extends LinearOpMode {
 
     VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
-    GoalLibraries library = new GoalLibraries();
     Reference constants = new Reference();
     GeneralMethods methods = new GeneralMethods();
     MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
@@ -61,8 +60,12 @@ public class MainAutonomousLinear extends LinearOpMode {
     public WebcamName webcam = null;
 
 
-
-    private final double START_POSITION_CLAW       =  1.0 ; //starting pose of main claw servo
+    //Choose a goal library. Options are:
+    //Blue side, skystone : "blue", "skystone"
+    //Blue side, foundation: "blue", "foundation"
+    //Red side, skystoen: "red", "skystone"
+    //Red side, foundation: "red", "foundation"
+    private final String[] taskChoose = {"blue", "skystone"};
 
     //IMU STUFF
     public BNO055IMU imu;
@@ -122,6 +125,14 @@ public class MainAutonomousLinear extends LinearOpMode {
             theta += 360;
         }
         return theta;
+    }
+
+    private void intake(){
+        intake_wheel_left.setPower(1);
+        intake_wheel_right.setPower(1);
+        sleep(2000);
+        intake_wheel_left.setPower(0);
+        intake_wheel_right.setPower(0);
     }
 
     private void resetDrive(){
@@ -222,7 +233,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         stopDrive();
     }
 
-    private double[][] goalLibrary = library.goalLibraryBBF;
 
     //0 is a position change in format {0, x, y}
     //1 is an angle change in format {1, angle, 0}
@@ -232,11 +242,11 @@ public class MainAutonomousLinear extends LinearOpMode {
     //others as needed
 
 
-    public static int stepNumber = 0;
-    public static double[] previousPos = {0.00d, 0.00d}; //define starting position here. May change based on placement.
+    private static int stepNumber = 0;
+    private static double[] previousPos; //define starting position here. May change based on placement.
     public static final double servoDegreesConst = 0.005;
     private final float COUNTS_PER_INCH = 2.9452f; /**Needs to be updated!!!!!!! */
-    private static int stonePos = -1;
+    private static int stonePos;
     private static int previousTicksYLeft = 0;
     private static int previousTicksYRight = 0;
     private static int previousTicksX = 0;
@@ -251,13 +261,35 @@ public class MainAutonomousLinear extends LinearOpMode {
     //Creates list to hold motors
     private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();
 
-    ShowTelemetry showTelemetry = new ShowTelemetry(telem);
+    ShowTelemetry showTelemetry = new ShowTelemetry(this);
+
+    private double[][] goalLibrary;
 
 
 
 
     @Override
     public void runOpMode() {
+
+        //Load Goal Library.
+        showTelemetry.telemetryMessage("Goal Library:", ("color:" + taskChoose[0] + "task" + taskChoose[1]));
+        showTelemetry.updateTelemetry();
+        try {
+            GoalLibraries library = new GoalLibraries("blue", "skystone");
+            showTelemetry.telemetryMessage("Goal Library:", "Successfully Loaded");
+            showTelemetry.updateTelemetry();
+            goalLibrary = library.choosenLibrary;
+        } catch(IllegalArgumentException e) {
+            showTelemetry.telemetryMessage("Someone misspelled the goals", "this really isn't hard...");
+            showTelemetry.updateTelemetry();
+
+            waitForStart();
+
+            while(opModeIsActive()){
+                idle();
+            }
+        }
+
 
         showTelemetry.startTelemetry();
 
@@ -332,9 +364,8 @@ public class MainAutonomousLinear extends LinearOpMode {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-
-
-
+        previousPos[0] = goalLibrary[0][0];
+        previousPos[0] = goalLibrary[0][1];
 
 
         waitForStart();
@@ -355,7 +386,7 @@ public class MainAutonomousLinear extends LinearOpMode {
 
         while(opModeIsActive()){
 
-            showTelemetry.massTelemetryUpdate("GOOD", "DISABLED", stepNumber, degreesConversion(), "GOOD");
+            showTelemetry.updateTelemetry();
 
 
 
@@ -368,7 +399,13 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Position Change */
                 case 0:
+                    showTelemetry.setDriveStatus("ACTIVE");
+                    showTelemetry.updateTelemetry();
+
                     MovePosition();
+
+                    showTelemetry.setDriveStatus("IDLE");
+                    showTelemetry.updateTelemetry();
                     break;
 
 
@@ -391,7 +428,7 @@ public class MainAutonomousLinear extends LinearOpMode {
                         if(stonePos == 4) stonePos = 1;
 
                         if(goalLibrary[stepNumber][1] == 1){ //for blue side
-                            switch(stonePos){
+                            switch(stonePos) {
                                 case 0: //bridge
 
                                     MoveOdomPosition(17.0d, 17.0d); /*change this */
@@ -526,11 +563,7 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                     //MAYBE INTAKE HERE:
                 case 3:
-                    intake_wheel_left.setPower(1);
-                    intake_wheel_right.setPower(1);
-                    sleep(2000);
-                    intake_wheel_left.setPower(0);
-                    intake_wheel_right.setPower(0);
+                    intake();
                     break;
 
 
@@ -545,7 +578,6 @@ public class MainAutonomousLinear extends LinearOpMode {
                     break;
             }
             stepNumber++;
-            telemetry.update();
 
 
 

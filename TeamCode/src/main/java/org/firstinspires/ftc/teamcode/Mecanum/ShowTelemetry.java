@@ -3,13 +3,17 @@ package org.firstinspires.ftc.teamcode.Mecanum;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.HardwareDeviceHealth;
 import org.firstinspires.ftc.robotcore.external.Func;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class ShowTelemetry {
 
     private Telemetry telemetry; //local telemetry
+    private OpMode opMode;
 
-    public ShowTelemetry(Telemetry telem){
-        this.telemetry = telem;
+    public ShowTelemetry(OpMode aOpMode)
+    {
+        this.opMode = aOpMode;
+
     } //constructor
 
 
@@ -28,50 +32,42 @@ public class ShowTelemetry {
 
     public void startTelemetry(){
 
-        telemetry.addData("Drive Base Status:", new Func<String>(){
+        opMode.telemetry.addData("Drive Base Status:", new Func<String>(){
             @Override public String value() {
                 return driveStatusV;
             }
         });
 
-        telemetry.addData("Vision Testing Status:", new Func<String>(){
+        opMode.telemetry.addData("Vision Testing Status:", new Func<String>(){
             @Override public String value(){
                 return visionStatusV;
             }
         });
 
-        telemetry.addData("Current Step Number:", new Func<Integer>(){
+        opMode.telemetry.addData("Current Step Number:", new Func<Integer>(){
             @Override
             public Integer value() {
                 return stepNumbV;
             }
         });
 
-        telemetry.addData("Current Heading:", new Func<Double>(){
+        opMode.telemetry.addData("Current Heading:", new Func<Double>(){
             @Override
             public Double value() {
                 return currentHeadingV;
             }
         });
 
-        telemetry.addData("Robot Health", new Func<String>(){
+        opMode.telemetry.addData("Robot Health", new Func<String>(){
             @Override public String value() {
                 return robotHealthV;
             }
         });
 
 
-        telemetry.update();
+        opMode.telemetry.update();
     }
 
-    public void massTelemetryUpdate(String drive, String vision, int step, double heading, String health){
-        setDriveStatus(drive);
-        setVisionStatus(vision);
-        setStepNumbV(step);
-        setCurrentHeadingV(heading);
-        setRobotHealth(health);
-        updateTelemetry();
-    }
 
     public void updateTelemetry(){
         telemetry.update();
