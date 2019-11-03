@@ -27,7 +27,7 @@ public class BlueLoadingZone extends LinearOpMode {
     //public Servo    claw   = null;
     //public DcMotor slide = null;
     //public DcMotor main_arm = null;
-    //public WebcamName webcam = null;
+    public WebcamName webcam = null;
 
 
 
@@ -138,9 +138,9 @@ public class BlueLoadingZone extends LinearOpMode {
         right_drive = hardwareMap.get(DcMotor.class, "rightDrive");
         //main_arm = hardwareMap.get(DcMotor.class, "main_arm");
         //slide = hardwareMap.get(DcMotor.class, "slide");
-        //webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        //blockPosBlue.blueInit(webcam);
+        blockPosBlue.blueInit(webcam);
 
 //set target position, power, set run to position, wait for drive
 
@@ -154,8 +154,10 @@ public class BlueLoadingZone extends LinearOpMode {
 
         moveDrive(1f,3);
 
-        /*
-        switch (blockPosBlue) {
+
+        int skystonePos;
+        skystonePos = blockPosBlue.visionTest();
+        switch (skystonePos) {
             case 0:
                 turnDrive("ccw", 0.5f, 90);
                 moveDrive(1f,3.5f);
@@ -167,7 +169,8 @@ public class BlueLoadingZone extends LinearOpMode {
                 break;
             case 2:
                 break;
-        }*/
+        }
+
         /**
         moveDrive(0.7f, 47);
         //claw.setPosition(0.5);
