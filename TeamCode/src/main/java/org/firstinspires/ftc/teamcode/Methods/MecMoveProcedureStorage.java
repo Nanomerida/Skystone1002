@@ -16,16 +16,16 @@ public class MecMoveProcedureStorage {
     //The HashMap with the Mecanum movement procedures.
 
 
-    private HashMap<String, int[]> mecanum = new HashMap<String, int[]>();
+    private HashMap<String, float[]> mecanum = new HashMap<String, float[]>();
 
     //Constructor
     public MecMoveProcedureStorage(){
-        mecanum.put("forward", new int[] {1, 1, 1, 1}); //forward
-        mecanum.put("backward", new int[] {-1, -1, -1, -1} ); //backward
-        mecanum.put("strafeL", new int[] {-1, 1, 1, -1}); //strafe left
-        mecanum.put("strafeR", new int[] {1, -1, -1, 1}); //strafe right
-        mecanum.put("rotateCC", new int[] {1, 1, -1, -1}); //rotate clockwise
-        mecanum.put("rotateCCW", new int[] {-1, -1, 1, 1}); //rotate counter-clockwise
+        mecanum.put("forward", new float[] {0.5f, 0.5f, 0.5f, 0.5f}); //forward
+        mecanum.put("backward", new float[] {-0.5f, -0.5f, -0.5f, -0.5f} ); //backward
+        mecanum.put("strafeL", new float[] {-0.5f, 0.5f, 0.5f, -0.5f}); //strafe left
+        mecanum.put("strafeR", new float[] {0.5f, -0.5f, -0.5f, 0.5f}); //strafe right
+        mecanum.put("rotateCC", new float[] {0.5f, 0.5f, -0.5f, -0.5f}); //rotate clockwise
+        mecanum.put("rotateCCW", new float[] {-0.5f, -0.5f, 0.5f, 0.5f}); //rotate counter-clockwise
 
     }
 
@@ -34,7 +34,7 @@ public class MecMoveProcedureStorage {
 
 
     //The method that is called in other classes to use the HashMap
-    public HashMap<String, int[]> getMecanum() {
+    public HashMap<String, float[]> getMecanum() {
         return mecanum;
     }
 

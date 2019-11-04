@@ -256,7 +256,7 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
     //Gets the HasMap of mecanum movement procedures
-    private HashMap<String, int[]> mecanum = procedures.getMecanum();
+    private HashMap<String, float[]> mecanum = procedures.getMecanum();
 
     //Creates list to hold motors
     private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();

@@ -4,13 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-
+import org.firstinspires.ftc.teamcode.Methods.MecMoveProcedureStorage;
+import java.util.HashMap;
 
 @TeleOp(name = "TeleOpMain", group="TeleOp")
 
 public class TeleOpMain extends OpMode {
 
+    MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
+    private HashMap<String, float[]> mecanum = procedures.getMecanum();
 
     public DcMotor left_front_drive = null;
     public DcMotor left_back_drive = null;
@@ -22,10 +26,9 @@ public class TeleOpMain extends OpMode {
 
     public float[] m_v_mult(float[][] m, float[] v) {
         float[] out = new float[4];
-        out[0] = v[0] * m[0][0] + v[1] * m[1][0] + v[2] * m[2][0];
-        out[1] = v[0] * m[0][1] + v[1] * m[1][1] + v[2] * m[2][1];
-        out[2] = v[0] * m[0][2] + v[1] * m[1][2] + v[2] * m[2][2];
-        out[3] = v[0] * m[0][3] + v[1] * m[1][3] + v[2] * m[2][3];
+        for (int i = 0; i < 4; i++) {
+            out[i] = v[i] * m[0][i] + v[1] * m[1][i] + v[2] * m[2][i];
+        }
         return out;
     }
 
@@ -50,6 +53,9 @@ public class TeleOpMain extends OpMode {
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         lift_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
+        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
 
     }
 
@@ -82,9 +88,9 @@ public class TeleOpMain extends OpMode {
         float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x};
         float[] outputs;
 
-        float[] forward = {1, 1, 1, 1};
-        float[] right = {-1, 1, -1, 1};
-        float[] c_turn = {-1, -1, 1, 1};
+        float[] forward = mecanum.get("forward");
+        float[] right = mecanum.get("strafeR");
+        float[] c_turn = mecanum.get("turnCC");
 
         float[][] matrix = {forward, right, c_turn};
 

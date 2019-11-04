@@ -5,6 +5,8 @@ import static java.lang.Math.abs;
 import org.firstinspires.ftc.teamcode.OldCode.AutonomousCode;
 import org.firstinspires.ftc.teamcode.Variables.Reference;
 
+import java.util.HashMap;
+
 public class GeneralMethods  implements MecanumMovement{
 
     public GeneralMethods(){
@@ -12,11 +14,13 @@ public class GeneralMethods  implements MecanumMovement{
     }
     AutonomousCode heading = new AutonomousCode();
     Reference vars = new Reference();
+    MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
+    private HashMap<String, float[]> mecanum = procedures.getMecanum();
 
     // Position change method for mecanun
     public double[] PositionChange(double Xg, double Xa, double Yg, double Ya) { /**/
-        double[] MoveYBasePower = {1.0000d, 1.0000d, 1.0000d, 1.0000d};                             //Base Motor Power for Y movement
-        double[] MoveXBasePower = {1.0000d, -1.0000d, -1.0000d, 1.0000};                            //Base Motor Power for X movement
+        float[] MoveYBasePower = mecanum.get("forward");                             //Base Motor Power for Y movement
+        float[] MoveXBasePower = mecanum.get("strafeR");                            //Base Motor Power for X movement
         Yg -= Ya;
         Xg -= Xa;
         Yg /= 144;
@@ -35,7 +39,7 @@ public class GeneralMethods  implements MecanumMovement{
     //Angle change method for mecanum
     public double[] AngleChange(double thetaG) { /**/
         double thetaA = heading.degreesConversion();
-        double[] TurnBasePower = {1.0000d, -1.0000d, 1.0000d, -1.0000d};
+        float[] TurnBasePower = mecanum.get("turnCC");
         thetaA -= thetaG;
         double[] motorPower = new double[4];
         for(int i = 0; i < 4; i++) {
