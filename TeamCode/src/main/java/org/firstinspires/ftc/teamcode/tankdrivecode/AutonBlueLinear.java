@@ -157,7 +157,7 @@ public class AutonBlueLinear extends LinearOpMode {
 
         int skystonePos = 4;
 
-        blockPosBlue.blueInit(); //sets up vuforia
+        //blockPosBlue.blueInit(); //sets up vuforia
 
 
         // MORE IMU STUFF

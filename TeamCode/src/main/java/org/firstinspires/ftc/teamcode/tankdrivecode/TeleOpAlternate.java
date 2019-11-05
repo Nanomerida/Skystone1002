@@ -105,7 +105,6 @@ public class TeleOpAlternate extends OpMode {
             claw.setPosition(0.0);
         }*/
 
-
         // update prevX
         prevX = gamepad1.x;
     }

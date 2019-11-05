@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.tankdrivecode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -11,9 +11,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.teamcode.Variables.Reference;
-import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
 
 
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
@@ -27,18 +27,18 @@ public class BlueLoadingZone extends LinearOpMode {
     //public Servo    claw   = null;
     //public DcMotor slide = null;
     //public DcMotor main_arm = null;
-    public WebcamName webcam = null;
+    //public WebcamName webcam = null;
 
 
 
 
 
-    static final double ROBOT_WHEEL_DIST_INCHES = 14.3f;     // distance from center of robot to wheels
-    static final double COUNTS_PER_WHEEL_REV = 288;    // eg: TETRIX Motor Encoder
-    static final double WHEEL_DIAMETER_MM = 88.9;     // For figuring circumference
-    static final float COUNTS_PER_INCH = 2.9452f;
-    static final double DRIVE_SPEED = 0.6;
-    static final double TURN_SPEED = 0.5;
+    static final double ROBOT_WHEEL_DIST_INCHES = 5.5;     // distance from center of robot to wheels
+    static final double COUNTS_PER_WHEEL_REV = 2240;    // eg: TETRIX Motor Encoder
+    static final double WHEEL_DIAMETER_INCHES = 3.75;     // For figuring circumference
+    //static final double WHEEL_CIRCUMFERENCE = (WHEEL_DIAMETER_INCHES) * PI;
+    static final double WHEEL_CIRCUMFERENCE = 11.780972451f;
+    static final double COUNTS_PER_TICK = ((WHEEL_CIRCUMFERENCE)/(COUNTS_PER_WHEEL_REV));
 
 
 
@@ -46,7 +46,7 @@ public class BlueLoadingZone extends LinearOpMode {
 
     /* Other Variables */
     public static final double degreesToRadians = 180.0 / Math.PI;
-    private VuforiaBlue blockPosBlue = new VuforiaBlue();
+    //private VuforiaBlue blockPosBlue = new VuforiaBlue();
     private ElapsedTime runtime = new ElapsedTime();
     private Reference ref = new Reference();
     public static final double SERVODEGREES = 0.005;
@@ -74,24 +74,21 @@ public class BlueLoadingZone extends LinearOpMode {
 
         resetDrive();
 
-
-        left_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-        right_drive.setTargetPosition(round(inches / COUNTS_PER_INCH));
-
-        //FYI: might go after setPower
-        setRunToPosition();
+        left_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_TICK));
+        right_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_TICK));
 
         left_drive.setPower(power);
         right_drive.setPower(power);
 
-
-
+        setRunToPosition();
 
         waitForDrive();
 
+        left_drive.setPower(0);
+        right_drive.setPower(0);
     }
 
-    public void turnDrive(String direction, double power, double degrees) {
+   /* public void turnDrive(String direction, double tpower, double degrees) {
 
         String cc = "cw";
 
@@ -101,27 +98,45 @@ public class BlueLoadingZone extends LinearOpMode {
 
         if(direction.equals(cc)){
             speedRight = -1.0f;
+            speedLeft = 0f;
         }
         else{
             speedLeft = -1.0f;
+            speedRight = 0f;
         }
 
         resetDrive();
 
-        left_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
-        right_drive.setTargetPosition((int) round(inches / COUNTS_PER_INCH));
+        left_drive.setTargetPosition((int) round(degrees / COUNTS_PER_TICK));
+        right_drive.setTargetPosition((int) round(degrees / COUNTS_PER_TICK));
 
         //set desired power
-        left_drive.setPower(power * speedLeft);
-        right_drive.setPower(power * speedRight);
+        left_drive.setPower(tpower * speedLeft);
+        right_drive.setPower(tpower * speedRight);
+        setRunToPosition();
+
+        waitForDrive();
+
+        left_drive.setPower(0);
+        right_drive.setPower(0);
+    }*/
+
+    public void turnDrive(double tpower, double degrees) {
+        resetDrive();
+
+        left_drive.setTargetPosition(0);
+        right_drive.setTargetPosition((int) round(WHEEL_CIRCUMFERENCE/(720/(degrees+9.85)) / COUNTS_PER_TICK));//100.00 is SLIGHTLY too much. 9.25 is too little Like, it looks perfect, but after 4 rotations...
+
+        left_drive.setPower(0);
+        right_drive.setPower(tpower);
 
         setRunToPosition();
 
         waitForDrive();
 
-
+        left_drive.setPower(0);
+        right_drive.setPower(0);
     }
-
 
     //IMU STUFF
     BNO055IMU imu;
@@ -138,23 +153,20 @@ public class BlueLoadingZone extends LinearOpMode {
         right_drive = hardwareMap.get(DcMotor.class, "rightDrive");
         //main_arm = hardwareMap.get(DcMotor.class, "main_arm");
         //slide = hardwareMap.get(DcMotor.class, "slide");
-        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        //webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        blockPosBlue.blueInit(webcam);
+        //blockPosBlue.blueInit(webcam);
 
 //set target position, power, set run to position, wait for drive
 
 
         waitForStart();
-        /**sleep(10000);
-        //line up robot to left line of foam tile
-        moveDrive(1.0f, 26);*/
 
+        //moveDrive(0.7f,20);
 
+        turnDrive(0.3f,90);
 
-        moveDrive(1f,3);
-
-
+/*
         int skystonePos;
         skystonePos = blockPosBlue.visionTest();
         switch (skystonePos) {
@@ -170,7 +182,7 @@ public class BlueLoadingZone extends LinearOpMode {
             case 2:
                 break;
         }
-
+*/
         /**
         moveDrive(0.7f, 47);
         //claw.setPosition(0.5);
