@@ -41,7 +41,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 
-
 public class VuforiaBlue {
 
     private ElapsedTime searchTime = new ElapsedTime(0);
@@ -69,12 +68,14 @@ public class VuforiaBlue {
 
 
 
+
+
     /** This method initiates vuforia. Make sure to pass a webcam object
      *
      * @param webcamName The webcam object
      * */
     public void blueInit(WebcamName webcamName) {
-
+        ;
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -135,6 +136,7 @@ public class VuforiaBlue {
             skystonePosition = 2;
         } catch (NullPointerException e) {
             skystonePosition = 4;
+
         }
 
         // Disable Tracking when we are done;

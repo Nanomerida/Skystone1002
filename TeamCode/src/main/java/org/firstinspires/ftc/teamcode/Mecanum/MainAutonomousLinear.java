@@ -43,7 +43,8 @@ public class MainAutonomousLinear extends LinearOpMode {
     GeneralMethods methods = new GeneralMethods();
     MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
     private ElapsedTime timer = new ElapsedTime(0);
-    Telemetry telem;
+    private RobotState robotState = new RobotState();
+
 
 
 
@@ -54,7 +55,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     public DcMotor  left_y_encoder = null;
     public DcMotor  right_y_encoder = null;
     public DcMotor  x_encoder = null;
-    public DcMotor  slide = null;
+    public DcMotor  lift = null;
     public CRServo intake_wheel_left = null;
     public CRServo intake_wheel_right = null;
     public WebcamName webcam = null;
@@ -63,7 +64,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     //Choose a goal library. Options are:
     //Blue side, skystone : "blue", "skystone"
     //Blue side, foundation: "blue", "foundation"
-    //Red side, skystoen: "red", "skystone"
+    //Red side, skystone: "red", "skystone"
     //Red side, foundation: "red", "foundation"
     private final String[] taskChoose = {"blue", "skystone"};
 
@@ -128,11 +129,17 @@ public class MainAutonomousLinear extends LinearOpMode {
     }
 
     private void intake(){
+        robotState.setIntakeState(RobotState.IntakeState.ACTIVE);
+        showTelemetry.updateTelem.updateTelemetry();
+
         intake_wheel_left.setPower(1);
         intake_wheel_right.setPower(1);
         sleep(2000);
         intake_wheel_left.setPower(0);
         intake_wheel_right.setPower(0);
+
+        robotState.setIntakeState(RobotState.IntakeState.IDLE);
+        showTelemetry.updateTelem.updateTelemetry();
     }
 
     private void resetDrive(){
@@ -165,15 +172,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         }
     }
 
-    public void setRunToPosition(){
-        for(DcMotor motor : driveMotors){
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-        /*left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION); */
-    }
 
     public void setRunUsingEncoder(){
         stopDrive();
@@ -195,6 +193,9 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
     private void MovePosition(){
+        robotState.setDriveState(RobotState.DriveState.MOVING);
+        showTelemetry.updateTelem.updateTelemetry();
+        //Use odometry to move
         do {
             double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
             goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
@@ -205,10 +206,14 @@ public class MainAutonomousLinear extends LinearOpMode {
             previousPos[1] = actualPos[1];
         }
         while(!goalReachedPos);
+        robotState.setDriveState(RobotState.DriveState.IDLE);
+        showTelemetry.updateTelem.updateTelemetry();
         stopDrive();
     }
 
     private void MoveOdomPosition(double GoalX, double GoalY){
+
+        //Use odometry to move to a given position
         do {
             double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
             goalReachedPos = methods.GoalCheckPos(actualPos[0], GoalX, actualPos[1], GoalY); //check if we are at position
@@ -223,6 +228,9 @@ public class MainAutonomousLinear extends LinearOpMode {
     }
 
     private void MoveAngle(){
+        robotState.setDriveState(RobotState.DriveState.MOVING);
+        showTelemetry.updateTelem.updateTelemetry();
+        //Use odometry to rotate
         do {
             boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
             if (goalReachedAngle) {
@@ -230,8 +238,11 @@ public class MainAutonomousLinear extends LinearOpMode {
             }
         }
         while(!goalReachedAngle);
+        robotState.setDriveState(RobotState.DriveState.IDLE);
+        showTelemetry.updateTelem.updateTelemetry();
         stopDrive();
     }
+
 
 
     //0 is a position change in format {0, x, y}
@@ -242,9 +253,8 @@ public class MainAutonomousLinear extends LinearOpMode {
     //others as needed
 
 
-    private static int stepNumber = 0;
+    private static int stepNumber = 1;
     private static double[] previousPos; //define starting position here. May change based on placement.
-    public static final double servoDegreesConst = 0.005;
     private final float COUNTS_PER_INCH = 2.9452f; /**Needs to be updated!!!!!!! */
     private static int stonePos;
     private static int previousTicksYLeft = 0;
@@ -261,7 +271,8 @@ public class MainAutonomousLinear extends LinearOpMode {
     //Creates list to hold motors
     private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();
 
-    ShowTelemetry showTelemetry = new ShowTelemetry(this);
+    ShowTelemetry showTelemetry = new ShowTelemetry(this, robotState);
+
 
     private double[][] goalLibrary;
 
@@ -271,17 +282,18 @@ public class MainAutonomousLinear extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+
         //Load Goal Library.
         showTelemetry.telemetryMessage("Goal Library:", ("color:" + taskChoose[0] + "task" + taskChoose[1]));
-        showTelemetry.updateTelemetry();
+        showTelemetry.updateTelem.updateTelemetry();
         try {
             GoalLibraries library = new GoalLibraries("blue", "skystone");
             showTelemetry.telemetryMessage("Goal Library:", "Successfully Loaded");
-            showTelemetry.updateTelemetry();
+            showTelemetry.updateTelem.updateTelemetry();
             goalLibrary = library.choosenLibrary;
-        } catch(IllegalArgumentException e) {
-            showTelemetry.telemetryMessage("Someone misspelled the goals", "this really isn't hard...");
-            showTelemetry.updateTelemetry();
+        } catch(NoFoundGoalLibraryException e) {
+            showTelemetry.telemetryMessage("Someone misspelled the word:", e.toString());
+            showTelemetry.updateTelem.updateTelemetry();
 
             waitForStart();
 
@@ -289,9 +301,10 @@ public class MainAutonomousLinear extends LinearOpMode {
                 idle();
             }
         }
+        previousPos[0] = goalLibrary[0][0];
+        previousPos[1] = goalLibrary[0][1];
 
 
-        showTelemetry.startTelemetry();
 
         //Initialize motors
         left_front_drive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
@@ -300,7 +313,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_back_drive = hardwareMap.get(DcMotor.class, "rightBackDrive");
 
         //Arm
-        slide = hardwareMap.get(DcMotor.class, "slide_motor");
+        lift = hardwareMap.get(DcMotor.class, "slide_motor");
 
         left_y_encoder = hardwareMap.get(DcMotor.class, "left_y_encoder");
         right_y_encoder = hardwareMap.get(DcMotor.class, "right_y_encoder");
@@ -323,7 +336,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         left_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -341,6 +354,8 @@ public class MainAutonomousLinear extends LinearOpMode {
         driveMotors.add(left_back_drive);
         driveMotors.add(right_front_drive);
         driveMotors.add(right_back_drive);
+
+        setRunUsingEncoder();
 
 
 
@@ -368,16 +383,24 @@ public class MainAutonomousLinear extends LinearOpMode {
         previousPos[0] = goalLibrary[0][1];
 
 
+        //Ready up
+        robotState.setDriveState(RobotState.DriveState.IDLE);
+        robotState.setIntakeState(RobotState.IntakeState.IDLE);
+        robotState.setLiftState(RobotState.LiftState.IDLE);
+        robotState.setVisionState(RobotState.VisionState.DISABLED);
+
+        //Ready for launch!!!!!
+        robotState.setMainState(RobotState.MainState.IDLE);
+        showTelemetry.startTelemetry();
+        showTelemetry.updateTelem.updateTelemetry();
+
+
         waitForStart();
 
 
 
+        robotState.setMainState(RobotState.MainState.ACTIVE);
 
-
-        /*DO NOT DELETE!!!!!!!!!!!! If deleted, robot will automatically navigate to opponent's Capstone!!!!! */
-
-        showTelemetry.telemetryMessage("Glitches in MATRIX detected:", 0);
-        showTelemetry.updateTelemetry();
 
 
         //HERE IS WHERE WE CAN PUT THE ORIGINAL OP MODE MECANUM CODE LOOP().
@@ -386,7 +409,8 @@ public class MainAutonomousLinear extends LinearOpMode {
 
         while(opModeIsActive()){
 
-            showTelemetry.updateTelemetry();
+            showTelemetry.updateTelem.setStepNumbV(stepNumber);
+            showTelemetry.updateTelem.updateTelemetry();
 
 
 
@@ -399,19 +423,25 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Position Change */
                 case 0:
-                    showTelemetry.setDriveStatus("ACTIVE");
-                    showTelemetry.updateTelemetry();
+                    robotState.setDriveState(RobotState.DriveState.MOVING);
+                    showTelemetry.updateTelem.updateTelemetry();
 
                     MovePosition();
 
-                    showTelemetry.setDriveStatus("IDLE");
-                    showTelemetry.updateTelemetry();
+                    robotState.setDriveState(RobotState.DriveState.IDLE);
+                    showTelemetry.updateTelem.updateTelemetry();
                     break;
 
 
                 /* Angle Change */
                 case 1:
+                    robotState.setDriveState(RobotState.DriveState.MOVING);
+                    showTelemetry.updateTelem.updateTelemetry();
+
                     MoveAngle();
+
+                    robotState.setDriveState(RobotState.DriveState.IDLE);
+                    showTelemetry.updateTelem.updateTelemetry();
                     break;
 
 
@@ -419,15 +449,20 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Vuforia.java :( ugh... */
                 case 2:
-                        showTelemetry.setVisionStatus("Searching");
-                        showTelemetry.updateTelemetry();
+                        robotState.setVisionState(RobotState.VisionState.SEARCHING);
+                        showTelemetry.updateTelem.updateTelemetry();
 
-                        if (goalLibrary[stepNumber][1] == 1) {
-                            stonePos = blockPosBlue.visionTest();
+                        stonePos = blockPosBlue.visionTest();
+                        if(stonePos == 4) {
+                            stonePos = 1;
+                            robotState.setVisionState(RobotState.VisionState.ERROR);
+                            showTelemetry.updateTelem.updateTelemetry();
                         }
-                        if(stonePos == 4) stonePos = 1;
-
+                        robotState.setVisionState(RobotState.VisionState.FOUND);
+                        showTelemetry.updateTelem.updateTelemetry();
                         if(goalLibrary[stepNumber][1] == 1){ //for blue side
+                            robotState.setVisionState(RobotState.VisionState.DISABLED);
+                            showTelemetry.updateTelem.updateTelemetry();
                             switch(stonePos) {
                                 case 0: //bridge
 
@@ -491,6 +526,8 @@ public class MainAutonomousLinear extends LinearOpMode {
                         }
 
                         else{ //Red side
+                            robotState.setVisionState(RobotState.VisionState.DISABLED);
+                            showTelemetry.updateTelem.updateTelemetry();
                             switch (stonePos){
                                 case 0:
 
@@ -567,18 +604,40 @@ public class MainAutonomousLinear extends LinearOpMode {
                     break;
 
 
-                //SLIDE MOTOR:
+                //LIFT MOTOR UP:
                 case 4:
-                    slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    slide.setTargetPosition(120);
-                    slide.setPower(0.4);
-                    while(slide.isBusy()){
+                    robotState.setLiftState(RobotState.LiftState.MOVING_UP);
+                    showTelemetry.updateTelem.updateTelemetry();
+
+                    lift.setTargetPosition(1000);
+                    lift.setPower(0.5);
+                    lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    while(lift.isBusy()){
                         sleep(1);
                     }
+
+                    robotState.setLiftState(RobotState.LiftState.IDLE);
+                    showTelemetry.updateTelem.updateTelemetry();
+                    break;
+
+                //LIFT MOTOR DOWN:
+                case 5:
+                    break;
+
+
+                //WAIT:
+                case 6:
+                    robotState.setMainState(RobotState.MainState.IDLE);
+                    showTelemetry.updateTelem.updateTelemetry();
+
+                    //Wait for indicated time
+                    sleep((long) goalLibrary[stepNumber][1]);
+
+                    robotState.setMainState(RobotState.MainState.ACTIVE);
+                    showTelemetry.updateTelem.updateTelemetry();
                     break;
             }
             stepNumber++;
-
 
 
 

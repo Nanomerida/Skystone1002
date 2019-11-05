@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.Variables;
 
 
 
-import static java.lang.Math.cos; //Ryan's Math Stuff
-import static java.lang.Math.sin;
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 /** This class contains the goal libraries for each possible route of the Autonomous code (with mecanum).
@@ -12,7 +9,7 @@ import static java.lang.Math.abs;
  * The goal libraries are named separately, according to their corresponding location and general task on the
  * field. The goal libraries are labeled as follows, in the order {field side, task}.
  *
- * Red side, building zone, getting skystone: goalLibraryRBS
+ * Red side, building zone, moving foundation: goalLibraryRBF
  * Red side, loading zone, getting skystone: goalLibraryRLS
  * Blue side, building zone, moving foundation: goalLibraryBBF
  * Blue side, loading zone, getting skystone: goalLibraryBLS
@@ -23,31 +20,32 @@ public class GoalLibraries {
     //0 is a position change in format {0, x, y}
     //1 is an angle change in format {1, angle, 0}
     //2 is the vision test for skystone in format {2, 1 for red or 2 for blue, 0}
-    //3 is an arm change in format {3, arm power, claw head servo}
-    //4 is an claw change in format {4, open(0)/close(1) claw, 0}
-    //5 is a slide change.
+    //3 is an intake cycle
+    //4 is a lift change up
+    //5 is a lift change down
+    //6 is a wait method with the seconds as the second element
     //others as needed
 
 
-    public double[][] goalLibraryRBS = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    public double[][] goalLibraryRBF = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
-    public double[][] goalLibraryRLS = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    public double[][] goalLibraryRLS = {{0, 0, 0}, {6, 10000, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
     public double[][] goalLibraryBBF = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
-    public double[][] goalLibraryBLS = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+    public double[][] goalLibraryBLS = {{0, 0, 0}, {6, 10000, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
     public double[][] choosenLibrary;
 
 
-    /** Sets the goal library to the choosen goal.
+    /** Sets the goal library to the chosen goal.
      *
      *
      * @param color Either "red" or "blue"
      * @param task Either "skystone" or "foundation"
      * @throws IllegalArgumentException If you spell those things wrong, it's your fault.
      */
-    public GoalLibraries(String color, String task) throws IllegalArgumentException {
+    public GoalLibraries(String color, String task) throws NoFoundGoalLibraryException {
 
 
         if(color.equals("blue")){
@@ -66,7 +64,7 @@ public class GoalLibraries {
                 }
             }
             else{
-                throw new IllegalArgumentException();
+                throw new NoFoundGoalLibraryException(task);
             }
 
         }
@@ -79,19 +77,19 @@ public class GoalLibraries {
                 }
             }
             else if(task.equals("foundation")){
-                for(int i = 0; i < goalLibraryRBS.length; i++) {
-                    for (int j = 0; j < goalLibraryRBS[i].length; j++) {
-                        choosenLibrary[i][j] = goalLibraryRBS[i][j];
+                for(int i = 0; i < goalLibraryRBF.length; i++) {
+                    for (int j = 0; j < goalLibraryRBF[i].length; j++) {
+                        choosenLibrary[i][j] = goalLibraryRBF[i][j];
                     }
                 }
             }
             else {
-                throw new IllegalArgumentException();
+                throw new NoFoundGoalLibraryException(task);
             }
 
         }
         else {
-            throw new IllegalArgumentException();
+            throw new NoFoundGoalLibraryException(color);
         }
 
     }
