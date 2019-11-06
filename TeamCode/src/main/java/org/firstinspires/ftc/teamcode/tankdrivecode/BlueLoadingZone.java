@@ -34,10 +34,10 @@ public class BlueLoadingZone extends LinearOpMode {
 
 
     static final double ROBOT_WHEEL_DIST_INCHES = 5.5;     // distance from center of robot to wheels
-    static final double COUNTS_PER_WHEEL_REV = 2240;    // eg: TETRIX Motor Encoder
+    static final double COUNTS_PER_WHEEL_REV = 288;    // eg: TETRIX Motor Encoder
     static final double WHEEL_DIAMETER_INCHES = 3.75;     // For figuring circumference
     static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_INCHES * PI;
-    static final double COUNTS_PER_INCH = COUNTS_PER_WHEEL_REV / WHEEL_CIRCUMFERENCE;
+    static final double COUNTS_PER_INCH = COUNTS_PER_WHEEL_REV / WHEEL_CIRCUMFERENCE; // number of encoder ticks per inch circumference
 
 
 
@@ -121,15 +121,16 @@ public class BlueLoadingZone extends LinearOpMode {
     }*/
 
     public void turnDrive(double tpower, double degrees) {
-        resetDrive();
-
         double inches = (degrees * degreesToRadians) * ROBOT_WHEEL_DIST_INCHES;
 
-        left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
-        //right_drive.setTargetPosition((int) round(WHEEL_CIRCUMFERENCE/(720/(degrees+9.85)) / COUNTS_PER_TICK));//10.00 is SLIGHTLY too much. 9.25 is too little. Like, it looks perfect, but after 4 rotations...
-        right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
+        resetDrive();
 
-        left_drive.setPower(-tpower);
+//inches * COUNTS_PER_INCH
+        left_drive.setTargetPosition(-211);
+        //right_drive.setTargetPosition((int) round(WHEEL_CIRCUMFERENCE/(720/(degrees+9.85)) * COUNTS_PER_INCH));//10.00 is SLIGHTLY too much. 9.25 is too little. Like, it looks perfect, but after 4 rotations...
+        right_drive.setTargetPosition(211);
+
+        left_drive.setPower(tpower);
         right_drive.setPower(tpower);
 
         setRunToPosition();
@@ -164,9 +165,9 @@ public class BlueLoadingZone extends LinearOpMode {
 
         waitForStart();
 
-        moveDrive(0.7f,20);
+       // moveDrive(0.7f,5);
         turnDrive(0.3f,90);
-        moveDrive(0.7f,14);
+        //moveDrive(0.7f,14);
 
 /*
         int skystonePos;

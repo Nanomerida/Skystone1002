@@ -16,6 +16,12 @@ to travel 3 inches: 3/one_tick ---> (570.411316041)
 
 
 FYI: 570 moved it by 3 FEET, so divide by 12 ---> (47.5342763368)
+-------------------------------------------------------------------
+
+Circumference == diameter * PI
+
+Counts_per_inch == Counts_per_rev / Circumference
+
 */
 package org.firstinspires.ftc.teamcode.tankdrivecode;
 
