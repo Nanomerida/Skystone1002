@@ -122,9 +122,8 @@ public class MainAutonomousLinear extends LinearOpMode {
 
     private double degreesConversion(){
         double theta = this.angles.firstAngle;
-        if(theta < 0) {
-            theta += 360;
-        }
+        if(theta < 0) theta += 360;
+        if
         return theta;
     }
 
@@ -261,6 +260,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     private static int previousTicksX = 0;
     private static boolean goalReachedPos = false;
     private static boolean goalReachedAngle = false;
+    private static boolean redSide;
 
 
 
@@ -307,6 +307,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         }
         previousPos[0] = goalLibrary[0][0]; //sets the starting position for the robot
         previousPos[1] = goalLibrary[0][1];
+        if(goalLibrary[0][2] == 1) redSide = true;
 
 
 
