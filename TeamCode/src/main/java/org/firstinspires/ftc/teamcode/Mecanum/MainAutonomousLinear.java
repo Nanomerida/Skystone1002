@@ -278,7 +278,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         driveMotors.add(right_front_drive);
         driveMotors.add(right_back_drive);
 
-        blockPosBlue.blueInit();
         blockPosRed.redInit();
 
 
