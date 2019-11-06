@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardwareMaps;
 
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 /**
  * This is NOT an opmode.
@@ -31,20 +35,14 @@ public class HardwareMapMain {
     public DcMotor  left_back_drive  = null;
     public DcMotor  right_front_drive = null;
     public DcMotor  right_back_drive = null;
-    public DcMotor  main_arm     = null;
-    public DcMotor  slide = null;
-    public Servo    claw_level    = null;
-    public Servo    claw   = null;
-    public Servo    claw_rotate = null;
-    public Servo    front_servo = null;
+    public DcMotor  lift_motor = null;
+    public CRServo intake_wheel_left = null;
+    public CRServo intake_wheel_right = null;
 
-    private static final double START_POSITION_CLAW       =  0.0 ; //starting pose of main claw servo
-    private static final double START_POSITION_CLAW_LEVELER = 0.0; //starting pose of the claw leveler
-    private static final double START_POSITION_CLAW_ROTATER = 0.0;
-    private static final double START_POSITION_FRONT_SERVO =  0.0;
+
 
     /* local OpMode members. */
-    HardwareMap hwMap           =  null;
+    OpMode opMode;
 
     /* Constructor */
     public HardwareMapMain(){
@@ -52,37 +50,25 @@ public class HardwareMapMain {
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
+    public void init(OpMode aopMode) {
         // Save reference to Hardware map
-        hwMap = ahwMap;
+        opMode = aopMode;
 
         // Define and Initialize Motors
 
         //Drive
-        left_front_drive  = hwMap.get(DcMotor.class, "leftFrontDrive");
-        left_back_drive = hwMap.get(DcMotor.class, "leftBackDrive");
-        right_front_drive = hwMap.get(DcMotor.class, "rightFrontDrive");
-        right_back_drive = hwMap.get(DcMotor.class, "rightBackDrive");
+        left_front_drive  = opMode.hardwareMap.get(DcMotor.class, "leftFrontDrive");
+        left_back_drive = opMode.hardwareMap.get(DcMotor.class, "leftBackDrive");
+        right_front_drive = opMode.hardwareMap.get(DcMotor.class, "rightFrontDrive");
+        right_back_drive = opMode.hardwareMap.get(DcMotor.class, "rightBackDrive");
 
-        //Arm
-        slide = hwMap.get(DcMotor.class, "slide_motor");
-        main_arm    = hwMap.get(DcMotor.class, "main_arm");
-        claw_level = hwMap.get(Servo.class, "claw_leveler");
-        claw = hwMap.get(Servo.class, "claw");
-        claw_rotate = hwMap.get(Servo.class, "claw_rotate");
+        //Intake
+        intake_wheel_left = opMode.hardwareMap.get(CRServo.class, "intake_wheel_left");
+        intake_wheel_right = opMode.hardwareMap.get(CRServo.class, "intake_wheel_right");
 
-        //Front Servo
-        front_servo = hwMap.get(Servo.class, "front_servo");
+        //Lift
+        lift_motor = opMode.hardwareMap.get(DcMotor.class, "lift_motor");
 
-
-        // Set all motors to zero power
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
-
-        slide.setPower(0);
-        main_arm.setPower(0);
 
         //Reset ALL encoders
         left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -90,55 +76,15 @@ public class HardwareMapMain {
         right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        main_arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        // Define and initialize ALL installed servos.
-        claw_level.setPosition(START_POSITION_CLAW_LEVELER);
-        claw.setPosition(START_POSITION_CLAW);
-        claw_rotate.setPosition(START_POSITION_CLAW_ROTATER);
-        front_servo.setPosition(START_POSITION_FRONT_SERVO);
-    }
-
-    public void resetEncoders(){
-        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
-    public void setRunToPosition(){
-        left_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public void setRunWithEncoders(){
-        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
 
     public void stopDrive(){
         left_front_drive.setPower(0);
         left_back_drive.setPower(0);
         right_front_drive.setPower(0);
         right_back_drive.setPower(0);
-    }
-    public void stopArm(){
-        main_arm.setPower(0);
-    }
-    public void stopSlide(){
-        slide.setPower(0);
     }
 }

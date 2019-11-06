@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+
 import org.firstinspires.ftc.teamcode.Methods.MecMoveProcedureStorage;
 import java.util.HashMap;
 
@@ -44,7 +45,7 @@ public class TeleOpMain extends OpMode {
         lift_motor = hardwareMap.get(DcMotor.class, "lift_motor");
 
         intake_wheel_left = hardwareMap.get(CRServo.class, "intake_wheel_left");
-        intake_wheel_right = hardwareMap.get(CRServo.class, "intake");
+        intake_wheel_right = hardwareMap.get(CRServo.class, "intake_wheel_right");
 
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -56,6 +57,8 @@ public class TeleOpMain extends OpMode {
 
         right_front_drive.setDirection(DcMotor.Direction.REVERSE);
         right_back_drive.setDirection(DcMotor.Direction.REVERSE);
+
+        intake_wheel_right.setDirection(CRServo.Direction.REVERSE);
 
     }
 
@@ -84,6 +87,8 @@ public class TeleOpMain extends OpMode {
             lift_motor.setPower(0);
         }
 
+        intake_wheel_left.setPower(gamepad2.right_trigger);
+        intake_wheel_right.setPower(gamepad2.right_trigger);
 
         float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x};
         float[] outputs;

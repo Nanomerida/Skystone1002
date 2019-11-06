@@ -291,7 +291,9 @@ public class MainAutonomousLinear extends LinearOpMode {
             showTelemetry.telemetryMessage("Goal Library:", "Successfully Loaded");
             showTelemetry.updateTelem.updateTelemetry();
             goalLibrary = library.choosenLibrary;
-        } catch(NoFoundGoalLibraryException e) {
+        }
+        //Runs a scuffed opMode if no goal library can be loaded
+        catch(NoFoundGoalLibraryException e) {
             showTelemetry.telemetryMessage("Someone misspelled the word:", e.toString());
             showTelemetry.updateTelem.updateTelemetry();
 
@@ -301,7 +303,7 @@ public class MainAutonomousLinear extends LinearOpMode {
                 idle();
             }
         }
-        previousPos[0] = goalLibrary[0][0];
+        previousPos[0] = goalLibrary[0][0]; //sets the starting position for the robot
         previousPos[1] = goalLibrary[0][1];
 
 
@@ -312,9 +314,10 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_front_drive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         right_back_drive = hardwareMap.get(DcMotor.class, "rightBackDrive");
 
-        //Arm
+        //Lift
         lift = hardwareMap.get(DcMotor.class, "slide_motor");
 
+        //External encoders
         left_y_encoder = hardwareMap.get(DcMotor.class, "left_y_encoder");
         right_y_encoder = hardwareMap.get(DcMotor.class, "right_y_encoder");
         x_encoder = hardwareMap.get(DcMotor.class, "x_encoder");
@@ -325,19 +328,22 @@ public class MainAutonomousLinear extends LinearOpMode {
 
         //Webcam
         webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        //Initialize vuforia with webcam
         blockPosBlue.blueInit(webcam);
 
 
 
 
+        //Set up the drive base
+        left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        left_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        //reset the lift
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        //reset the external encoders
         left_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         x_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -345,7 +351,8 @@ public class MainAutonomousLinear extends LinearOpMode {
         left_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         right_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         x_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        
+
+        //reverse the right intake
         intake_wheel_right.setDirection(CRServo.Direction.REVERSE);
 
 
@@ -354,14 +361,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         driveMotors.add(left_back_drive);
         driveMotors.add(right_front_drive);
         driveMotors.add(right_back_drive);
-
-<<<<<<< Updated upstream
-        setRunUsingEncoder();
-
-=======
-        //blockPosBlue.blueInit();
-        blockPosRed.redInit();
->>>>>>> Stashed changes
 
 
 

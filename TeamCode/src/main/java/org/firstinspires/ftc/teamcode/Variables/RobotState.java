@@ -19,7 +19,7 @@ public class RobotState {
         DISABLED,
         SEARCHING,
         FOUND,
-        ERROR;
+        ERROR
     }
 
     public enum GyroState {
