@@ -255,7 +255,6 @@ public class MainAutonomousLinear extends LinearOpMode {
 
     private static int stepNumber = 1;
     private static double[] previousPos; //define starting position here. May change based on placement.
-    private final float COUNTS_PER_INCH = 2.9452f; /**Needs to be updated!!!!!!! */
     private static int stonePos;
     private static int previousTicksYLeft = 0;
     private static int previousTicksYRight = 0;
@@ -281,6 +280,9 @@ public class MainAutonomousLinear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        telemetry.addData("Start:", "telem");
+        telemetry.update();
 
 
         //Load Goal Library.
@@ -383,8 +385,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        previousPos[0] = goalLibrary[0][0];
-        previousPos[0] = goalLibrary[0][1];
 
 
         //Ready up
