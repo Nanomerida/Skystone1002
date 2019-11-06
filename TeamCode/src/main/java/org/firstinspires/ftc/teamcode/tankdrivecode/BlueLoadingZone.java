@@ -162,8 +162,7 @@ public class BlueLoadingZone extends LinearOpMode {
 
         waitForStart();
 
-        //moveDrive(0.7f,20);
-
+        moveDrive(0.7f,20);
         turnDrive(0.3f,90);
 
 /*
@@ -171,9 +170,8 @@ public class BlueLoadingZone extends LinearOpMode {
         skystonePos = blockPosBlue.visionTest();
         switch (skystonePos) {
             case 0:
-                turnDrive("ccw", 0.5f, 90);
-                moveDrive(1f,3.5f);
-                turnDrive("ccw",0.5f,90);
+                moveDrive(1f,14);
+                turnDrive(0.5f, 90);
                 //arm.setPower(1);
                 //claw.setPosition(-0.5);
                 break;
