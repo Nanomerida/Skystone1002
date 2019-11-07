@@ -34,10 +34,12 @@ public class BlueLoadingZone extends LinearOpMode {
 
 
     static final double ROBOT_WHEEL_DIST_INCHES = 5.5;     // distance from center of robot to wheels
-    static final double COUNTS_PER_WHEEL_REV = 288;    // eg: TETRIX Motor Encoder
+    static final double COUNTS_PER_WHEEL_REV = 288;
+    //static final double COUNTS_PER_WHEEL_REV = 2240;// eg: TETRIX Motor Encoder
     static final double WHEEL_DIAMETER_INCHES = 3.75;     // For figuring circumference
     static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_INCHES * PI;
     static final double COUNTS_PER_INCH = COUNTS_PER_WHEEL_REV / WHEEL_CIRCUMFERENCE; // number of encoder ticks per inch circumference
+    //static final double COUNTS_PER_INCH =  ((WHEEL_CIRCUMFERENCE)/(COUNTS_PER_WHEEL_REV));
 
 
 
@@ -75,6 +77,9 @@ public class BlueLoadingZone extends LinearOpMode {
 
         left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
+
+        //left_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        //right_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
 
         left_drive.setPower(power);
         right_drive.setPower(power);
@@ -126,11 +131,16 @@ public class BlueLoadingZone extends LinearOpMode {
         resetDrive();
 
 //inches * COUNTS_PER_INCH
-        left_drive.setTargetPosition(-211);
+        //left_drive.setTargetPosition(-211);
         //right_drive.setTargetPosition((int) round(WHEEL_CIRCUMFERENCE/(720/(degrees+9.85)) * COUNTS_PER_INCH));//10.00 is SLIGHTLY too much. 9.25 is too little. Like, it looks perfect, but after 4 rotations...
-        right_drive.setTargetPosition(211);
+        //right_drive.setTargetPosition(211);
 
-        left_drive.setPower(tpower);
+        left_drive.setTargetPosition(0);
+        right_drive.setTargetPosition((int) round((WHEEL_CIRCUMFERENCE/(720/(degrees+9.85))) * COUNTS_PER_INCH));
+        ///right_drive.setTargetPosition((int) round(WHEEL_CIRCUMFERENCE/(720/(degrees+9.85)) / COUNTS_PER_INCH));
+
+        //left_drive.setPower(-tpower);
+        left_drive.setPower(0);
         right_drive.setPower(tpower);
 
         setRunToPosition();
