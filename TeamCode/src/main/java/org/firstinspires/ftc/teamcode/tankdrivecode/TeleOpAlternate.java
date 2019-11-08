@@ -90,8 +90,12 @@ public class TeleOpAlternate extends OpMode {
         else if(clawPowerClose != 0.0) claw.setPower(clawPowerClose);
         else claw.setPower(0);
 
-
-
+//HAHA Ryan
+/*
+        if(gamepad2.right_trigger) claw.setPower(clawPowerOpen);
+        else if(gamepad2.left_trigger) claw.setPower(clawPowerClose);
+        else claw.setPower(0);
+*/
 
         // update prevX
         prevX = gamepad1.x;

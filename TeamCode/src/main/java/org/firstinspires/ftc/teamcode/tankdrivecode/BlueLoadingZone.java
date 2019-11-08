@@ -174,7 +174,7 @@ public class BlueLoadingZone extends LinearOpMode {
 
        // moveDrive(0.7f,5);
         turnDrive(0.3f,90);
-        //moveDrive(0.7f,14);
+        moveDrive(0.7f,5);
 
 /*
         int skystonePos;
