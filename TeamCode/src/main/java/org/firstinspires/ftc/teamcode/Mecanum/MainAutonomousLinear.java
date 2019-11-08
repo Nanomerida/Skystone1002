@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -29,6 +28,12 @@ import static java.lang.Math.sin;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.ExpansionHubMotor;
+import org.openftc.revextensions2.RevBulkData;
+
+
+
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -42,7 +47,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     Reference constants = new Reference();
     GeneralMethods methods = new GeneralMethods();
     MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
-    private ElapsedTime timer = new ElapsedTime(0);
+    private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     private RobotState robotState = new RobotState();
 
 
@@ -52,13 +57,17 @@ public class MainAutonomousLinear extends LinearOpMode {
     public DcMotor  left_back_drive  = null;
     public DcMotor  right_front_drive = null;
     public DcMotor  right_back_drive = null;
-    public DcMotor  left_y_encoder = null;
-    public DcMotor  right_y_encoder = null;
-    public DcMotor  x_encoder = null;
+    //public DcMotor  left_y_encoder = null;
+    //public DcMotor  right_y_encoder = null;
+    //public DcMotor  x_encoder = null;
     public DcMotor  lift = null;
     public CRServo intake_wheel_left = null;
     public CRServo intake_wheel_right = null;
     public WebcamName webcam = null;
+    ExpansionHubEx expansionHub4;
+    RevBulkData bulkData;
+    ExpansionHubMotor left_y_encoder, right_y_encoder, x_encoder = null;
+
 
 
     //Choose a goal library. Options are:
@@ -78,9 +87,11 @@ public class MainAutonomousLinear extends LinearOpMode {
         double[] CurrentPosition = new double[2];
         double[] XEncoderPosition = new double[2];
         double[] YEncoderPosition = new double[2];
-        double ConvRate = (PI * 90) / 208076.8;
-        double[] WeirdOrlandoMathsX = {sin(degreesConversion()), cos(degreesConversion())};
-        double[] WeirdOrlandoMathsY = {cos(degreesConversion()), sin(degreesConversion())};
+        double ConvRate = (PI * 90) / 208076.8; /** Change this */
+        double theta = degreesConversion();
+        double[] WeirdOrlandoMathsX = {sin(theta), cos(theta)};
+        double[] WeirdOrlandoMathsY = {cos(theta), sin(theta)};
+        bulkData = expansionHub4.getBulkInputData();
         int XClicks = ticksX();
         int YClicks = ((ticksLeftY() + ticksRightY()) / 2);
         for(int i = 0; i < 2; i++) {
@@ -96,34 +107,36 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
     private int ticksLeftY(){
-        int deltaTicks;
-        deltaTicks = (previousTicksYLeft - left_y_encoder.getCurrentPosition());
+        int deltaTicks = (previousTicksYLeft - bulkData.getMotorCurrentPosition(left_y_encoder));
         return deltaTicks;
     }
 
     private int ticksRightY(){
-        int deltaTicks;
-        deltaTicks = (previousTicksYRight - right_y_encoder.getCurrentPosition());
+        int deltaTicks = (previousTicksYRight - bulkData.getMotorCurrentPosition(right_y_encoder));
         return deltaTicks;
     }
 
     private int ticksX(){
-        int deltaTicks;
-        deltaTicks = (previousTicksX - x_encoder.getCurrentPosition());
+        int deltaTicks = (previousTicksX - bulkData.getMotorCurrentPosition(x_encoder));
         return deltaTicks;
     }
 
     private void resetEncoders(){
-        previousTicksYLeft = left_y_encoder.getCurrentPosition();
-        previousTicksYRight = right_y_encoder.getCurrentPosition();
-        previousTicksX = x_encoder.getCurrentPosition();
+        previousTicksYLeft = bulkData.getMotorCurrentPosition(left_y_encoder);
+        previousTicksYRight = bulkData.getMotorCurrentPosition(right_y_encoder);
+        previousTicksX = bulkData.getMotorCurrentPosition(x_encoder);
     }
 
 
     private double degreesConversion(){
+        while(refreshTimer.milliseconds() < 3){sleep(1);}
+        refreshTimer.reset();
         double theta = this.angles.firstAngle;
         if(theta < 0) theta += 360;
-        if
+        if(redSide){
+            if(theta < 0) theta += 180;
+            else theta -= 180;
+        }
         return theta;
     }
 
@@ -318,10 +331,13 @@ public class MainAutonomousLinear extends LinearOpMode {
         //Lift
         lift = hardwareMap.get(DcMotor.class, "slide_motor");
 
+        //Expansion Hub with encoders
+        expansionHub4 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 4");
+
         //External encoders
-        left_y_encoder = hardwareMap.get(DcMotor.class, "left_y_encoder");
-        right_y_encoder = hardwareMap.get(DcMotor.class, "right_y_encoder");
-        x_encoder = hardwareMap.get(DcMotor.class, "x_encoder");
+        left_y_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "left_y_encoder");
+        right_y_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "right_y_encoder");
+        x_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "x_encoder");
         
         //Intake wheels
         intake_wheel_left = hardwareMap.get(CRServo.class, "intake_wheel_left");
