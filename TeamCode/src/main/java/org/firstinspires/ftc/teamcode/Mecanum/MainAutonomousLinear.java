@@ -19,10 +19,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-import org.openftc.revextensions2.ExpansionHubEx;
-import org.openftc.revextensions2.ExpansionHubMotor;
-import org.openftc.revextensions2.RevBulkData;
-
 import org.firstinspires.ftc.teamcode.Variables.*;
 import org.firstinspires.ftc.teamcode.Methods.*;
 import org.firstinspires.ftc.teamcode.CRVuforia.*;
@@ -127,10 +123,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     private double degreesConversion(){
         double theta = this.angles.firstAngle;
         if(theta < 0) theta += 360;
-        if(redSide){
-            if(theta < 0) theta += 180;
-            else theta -= 180;
-        }
+        if
         return theta;
     }
 
