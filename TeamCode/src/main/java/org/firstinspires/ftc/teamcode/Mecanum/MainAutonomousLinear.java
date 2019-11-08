@@ -198,9 +198,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         do {
             double[] actualPos = AbsolutePosition(previousPos[0], previousPos[1]);
             goalReachedPos = methods.GoalCheckPos(actualPos[0], goalLibrary[stepNumber][1], actualPos[1], goalLibrary[stepNumber][2]); //check if we are at position
-            if (!goalReachedPos) {
                 moveDrivebyPower(methods.PositionChange(actualPos[0], goalLibrary[stepNumber][1], actualPos[2], goalLibrary[stepNumber][2]));
-            }
             previousPos[0] = actualPos[0];
             previousPos[1] = actualPos[1];
         }
@@ -270,7 +268,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     //Creates list to hold motors
     private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();
 
-    ShowTelemetry showTelemetry = new ShowTelemetry(this, robotState);
+    private ShowTelemetry showTelemetry = new ShowTelemetry(this, robotState);
 
 
     private double[][] goalLibrary;
