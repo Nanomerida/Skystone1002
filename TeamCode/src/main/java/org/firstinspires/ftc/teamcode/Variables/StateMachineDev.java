@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Variables;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,6 +28,7 @@ import static java.lang.Math.sin;
 /**This development class is for the blue skystone task */
 
 @Autonomous(name="StateMachine", group="Testing")
+@Disabled
 public class StateMachineDev extends OpMode{
 
   private GeneralMethods methods = new GeneralMethods();
