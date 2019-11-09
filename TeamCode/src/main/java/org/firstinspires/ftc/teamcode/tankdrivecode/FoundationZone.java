@@ -18,11 +18,9 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
-@Autonomous (name = "RedLoadingZoneTank", group = "Autonomous")
+@Autonomous (name = "FoundationZoneTank", group = "Autonomous")
 
-public class RedLoadingZone extends LinearOpMode {
-
-
+public class FoundationZone extends LinearOpMode {
     public DcMotor left_drive;
     public DcMotor right_drive;
     public CRServo claw;
@@ -128,7 +126,7 @@ public class RedLoadingZone extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        left_drive  = hardwareMap.get(DcMotor.class, "leftDrive");
+        left_drive = hardwareMap.get(DcMotor.class, "leftDrive");
         right_drive = hardwareMap.get(DcMotor.class, "rightDrive");
         arm = hardwareMap.get(DcMotor.class, "arm");
         claw = hardwareMap.get(CRServo.class, "claw");
@@ -142,66 +140,11 @@ public class RedLoadingZone extends LinearOpMode {
 
         waitForStart();
 
-        sleep(9000);
+        sleep(20000);
 
-        claw.setPower(0.3);
-        sleep(1000);
-        claw.setPower(0);
-
-        moveDrive(0.5f,29);
-        claw.setPower(0.7);
+        arm.setPower(0.5);
         sleep(2000);
-        claw.setPower(0);
-        //claw.setPower(-0.5);
-        moveDrive(0.5f,-15);
-        sleep(1000);
-        /***Will this work?? -- Let's hope!*/
-        turnDrive(0.3f,-90);
-        sleep(400);
-        moveDrive(0.7f, 45);
-        sleep(400);
-        claw.setPower(-0.5);
-        sleep(1000);
-        claw.setPower(0);
-        moveDrive(0.5f, -20);
+        arm.setPower(0);
         idle();
-/*
-        int skystonePos;
-        skystonePos = blockPosBlue.visionTest();
-        switch (skystonePos) {
-            case 0:
-                moveDrive(1f,14);
-                turnDrive(0.5f, 90);
-                //arm.setPower(1);
-                //claw.setPosition(-0.5);
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-        }
-*/
-        /**
-         moveDrive(0.7f, 47);
-         //claw.setPosition(0.5);
-
-         moveDrive(-0.7f, 25);
-
-         resetDrive();
-
-         left_drive.setPower(0);
-         right_drive.setPower(0);
-         //arm.setPower(0);*/
     }
-
-
 }
-
-
-
-
-
-
-
-
-

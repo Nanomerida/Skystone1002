@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tankdrivecode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -22,7 +23,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
 @Autonomous (name = "AutonBlueLinear", group = "Autonomous")
-
+@Disabled
 public class AutonBlueLinear extends LinearOpMode {
 
 
