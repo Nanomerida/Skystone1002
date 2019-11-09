@@ -19,8 +19,8 @@ import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
 @Autonomous (name = "BlueLoadingZoneTank", group = "Autonomous")
-
-public class BlueLoadingZone extends LinearOpMode {
+@Disabled
+public class TwoBlockBlue extends LinearOpMode {
 
 
     public DcMotor left_drive;
@@ -82,7 +82,7 @@ public class BlueLoadingZone extends LinearOpMode {
         right_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
 
         left_drive.setPower(power);
-        right_drive.setPower(power);
+        right_drive.setPower(power * 1.15);
 
         setRunToPosition();
 
@@ -152,18 +152,19 @@ public class BlueLoadingZone extends LinearOpMode {
         claw.setPower(0);
 
         moveDrive(0.5f,29);
-        claw.setPower(0.3);
+        claw.setPower(0.7);
         sleep(3000);
+        claw.setPower(0);
         moveDrive(0.5f,-15);
         sleep(1000);
         turnDrive(0.3f,90);
         sleep(400);
-        moveDrive(0.9f, 45);
+        moveDrive(0.7f, 45);
         sleep(400);
         claw.setPower(-0.7);
         sleep(1000);
         claw.setPower(0);
-        moveDrive(0.7f, -20);
+        moveDrive(0.5f, -20);
         idle();
 
 
@@ -184,30 +185,10 @@ public class BlueLoadingZone extends LinearOpMode {
                 break;
         }
 */
-        /**
-        moveDrive(0.7f, 47);
-        //claw.setPosition(0.5);
-
-        moveDrive(-0.7f, 25);
-
-        resetDrive();
-
-        left_drive.setPower(0);
-        right_drive.setPower(0);
-        //arm.setPower(0);*/
     }
 
 
 }
-
-
-
-
-
-
-
-
-
 
 
 

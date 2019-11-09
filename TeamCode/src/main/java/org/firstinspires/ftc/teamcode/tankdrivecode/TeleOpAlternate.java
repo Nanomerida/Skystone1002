@@ -27,6 +27,7 @@ public class TeleOpAlternate extends OpMode {
     
     public DcMotor arm = null;
     public CRServo claw = null;
+    public CRServo dropper = null;
 
     private boolean slowModeOn = false;
     private boolean prevX = false;
@@ -43,6 +44,7 @@ public class TeleOpAlternate extends OpMode {
         right_drive = hardwareMap.get(DcMotor.class, "rightDrive");
         arm = hardwareMap.get(DcMotor.class, "arm");
         claw = hardwareMap.get(CRServo.class, "claw");
+        dropper = hardwareMap.get(CRServo.class, "dropper");
 
 
         //Reset ALL encoders
@@ -76,6 +78,7 @@ public class TeleOpAlternate extends OpMode {
         double armPower = gamepad2.right_stick_y;
         double clawPowerClose = -gamepad2.left_trigger;
         double clawPowerOpen = gamepad2.right_trigger;
+        boolean stoneDropper = gamepad2.dpad_up;
 
         if(gamepad1.x && !prevX) slowModeOn = !slowModeOn;
 
@@ -84,11 +87,15 @@ public class TeleOpAlternate extends OpMode {
         // Set joystick values to motor values on robot
         left_drive.setPower(left * speed);
         right_drive.setPower(right * speed);
-        arm.setPower(0.8*armPower);
+        arm.setPower(0.5555*armPower);
+// GAYMER
 
-        if(clawPowerOpen != 0.0) claw.setPower(clawPowerOpen);
-        else if(clawPowerClose != 0.0) claw.setPower(clawPowerClose);
+        if(clawPowerOpen != 0.0) claw.setPower(0.7*clawPowerOpen);
+        else if(clawPowerClose != 0.0) claw.setPower(0.8*clawPowerClose);
         else claw.setPower(0);
+
+        if(stoneDropper) dropper.setPower(0.5);
+        else dropper.setPower(0);
 
 //HAHA Ryan
 /*

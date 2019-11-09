@@ -27,6 +27,7 @@ public class RedLoadingZone extends LinearOpMode {
     public DcMotor right_drive;
     public CRServo claw;
     public DcMotor arm;
+    public CRServo dropper;
 
 
 
@@ -142,21 +143,19 @@ public class RedLoadingZone extends LinearOpMode {
 
         waitForStart();
 
-        sleep(9000);
+        sleep(2000);
 
         claw.setPower(0.3);
         sleep(1000);
         claw.setPower(0);
 
         moveDrive(0.5f,29);
-        claw.setPower(0.7);
-        sleep(2000);
-        claw.setPower(0);
+        claw.setPower(0.3);
+        sleep(3000);
         //claw.setPower(-0.5);
         moveDrive(0.5f,-15);
         sleep(1000);
-        /***Will this work?? -- Let's hope!*/
-        turnDrive(0.3f,-90);
+        turnDrive(0.3f,-98);
         sleep(400);
         moveDrive(0.7f, 45);
         sleep(400);

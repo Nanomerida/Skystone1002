@@ -19,7 +19,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
 @Autonomous (name = "FoundationZoneTank", group = "Autonomous")
-
 public class FoundationZone extends LinearOpMode {
     public DcMotor left_drive;
     public DcMotor right_drive;
@@ -142,7 +141,7 @@ public class FoundationZone extends LinearOpMode {
 
         sleep(20000);
 
-        arm.setPower(0.5);
+        arm.setPower(-0.5);
         sleep(2000);
         arm.setPower(0);
         idle();

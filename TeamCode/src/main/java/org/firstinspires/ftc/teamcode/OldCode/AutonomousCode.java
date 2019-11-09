@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OldCode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -31,7 +32,7 @@ import static java.lang.Math.abs;
 import java.util.HashMap;
 
 @Autonomous //Assuming this is right
-//@Disabled
+@Disabled
 public class AutonomousCode extends OpMode {
 
     HardwareMapMain robot = new HardwareMapMain(); //need to define the hardware map

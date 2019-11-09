@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OldCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,7 +24,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
 @Autonomous (name = "TankAutonomous", group = "Autonomous")
-
+@Disabled
 public class AutonRedSkystone extends OpMode {
     private HardwareMapMain robot   = new HardwareMapMain();
     private GeneralMethods methods = new GeneralMethods();

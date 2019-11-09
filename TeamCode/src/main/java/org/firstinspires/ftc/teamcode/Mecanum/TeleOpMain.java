@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.Mecanum;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.hardwareMaps.HardwareMapMain;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOpMain", group="TeleOp")
-
+@Disabled
 public class TeleOpMain extends OpMode {
     //Crates HardwareMap object robot
     HardwareMapMain robot = new HardwareMapMain();
