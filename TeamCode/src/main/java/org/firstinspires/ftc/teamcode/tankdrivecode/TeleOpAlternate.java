@@ -84,7 +84,7 @@ public class TeleOpAlternate extends OpMode {
         // Set joystick values to motor values on robot
         left_drive.setPower(left * speed);
         right_drive.setPower(right * speed);
-        arm.setPower(0.5*armPower);
+        arm.setPower(0.8*armPower);
 
         if(clawPowerOpen != 0.0) claw.setPower(clawPowerOpen);
         else if(clawPowerClose != 0.0) claw.setPower(clawPowerClose);

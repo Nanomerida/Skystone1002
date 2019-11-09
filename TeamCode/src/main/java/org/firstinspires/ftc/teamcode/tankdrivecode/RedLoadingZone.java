@@ -18,9 +18,9 @@ import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
-@Autonomous (name = "BlueLoadingZoneTank", group = "Autonomous")
+@Autonomous (name = "RedLoadingZoneTank", group = "Autonomous")
 
-public class BlueLoadingZone extends LinearOpMode {
+public class RedLoadingZone extends LinearOpMode {
 
 
     public DcMotor left_drive;
@@ -143,23 +143,22 @@ public class BlueLoadingZone extends LinearOpMode {
         claw.setPower(0.3);
         sleep(1000);
         claw.setPower(0);
+
         waitForStart();
 
         moveDrive(0.7f,29);
+        sleep(400);
         claw.setPower(-1);
         sleep(2000);
         claw.setPower(-0.5);
-        turnDrive(0.3f,90);
+        turnDrive(-0.3f,90);
         sleep(400);
-        moveDrive(0.7f, 65);
-        sleep(400);
+        moveDrive(0.7f, 70);
+        sleep(100);
         claw.setPower(1);
         sleep(2000);
-        claw.setPower(0);
         moveDrive(-0.5f, 20);
         idle();
-
-
 /*
         int skystonePos;
         skystonePos = blockPosBlue.visionTest();
@@ -177,29 +176,20 @@ public class BlueLoadingZone extends LinearOpMode {
         }
 */
         /**
-        moveDrive(0.7f, 47);
-        //claw.setPosition(0.5);
+         moveDrive(0.7f, 47);
+         //claw.setPosition(0.5);
 
-        moveDrive(-0.7f, 25);
+         moveDrive(-0.7f, 25);
 
-        resetDrive();
+         resetDrive();
 
-        left_drive.setPower(0);
-        right_drive.setPower(0);
-        //arm.setPower(0);*/
+         left_drive.setPower(0);
+         right_drive.setPower(0);
+         //arm.setPower(0);*/
     }
 
 
 }
-
-
-
-
-
-
-
-
-
 
 
 
