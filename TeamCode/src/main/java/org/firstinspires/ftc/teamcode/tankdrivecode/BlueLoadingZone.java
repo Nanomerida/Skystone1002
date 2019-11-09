@@ -140,24 +140,32 @@ public class BlueLoadingZone extends LinearOpMode {
 
 //set target position, power, set run to position, wait for drive
 
+
+        waitForStart();
+
+        sleep(9000);
+
         claw.setPower(0.3);
         sleep(1000);
         claw.setPower(0);
-        waitForStart();
 
-        moveDrive(0.7f,29);
-        claw.setPower(-1);
-        sleep(2000);
-        claw.setPower(-0.5);
-        turnDrive(0.3f,90);
-        sleep(400);
-        moveDrive(0.7f, 65);
-        sleep(400);
-        claw.setPower(1);
+        moveDrive(0.5f,29);
+        claw.setPower(0.7);
         sleep(2000);
         claw.setPower(0);
-        moveDrive(-0.5f, 20);
+        //claw.setPower(-0.5);
+        moveDrive(0.5f,-15);
+        sleep(1000);
+        turnDrive(0.3f,90);
+        sleep(400);
+        moveDrive(0.7f, 45);
+        sleep(400);
+        claw.setPower(-0.5);
+        sleep(1000);
+        claw.setPower(0);
+        moveDrive(0.5f, -20);
         idle();
+
 
 
 /*
