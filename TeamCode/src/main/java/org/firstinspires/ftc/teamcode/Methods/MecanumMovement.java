@@ -43,7 +43,7 @@ public interface MecanumMovement {
 
     public boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg);
 
-    public boolean GoalCheckAngle(double thetaG);
+    public boolean GoalCheckAngle(double thetaG, double thetaA);
 
     public double degreeServoConv(double degrees);
 }

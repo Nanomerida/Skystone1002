@@ -50,8 +50,7 @@ public class GeneralMethods  implements MecanumMovement{
 
     //Goal check method for position
     public boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg) { /**/
-        boolean
-                reachedGoal = false;
+        boolean reachedGoal = false;
         if(abs(Xg - Xa) < 0.1) {
             reachedGoal = true;
             if (abs(Yg - Ya) < 0.1) {
@@ -65,9 +64,8 @@ public class GeneralMethods  implements MecanumMovement{
     }
 
     //Goal check method for angle
-    public boolean GoalCheckAngle(double thetaG) { /**/
+    public boolean GoalCheckAngle(double thetaG, double thetaA) { /**/
         boolean reachedGoal = false;
-        double thetaA = heading.degreesConversion();
         double thetaDif = (thetaG - thetaA);
         if(abs(thetaDif) < 0.1) {
             reachedGoal = true;

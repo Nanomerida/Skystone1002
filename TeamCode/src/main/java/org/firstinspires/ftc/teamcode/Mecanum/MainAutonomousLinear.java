@@ -242,7 +242,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         showTelemetry.updateTelem.updateTelemetry();
         //Use odometry to rotate
         do {
-            boolean goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1]); //check if we are at angle.
+            goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1], degreesConversion()); //check if we are at angle.
             if (goalReachedAngle) {
                 moveDrivebyPower(methods.AngleChange(goalLibrary[stepNumber][1]));
             }
@@ -285,6 +285,8 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
     private double[][] goalLibrary;
+
+    /** Note: wheelDelta - angleChange * wheelOffset */
 
 
 
@@ -371,6 +373,10 @@ public class MainAutonomousLinear extends LinearOpMode {
 
         //reverse the right intake
         intake_wheel_right.setDirection(CRServo.Direction.REVERSE);
+
+        //reverse the opposite drive motors
+        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
+        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
 
 
         //adds motors to ArrayList
