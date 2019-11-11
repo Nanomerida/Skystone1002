@@ -128,7 +128,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     }
 
 
-    private double degreesConversion(){
+    public double degreesConversion(){
         while(refreshTimer.milliseconds() < 3){sleep(1);}
         refreshTimer.reset();
         double theta = this.angles.firstAngle;

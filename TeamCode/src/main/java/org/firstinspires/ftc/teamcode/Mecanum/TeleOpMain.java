@@ -86,7 +86,7 @@ public class TeleOpMain extends OpMode {
         
         //Useful telemetry
         telemetry.addLine("Motor Powers | ")
-                .addData("Drive Status:", driveStatus);
+                .addData("Drive Status:", driveStatus)
                 .addData("Left Front:", left_front_drive.getPower())
                 .addData("Left Back:", left_back_drive.getPower())
                 .addData("Right Front:", right_front_drive.getPower())
@@ -136,7 +136,7 @@ public class TeleOpMain extends OpMode {
 
     }
     @Override
-    public void stop(){
+    public void stop() {
         //Stop drive motors
         left_front_drive.setPower(0);
         left_back_drive.setPower(0);
@@ -146,4 +146,5 @@ public class TeleOpMain extends OpMode {
         arm.setPower(0);
         //sStop claw
         claw.setPower(0);
+    }
 }

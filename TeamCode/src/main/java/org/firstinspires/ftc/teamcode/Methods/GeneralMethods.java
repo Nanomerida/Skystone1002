@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.Methods;
 
 import static java.lang.Math.abs;
+import org.firstinspires.ftc.teamcode.Mecanum.MainAutonomousLinear;
 
-import org.firstinspires.ftc.teamcode.OldCode.AutonomousCode;
 import org.firstinspires.ftc.teamcode.Variables.Reference;
 
 import java.util.HashMap;
@@ -12,7 +12,7 @@ public class GeneralMethods  implements MecanumMovement{
     public GeneralMethods(){
 
     }
-    AutonomousCode heading = new AutonomousCode();
+    MainAutonomousLinear heading = new MainAutonomousLinear();
     Reference vars = new Reference();
     MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
     private HashMap<String, float[]> mecanum = procedures.getMecanum();

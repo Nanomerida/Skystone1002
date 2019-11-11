@@ -120,14 +120,13 @@ public class NewVuforiaTestTest extends LinearOpMode {
         // CONSEQUENTLY do not put any driving commands in this loop.
         // To restore the normal opmode structure, just un-comment the following line:
 
-        // waitForStart();
+        waitForStart();
 
         // Note: To use the remote camera preview:
         // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
         // Tap the preview window to receive a fresh image.
 
         targetsSkyStone.activate();
-        try {
             while (!isStopRequested()) {
 
                 // check all the trackable targets to see which one (if any) is visible.
@@ -135,8 +134,9 @@ public class NewVuforiaTestTest extends LinearOpMode {
                     if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
                         telemetry.addData("Visible Target", stoneTarget.getName());
                         targetVisible = true;
-                        skystoneRawPose = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget();
-                        break;
+                         OpenGLMatrix location = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget();
+                         if(location != null) skystoneRawPose = location;
+                         break;
                     }
 
                 // Provide feedback as to where the robot is located (if we know).
@@ -145,10 +145,8 @@ public class NewVuforiaTestTest extends LinearOpMode {
                     VectorF translation = skystoneRawPose.getTranslation();
                     if ((skystoneMid - translation.get(0)) < (skystoneCenter - translation.get(0))) {
                         telemetry.addData("Skystone Target:", "Towards Bridge");
-                        telemetry.update();
                     } else {
                         telemetry.addData("Skystone Target:", "Center");
-                        telemetry.update();
                     }
 
                     telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
@@ -158,11 +156,6 @@ public class NewVuforiaTestTest extends LinearOpMode {
                 }
                 telemetry.update();
             }
-        } catch (NullPointerException e){
-            telemetry.addData("ERROR!!!!!!!!!", "VUFORIA CRAHSED!!!");
-            telemetry.addData("NICK!!!!", "WHAT DID YOU DO!!!!!");
-            telemetry.update();
-        }
 
         // Disable Tracking when we are done;
         targetsSkyStone.deactivate();
