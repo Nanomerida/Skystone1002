@@ -16,7 +16,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -71,6 +70,49 @@ public class SimpleAutonRed extends LinearOpMode {
         right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
 
         moveDriveByPower(new double[] {power, power, power, power});
+
+
+        setRunToPosition();
+
+        waitForDrive();
+
+        moveDriveByPower(new double[] {0, 0, 0, 0});
+    }
+
+    private void strafeL(double power, double inches){
+
+        resetDrive();
+
+        //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
+        //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
+
+        left_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        left_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+
+        moveDriveByPower(new double[] {-power, power, power, -power}); //strafe Left
+
+
+        setRunToPosition();
+
+        waitForDrive();
+
+        moveDriveByPower(new double[] {0, 0, 0, 0});
+    }
+    private void strafeR(double power, double inches){
+
+        resetDrive();
+
+        //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
+        //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
+
+        left_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        left_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+
+        moveDriveByPower(new double[] {power, -power, -power, power}); //strafe Left
 
 
         setRunToPosition();
@@ -168,34 +210,101 @@ public class SimpleAutonRed extends LinearOpMode {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
+
+        telemetry.addData("Status:", "Ready!");
+        telemetry.update();
         waitForStart();
 
-        waitForStart();
+        sleep(5000);
 
-        sleep(9000);
-
-        claw.setPower(0.3);
+        claw.setPower(-0.3);
         sleep(1000);
         claw.setPower(0);
 
-        moveDriveByPos(0.5f,29);
-        claw.setPower(0.3);
-        sleep(3000);
+        moveDriveByPos(0.5f,29.6f);
 
-        moveDriveByPos(0.5f,-15);
-        sleep(1000);
+        //Vuforia
 
-        MoveAngle(0.3f,90);
-        sleep(400);
+        int skystonePos = blockPosBlue.visionTest();
+        if (skystonePos == 4){
+            skystonePos = 1;
+            telemetry.addData("Vuforia Error!", "Defaluting!");
+            telemetry.update();
+        }
 
-        moveDriveByPos(0.9f, 45);
-        sleep(400);
+        switch (skystonePos){
+            case 0:
+                strafeL(0.3, 8);
+                sleep(400);
 
-        claw.setPower(-0.7);
-        sleep(1000);
+                moveDriveByPos(0.3f, 19);
+                sleep(400);
 
-        claw.setPower(0);
-        moveDriveByPos(0.7f, -20);
+                claw.setPower(0.5);
+                sleep(3000);
+                claw.setPower(0.1);
+
+                moveDriveByPos(0.3f, -19);
+                sleep(400);
+
+                MoveAngle(0.3, -90);
+                sleep(400);
+
+                moveDriveByPos(0.5f, 50);
+                sleep(300);
+
+                claw.setPower(-0.7);
+                sleep(2000);
+                claw.setPower(0);
+                break;
+            case 1:
+                moveDriveByPos(0.3f, 19);
+                sleep(400);
+
+                claw.setPower(0.5);
+                sleep(3000);
+                claw.setPower(0.1);
+
+                moveDriveByPos(0.3f, -19);
+                sleep(400);
+
+                MoveAngle(0.3, -90);
+                sleep(400);
+
+                moveDriveByPos(0.5f, 45);
+                sleep(300);
+
+                claw.setPower(-0.7);
+                sleep(2000);
+                claw.setPower(0);
+                break;
+            case 2:
+                strafeR(0.3, 8);
+                sleep(400);
+
+                moveDriveByPos(0.3f, 19);
+                sleep(400);
+
+                claw.setPower(0.5);
+                sleep(3000);
+                claw.setPower(0.1);
+
+                moveDriveByPos(0.3f, -19);
+                sleep(400);
+
+                MoveAngle(0.3, -90);
+                sleep(400);
+
+                moveDriveByPos(0.5f, 40);
+                sleep(300);
+
+                claw.setPower(-0.7);
+                sleep(2000);
+                claw.setPower(0);
+                break;
+        }
+
+        moveDriveByPos(-40f, -20);
 
         idle();
 
