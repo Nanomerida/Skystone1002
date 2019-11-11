@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
 import org.firstinspires.ftc.teamcode.Methods.MecMoveProcedureStorage;
@@ -21,9 +20,14 @@ public class TeleOpMain extends OpMode {
     public DcMotor left_back_drive = null;
     public DcMotor right_front_drive = null;
     public DcMotor right_back_drive = null;
-    public DcMotor lift_motor = null;
-    public CRServo intake_wheel_left = null;
-    public CRServo intake_wheel_right = null;
+    public DcMotor arm = null;
+    public CRServo claw = null;
+    
+    private boolean slowModeOn = false;
+    private boolean prevX = false;
+    private String driveStatus;
+    
+    
 
     public float[] m_v_mult(float[][] m, float[] v) {
         float[] out = new float[4];
@@ -32,6 +36,9 @@ public class TeleOpMain extends OpMode {
         }
         return out;
     }
+    
+    //Array to hold movement instructions
+    float[][] matrix = {mecanum.get("forward"), mecanum.get("strafeR"), mecanum.get("turnCC")};
 
     //Initializes with the hardwareMap
     @Override
@@ -42,10 +49,9 @@ public class TeleOpMain extends OpMode {
         right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
         right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
-        lift_motor = hardwareMap.get(DcMotor.class, "lift_motor");
 
-        intake_wheel_left = hardwareMap.get(CRServo.class, "intake_wheel_left");
-        intake_wheel_right = hardwareMap.get(CRServo.class, "intake_wheel_right");
+        arm = hardwareMap.get(DcMotor.class, "arm");
+        claw = hardwareMap.get(CRServo.class, "claw");
 
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -53,12 +59,8 @@ public class TeleOpMain extends OpMode {
         right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        lift_motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
-        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
-
-        intake_wheel_right.setDirection(CRServo.Direction.REVERSE);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
@@ -69,42 +71,79 @@ public class TeleOpMain extends OpMode {
     @Override
     public void start() {
     }
-
+    
+    @Override
     public void loop() {
-
+        
+        //Manipulator gamepad readings
+        double armPower = gamepad2.right_stick_y;
+        double clawPowerClose = -gamepad2.left_trigger;
+        double clawPowerOpen = gamepad2.right_trigger;
+        
+        //Turn slow mode of, if pressed and not already active
+        if(gamepad1.x && !prevX) slowModeOn = !slowModeOn;
+        float speed = (slowModeOn) ? 0.5f : 1.0f;
+        
+        //Useful telemetry
         telemetry.addLine("Motor Powers | ")
+                .addData("Drive Status:", driveStatus);
                 .addData("Left Front:", left_front_drive.getPower())
                 .addData("Left Back:", left_back_drive.getPower())
                 .addData("Right Front:", right_front_drive.getPower())
                 .addData("Right Back:", right_back_drive.getPower());
+        
+        telemetry.addLine("Arm Power | ")
+                .addData("Arm Motor:", armPower);
+        
+        telemetry.addLine("Claw Power | ")
+                .addData("Claw Servo Closing:", clawPowerClose)
+                .addData("Claw Servo Opening:", clawPowerOpen);
+        
+        telemetry.addData("Slow Mode:", slowModeOn);
+       
 
-        if (gamepad2.right_bumper) {
-            lift_motor.setPower(0.5);
-        }
-        else if (gamepad2.left_bumper) {
-            lift_motor.setPower(-0.5);
-        } else {
-            lift_motor.setPower(0);
-        }
-
-        intake_wheel_left.setPower(gamepad2.right_trigger);
-        intake_wheel_right.setPower(gamepad2.right_trigger);
-
+        //Read from controller
         float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x};
-        float[] outputs;
+        
+        //Update telemetry if moving
+        if(gamepad1.left_stick_y == 0.0 && gamepad1.right_stick_x == 0.0) driveStatus = "IDLE";
+        else driveStatus = "MOVING";
 
-        float[] forward = mecanum.get("forward");
-        float[] right = mecanum.get("strafeR");
-        float[] c_turn = mecanum.get("turnCC");
+        
+        //Calculate power for drive
+        float[] outputs = m_v_mult(matrix, inputs);
+        
+        //Set power to drive
+        left_front_drive.setPower(outputs[3] * speed);
+        left_back_drive.setPower(outputs[2] * speed);
+        right_front_drive.setPower(outputs[0] * speed);
+        right_back_drive.setPower(outputs[1] * speed);
+        
+        //Control arm
+        arm.setPower(0.5555*armPower);
+        
+        //Control claw
+        if(clawPowerOpen != 0.0) claw.setPower(0.7*clawPowerOpen);
+        else if(clawPowerClose != 0.0) claw.setPower(0.8*clawPowerClose);
+        else claw.setPower(0);
+        
+        //store current slow mode status
+        prevX = gamepad1.x;
+        
+        //update telemetry
+        telemetry.update();
 
-        float[][] matrix = {forward, right, c_turn};
-
-        outputs = m_v_mult(matrix, inputs);
-
-        left_front_drive.setPower(outputs[3]);
-        left_back_drive.setPower(outputs[2]);
-        right_front_drive.setPower(outputs[0]);
-        right_back_drive.setPower(outputs[1]);
 
     }
+    @Override
+    public void stop(){
+        //Stop drive motors
+        left_front_drive.setPower(0);
+        left_back_drive.setPower(0);
+        right_front_drive.setPower(0);
+        right_back_drive.setPower(0);
+        //Stop arm
+        arm.setPower(0);
+        //sStop claw
+        claw.setPower(0);
 }
