@@ -46,6 +46,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
+
 
 @TeleOp(name="Vuforia Pos Test", group ="Concept")
 //@Disabled
@@ -62,7 +64,7 @@ public class NewVuforiaTestTest extends LinearOpMode {
 
     // Class Members
     private VuforiaLocalizer vuforia = null;
-    private ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution MILLISECONDS);
+    private ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     /**
      * This is the webcam we are to use. As with other hardware devices such as motors and
@@ -117,11 +119,12 @@ public class NewVuforiaTestTest extends LinearOpMode {
         targetsSkyStone.activate();
         while (!isStopRequested()) {
             if(timer.milliseconds() == 3) continue;
+            boolean stoneVisible = false;
 
             // check all the trackable targets to see which one (if any) is visible.
             if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
                 telemetry.addData("Visible Target", stoneTarget.getName());
-                OpenGLMatrix location = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getUpdatedVuforiaCameraFromTarget();
+                OpenGLMatrix location = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget();
                 if (location != null) {
                     // express position (translation) of robot in inches.
                     VectorF translation = location.getTranslation();
