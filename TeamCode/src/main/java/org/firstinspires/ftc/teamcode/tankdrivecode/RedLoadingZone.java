@@ -156,6 +156,7 @@ public class RedLoadingZone extends LinearOpMode {
         moveDrive(0.5f,-15);
         sleep(1000);
         turnDrive(0.3f,-98);
+        claw.setPower(0);
         sleep(400);
         moveDrive(0.7f, 45);
         sleep(400);

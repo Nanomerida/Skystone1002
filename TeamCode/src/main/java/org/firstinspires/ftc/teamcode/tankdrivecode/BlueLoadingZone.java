@@ -157,6 +157,7 @@ public class BlueLoadingZone extends LinearOpMode {
         moveDrive(0.5f,-15);
         sleep(1000);
         turnDrive(0.3f,90);
+        claw.setPower(0);
         sleep(400);
         moveDrive(0.9f, 45);
         sleep(400);
