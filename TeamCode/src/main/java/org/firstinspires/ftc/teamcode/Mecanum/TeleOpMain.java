@@ -39,7 +39,7 @@ public class TeleOpMain extends OpMode {
     }
     
     //Array to hold movement instructions
-    private float[][] matrix = {{0.5f, 0.5f, 0.5f, 0.5f}, {0.5f, -0.5f, -0.5f, 0.5f}, {0.5f, 0.5f, -0.5f, -0.5f}};
+    private float[][] matrix = {{0.5f, 0.5f, -0.5f, -0.5f}, {0.5f, -0.5f, 0.5f, -0.5f}, {0.5f, 0.5f, 0.5f, 0.5f}};
 
     //Initializes with the hardwareMap
     @Override
@@ -119,8 +119,8 @@ public class TeleOpMain extends OpMode {
         //Set power to drive
         left_front_drive.setPower(outputs[3] * speed);
         left_back_drive.setPower(outputs[2] * speed);
-        right_front_drive.setPower(-outputs[0] * speed);
-        right_back_drive.setPower(-outputs[1] * speed);
+        right_front_drive.setPower(outputs[0] * speed);
+        right_back_drive.setPower(outputs[1] * speed);
         /*
         //Control arm
         arm.setPower(0.5555*armPower);
