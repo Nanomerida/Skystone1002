@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.CRVuforia;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -111,33 +112,21 @@ public class VuforiaBlue {
         targetsSkyStone.activate();
         boolean noFoundSkystone = true;
         searchTime.reset();
-        try {
-            while ((searchTime.seconds() != 7) && noFoundSkystone) {
+        while (searchTime.seconds() != 7) {
 
-                // check all the trackable targets to see which one (if any) is visible.
-                targetVisible = false;
-                if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
-                    skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
+            // check all the trackable targets to see which one (if any) is visible.
+            if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
+                skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
 
-                    targetVisible = true;
-
-                    break;
-                }
-                if (targetVisible) {
-                    VectorF skystoneCoords = skystonePositionCoords.getTranslation();
-                    if ((skystoneMid - skystoneCoords.get(0)) < (skystoneCenter - skystoneCoords.get(0))) {
-                        skystonePosition = 0;
-                    } else {
-                        skystonePosition = 1;
-                    }
-                    noFoundSkystone = false;
-                }
+                VectorF skystoneCoords = skystonePositionCoords.getTranslation();
+                float closestX = Range.clip(skystoneCoords.get(0), -10, 10);
+                if (closestX == -10) skystonePosition = 0;
+                else skystonePosition = 1;
+                break;
             }
-            skystonePosition = 2;
-        } catch (NullPointerException e) {
-            skystonePosition = 4;
-
         }
+        if(skystonePosition != 1 || skystonePosition != 1) skystonePosition = 2;
+
 
         // Disable Tracking when we are done;
         targetsSkyStone.deactivate();

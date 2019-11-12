@@ -43,14 +43,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
+import com.qualcomm.robotcore.util.Range;
 
 
 @TeleOp(name="Vuforia Pos Test", group ="Concept")
@@ -65,10 +58,8 @@ public class NewVuforiaTestTest extends LinearOpMode {
     // We will define some constants and conversions here
 
 
-    // Constants for the center support targets
 
     // Class Members
-    private OpenGLMatrix skystoneRawPose = null;
     private VuforiaLocalizer vuforia = null;
 
     /**
@@ -77,10 +68,7 @@ public class NewVuforiaTestTest extends LinearOpMode {
      */
     WebcamName webcamName = null;
 
-    private static final int skystoneMid = -100; //X positions of skystone positions
-    private static final int skystoneCenter = 100;
 
-    private boolean targetVisible = false;
 
     @Override public void runOpMode() {
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -112,8 +100,6 @@ public class NewVuforiaTestTest extends LinearOpMode {
         stoneTarget.setName("Stone Target");
 
 
-
-
         // WARNING:
         // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
         // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
@@ -127,35 +113,27 @@ public class NewVuforiaTestTest extends LinearOpMode {
         // Tap the preview window to receive a fresh image.
 
         targetsSkyStone.activate();
-            while (!isStopRequested()) {
+        while (!isStopRequested()) {
 
-                // check all the trackable targets to see which one (if any) is visible.
-                targetVisible = false;
-                    if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
-                        telemetry.addData("Visible Target", stoneTarget.getName());
-                        targetVisible = true;
-                         OpenGLMatrix location = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget();
-                         if(location != null) skystoneRawPose = location;
-                         break;
-                    }
-
-                // Provide feedback as to where the robot is located (if we know).
-                if (targetVisible) {
-                    // express position (translation) of robotgy in inches.
-                    VectorF translation = skystoneRawPose.getTranslation();
-                    if ((skystoneMid - translation.get(0)) < (skystoneCenter - translation.get(0))) {
-                        telemetry.addData("Skystone Target:", "Towards Bridge");
-                    } else {
-                        telemetry.addData("Skystone Target:", "Center");
-                    }
+            // check all the trackable targets to see which one (if any) is visible.
+            if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
+                telemetry.addData("Visible Target", stoneTarget.getName());
+                OpenGLMatrix location = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getUpdatedVuforiaCameraFromTarget();
+                if (location != null) {
+                    // express position (translation) of robot in inches.
+                    VectorF translation = location.getTranslation();
+                    float closestX = Range.clip(translation.get(0), -20f, 20f);
+                    if (closestX == -20) telemetry.addData("Skystone Target:", "Left");
+                    if (closestX == 20) telemetry.addData("Skystone Target:", "Center");
 
                     telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                             translation.get(0), translation.get(1), translation.get(2));
-                } else {
-                    telemetry.addData("Visible Target", "none");
                 }
-                telemetry.update();
+            } else {
+                telemetry.addData("Visible Target", "none");
             }
+            telemetry.update();
+        }
 
         // Disable Tracking when we are done;
         targetsSkyStone.deactivate();
