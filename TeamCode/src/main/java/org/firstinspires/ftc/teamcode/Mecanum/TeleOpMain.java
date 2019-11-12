@@ -117,10 +117,10 @@ public class TeleOpMain extends OpMode {
         float[] outputs = m_v_mult(matrix, inputs);
         
         //Set power to drive
-        left_front_drive.setPower(outputs[3] * speed);
-        left_back_drive.setPower(outputs[2] * speed);
-        right_front_drive.setPower(outputs[0] * speed);
-        right_back_drive.setPower(outputs[1] * speed);
+        left_front_drive.setPower(outputs[0] * speed);
+        left_back_drive.setPower(outputs[1] * speed);
+        right_front_drive.setPower(outputs[2] * speed);
+        right_back_drive.setPower(outputs[3] * speed);
         /*
         //Control arm
         arm.setPower(0.5555*armPower);
