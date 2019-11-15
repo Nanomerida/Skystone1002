@@ -71,23 +71,26 @@ public class BlueLoadingZone extends LinearOpMode {
         }
     }
 
+    //This functions contains all the encoder functions for moving the robot a certain amount of inches
     private void moveDrive(float power, float inches) {
-
+        //This resets the encoder values
         resetDrive();
 
-        //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
-        //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
-
+        //This sets the encoder distance, based on user input
         left_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
         right_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
 
+        //Defines robot speed based on input
         left_drive.setPower(power);
         right_drive.setPower(power);
 
+        //Sets encoder mode, in this case to go to target position, at inputted speed
         setRunToPosition();
 
+        //Makes sure nothing is currently moving before going
         waitForDrive();
 
+        //Stops wheel motion after movement is completed
         left_drive.setPower(0);
         right_drive.setPower(0);
     }
@@ -196,6 +199,7 @@ public class BlueLoadingZone extends LinearOpMode {
         left_drive.setPower(0);
         right_drive.setPower(0);
         //arm.setPower(0);*/
+
     }
 
 
