@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.Methods.*;
 import org.firstinspires.ftc.teamcode.CRVuforia.*;
 import org.firstinspires.ftc.teamcode.Variables.*;
 
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -69,7 +68,7 @@ public class SimpleAutonRed extends LinearOpMode {
         right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
         right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
 
-        moveDriveByPower(new double[] {power, power, power, power});
+        moveDriveByPower(new double[] {power, power , power, power});
 
 
         setRunToPosition();
@@ -91,7 +90,7 @@ public class SimpleAutonRed extends LinearOpMode {
         right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
         right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
 
-        moveDriveByPower(new double[] {-power, power, power, -power}); //strafe Left
+        moveDriveByPower(new double[] {-power, power, power, -power }); //strafe Left
 
 
         setRunToPosition();
@@ -125,6 +124,7 @@ public class SimpleAutonRed extends LinearOpMode {
     private void moveDriveByPower(double[] powers) { //method to move.
         int x = 0;
         for (DcMotor motor : driveMotors) {
+            if(x == 1 || x == 3) motor.setPower(powers[x] * 1.2);
             motor.setPower(powers[x]);
             x++;
         }
@@ -135,7 +135,6 @@ public class SimpleAutonRed extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
-
     private void waitForDrive(){
         while(left_front_drive.isBusy() ||left_back_drive.isBusy() || right_front_drive.isBusy() || right_back_drive.isBusy()){
             idle();
@@ -154,7 +153,6 @@ public class SimpleAutonRed extends LinearOpMode {
         }
     }
 
-
     private double degreesConversion(){
         while(refreshTimer.milliseconds() < 3){sleep(1);}
         refreshTimer.reset();
@@ -166,17 +164,14 @@ public class SimpleAutonRed extends LinearOpMode {
 
     private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();
 
-
     private static boolean goalReachedAngle = false;
     static final double COUNTS_PER_WHEEL_REV = 2114.5936;
     static final double WHEEL_DIAMETER_INCHES = 3;     // For figuring circumference
     static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_INCHES * PI;
     static final double COUNTS_PER_INCH =  ((WHEEL_CIRCUMFERENCE)/(COUNTS_PER_WHEEL_REV));
 
-
     @Override
     public void runOpMode(){
-
 
         left_front_drive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
         left_back_drive = hardwareMap.get(DcMotor.class, "leftBackDrive");
@@ -193,6 +188,11 @@ public class SimpleAutonRed extends LinearOpMode {
         claw = hardwareMap.get(CRServo.class, "claw");
 
         blockPosBlue.blueInit(webcam);
+
+        driveMotors.add(left_front_drive);
+        driveMotors.add(left_back_drive);
+        driveMotors.add(right_front_drive);
+        driveMotors.add(right_back_drive);
 
         // MORE IMU STUFF
 
@@ -226,15 +226,10 @@ public class SimpleAutonRed extends LinearOpMode {
         //Vuforia
 
         int skystonePos = blockPosBlue.visionTest();
-        if (skystonePos == 4){
-            skystonePos = 1;
-            telemetry.addData("Vuforia Error!", "Defaluting!");
-            telemetry.update();
-        }
 
         switch (skystonePos){
             case 0:
-                strafeL(0.3, 8);
+                strafeL(0.3, 10);
                 sleep(400);
 
                 moveDriveByPos(0.3f, 19);
@@ -279,7 +274,7 @@ public class SimpleAutonRed extends LinearOpMode {
                 claw.setPower(0);
                 break;
             case 2:
-                strafeR(0.3, 8);
+                strafeR(0.3, 6);
                 sleep(400);
 
                 moveDriveByPos(0.3f, 19);

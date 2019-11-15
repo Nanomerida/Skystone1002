@@ -112,20 +112,20 @@ public class VuforiaBlue {
         targetsSkyStone.activate();
         boolean noFoundSkystone = true;
         searchTime.reset();
-        while (searchTime.seconds() != 7) {
+        while (searchTime.seconds() != 5) {
 
             // check all the trackable targets to see which one (if any) is visible.
             if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
                 skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
 
                 VectorF skystoneCoords = skystonePositionCoords.getTranslation();
-                float closestX = Range.clip(skystoneCoords.get(0), -10, 10);
-                if (closestX == -10) skystonePosition = 0;
-                else skystonePosition = 1;
+                float closestX = Range.clip(skystoneCoords.get(0), -20f, 20f);
+                if (closestX == -20) skystonePosition = 1;
+                else skystonePosition = 2;
                 break;
             }
         }
-        if(skystonePosition != 1 || skystonePosition != 1) skystonePosition = 2;
+        if(skystonePosition != 0 && skystonePosition != 1) skystonePosition = 0;
 
 
         // Disable Tracking when we are done;

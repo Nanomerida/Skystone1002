@@ -129,8 +129,8 @@ public class NewVuforiaTestTest extends LinearOpMode {
                     // express position (translation) of robot in inches.
                     VectorF translation = location.getTranslation();
                     float closestX = Range.clip(translation.get(0), -20f, 20f);
-                    if (closestX == -20) telemetry.addData("Skystone Target:", "Left");
-                    if (closestX == 20) telemetry.addData("Skystone Target:", "Center");
+                    if (closestX == -20) telemetry.addData("Skystone Target:", "Center");
+                    if (closestX == 20) telemetry.addData("Skystone Target:", "Right");
 
                     telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                             translation.get(0), translation.get(1), translation.get(2));

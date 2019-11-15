@@ -34,14 +34,13 @@ public class SimpleAutonBlue extends LinearOpMode {
 
 
 
-
-     DcMotor left_front_drive   = null;
-     DcMotor  left_back_drive  = null;
-     DcMotor  right_front_drive = null;
-     DcMotor  right_back_drive = null;
-     DcMotor arm = null;
-     CRServo claw = null;
-     public WebcamName webcam = null;
+    DcMotor left_front_drive   = null;
+    DcMotor  left_back_drive  = null;
+    DcMotor  right_front_drive = null;
+    DcMotor  right_back_drive = null;
+    DcMotor arm = null;
+    CRServo claw = null;
+    public WebcamName webcam = null;
 
     public BNO055IMU imu;
     private Orientation angles;
@@ -69,7 +68,7 @@ public class SimpleAutonBlue extends LinearOpMode {
         right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
         right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
 
-        moveDriveByPower(new double[] {power, power, power, power});
+        moveDriveByPower(new double[] {power, power , power, power});
 
 
         setRunToPosition();
@@ -91,7 +90,7 @@ public class SimpleAutonBlue extends LinearOpMode {
         right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
         right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
 
-        moveDriveByPower(new double[] {-power, power, power, -power}); //strafe Left
+        moveDriveByPower(new double[] {-power, power, power, -power }); //strafe Left
 
 
         setRunToPosition();
@@ -125,6 +124,7 @@ public class SimpleAutonBlue extends LinearOpMode {
     private void moveDriveByPower(double[] powers) { //method to move.
         int x = 0;
         for (DcMotor motor : driveMotors) {
+            if(x == 1 || x == 3) motor.setPower(powers[x] * 1.2);
             motor.setPower(powers[x]);
             x++;
         }
@@ -227,15 +227,10 @@ public class SimpleAutonBlue extends LinearOpMode {
         //Vuforia
 
         int skystonePos = blockPosBlue.visionTest();
-        if (skystonePos == 4){
-            skystonePos = 1;
-            telemetry.addData("Vuforia Error!", "Defaluting!");
-            telemetry.update();
-        }
 
         switch (skystonePos){
             case 0:
-                strafeL(0.3, 8);
+                strafeL(0.3, 10);
                 sleep(400);
 
                 moveDriveByPos(0.3f, 19);
@@ -280,7 +275,7 @@ public class SimpleAutonBlue extends LinearOpMode {
                 claw.setPower(0);
                 break;
             case 2:
-                strafeR(0.3, 8);
+                strafeR(0.3, 6);
                 sleep(400);
 
                 moveDriveByPos(0.3f, 19);
