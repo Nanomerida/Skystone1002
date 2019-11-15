@@ -39,7 +39,7 @@ public class TeleOpMain extends OpMode {
     }
     
     //Array to hold movement instructions
-    private float[][] matrix = {{0.5f, 0.7f, 0.5f, 0.7f}, {0.5f, -0.7f, -0.5f, 0.7f}, {0.5f, 0.7f, -0.5f, -0.7f}};
+    private float[][] matrix = {{0.5f, 0.7f, 0.5f, 0.7f}, {-0.5f, 0.7f, 0.5f, -0.7f}, {0.5f, 0.7f, -0.5f, -0.7f}};
 
     //Initializes with the hardwareMap
     @Override
@@ -79,6 +79,7 @@ public class TeleOpMain extends OpMode {
 
         //Manipulator gamepad readings
         double armPower = gamepad2.right_stick_y;
+        double armPowerSlow = gamepad2.left_stick_y;
         double clawPowerClose = -gamepad2.left_trigger;
         double clawPowerOpen = gamepad2.right_trigger;
 
@@ -106,7 +107,7 @@ public class TeleOpMain extends OpMode {
 
 
         //Read from controller
-        float[] inputs = {gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x};
+        float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x};
         
         //Update telemetry if moving
         if(gamepad1.left_stick_y == 0.0 && gamepad1.right_stick_x == 0.0) driveStatus = "IDLE";
