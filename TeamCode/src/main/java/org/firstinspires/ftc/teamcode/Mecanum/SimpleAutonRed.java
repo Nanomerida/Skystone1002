@@ -30,7 +30,7 @@ import static java.lang.Math.round;
 public class SimpleAutonRed extends LinearOpMode {
 
     //VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
-    GeneralMethods methods = new GeneralMethods();
+//    GeneralMethods methods = new GeneralMethods();
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
@@ -50,8 +50,8 @@ public class SimpleAutonRed extends LinearOpMode {
     private void MoveAngle(double power, double angleGoal){
         //Use odometry to rotate
         do {
-            boolean goalReachedAngle = methods.GoalCheckAngle(angleGoal, degreesConversion()); //check if we are at angle.
-            if (goalReachedAngle) moveDriveByPower(methods.AngleChange(angleGoal));
+//            boolean goalReachedAngle = methods.GoalCheckAngle(angleGoal, degreesConversion()); //check if we are at angle.
+//            if (goalReachedAngle) moveDriveByPower(methods.AngleChange(angleGoal));
         }
         while(!goalReachedAngle);
         stopDrive();
