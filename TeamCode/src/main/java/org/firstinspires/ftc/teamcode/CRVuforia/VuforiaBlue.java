@@ -67,16 +67,19 @@ public class VuforiaBlue {
 
     private int skystonePosition = 4;
 
+    private WebcamName webcamName = null;
+
 
 
 
 
     /** This method initiates vuforia. Make sure to pass a webcam object
      *
-     * @param webcamName The webcam object
+     * @param awebcamName The webcam object
      * */
-    public void blueInit(WebcamName webcamName) {
-        ;
+    public void blueInit(WebcamName awebcamName) {
+
+        this.webcamName = awebcamName;
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.

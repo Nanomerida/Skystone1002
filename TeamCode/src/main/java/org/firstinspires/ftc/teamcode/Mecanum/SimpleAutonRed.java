@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -28,7 +29,7 @@ import static java.lang.Math.round;
 @Autonomous(name="MecaunmAutonRed", group = "Mecanum")
 public class SimpleAutonRed extends LinearOpMode {
 
-    VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
+    //VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
     GeneralMethods methods = new GeneralMethods();
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -63,10 +64,10 @@ public class SimpleAutonRed extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        left_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {power, power , power, power});
 
@@ -85,10 +86,10 @@ public class SimpleAutonRed extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        left_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {-power, power, power, -power }); //strafe Left
 
@@ -106,10 +107,10 @@ public class SimpleAutonRed extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        left_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {power, -power, -power, power}); //strafe Left
 
@@ -124,7 +125,7 @@ public class SimpleAutonRed extends LinearOpMode {
     private void moveDriveByPower(double[] powers) { //method to move.
         int x = 0;
         for (DcMotor motor : driveMotors) {
-            if(x == 1 || x == 3) motor.setPower(powers[x] * 1.2);
+            if(x == 0 || x == 2) motor.setPower(powers[x] * 0.5555);
             motor.setPower(powers[x]);
             x++;
         }
@@ -162,44 +163,45 @@ public class SimpleAutonRed extends LinearOpMode {
         return theta;
     }
 
-    private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();
+    private ArrayList<DcMotor> driveMotors = new ArrayList<>();
 
-    private static boolean goalReachedAngle = false;
-    static final double COUNTS_PER_WHEEL_REV = 2114.5936;
-    static final double WHEEL_DIAMETER_INCHES = 3;     // For figuring circumference
-    static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_INCHES * PI;
-    static final double COUNTS_PER_INCH =  ((WHEEL_CIRCUMFERENCE)/(COUNTS_PER_WHEEL_REV));
+    private  boolean goalReachedAngle = false;
+    private final double COUNTS_PER_WHEEL_REV = 2114.5936;
+    private final double WHEEL_DIAMETER_INCHES = 3;     // For figuring circumference
+    private final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_INCHES * PI;
+    private final double COUNTS_PER_INCH =  ((WHEEL_CIRCUMFERENCE)/(COUNTS_PER_WHEEL_REV));
+    private final float distanceMultiplier = 1.25f;
 
     @Override
     public void runOpMode(){
 
-        left_front_drive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        left_back_drive = hardwareMap.get(DcMotor.class, "leftBackDrive");
-        right_front_drive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
-        right_back_drive = hardwareMap.get(DcMotor.class, "rightBackDrive");
+        /*left_front_drive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        left_back_drive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
-        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
-        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
+        //right_front_drive.setDirection(DcMotor.Direction.REVERSE);
+        //right_back_drive.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.get(DcMotor.class, "arm");
 
-        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        //webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        claw = hardwareMap.get(CRServo.class, "claw");
+        claw = hardwareMap.get(CRServo.class, "claw"); */
 
-        blockPosBlue.blueInit(webcam);
+        //blockPosBlue.blueInit(webcam);
 
-        driveMotors.add(left_front_drive);
+        /*driveMotors.add(left_front_drive);
         driveMotors.add(left_back_drive);
         driveMotors.add(right_front_drive);
-        driveMotors.add(right_back_drive);
+        driveMotors.add(right_back_drive); */
 
         // MORE IMU STUFF
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        /*BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
@@ -208,11 +210,10 @@ public class SimpleAutonRed extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        */
 
 
 
-        telemetry.addData("Status:", "Ready!");
-        telemetry.update();
         waitForStart();
 
         sleep(5000);
@@ -225,7 +226,7 @@ public class SimpleAutonRed extends LinearOpMode {
 
         //Vuforia
 
-        int skystonePos = blockPosBlue.visionTest();
+        int skystonePos = 4;//blockPosBlue.visionTest();
 
         switch (skystonePos){
             case 0:

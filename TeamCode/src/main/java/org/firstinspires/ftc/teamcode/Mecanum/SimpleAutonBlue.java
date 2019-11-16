@@ -63,10 +63,10 @@ public class SimpleAutonBlue extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        left_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {power, power , power, power});
 
@@ -85,10 +85,10 @@ public class SimpleAutonBlue extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        left_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {-power, power, power, -power }); //strafe Left
 
@@ -106,10 +106,10 @@ public class SimpleAutonBlue extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        left_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_front_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
-        right_back_drive.setTargetPosition((int) round((inches/12) / COUNTS_PER_INCH));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {power, -power, -power, power}); //strafe Left
 
@@ -124,7 +124,7 @@ public class SimpleAutonBlue extends LinearOpMode {
     private void moveDriveByPower(double[] powers) { //method to move.
         int x = 0;
         for (DcMotor motor : driveMotors) {
-            if(x == 1 || x == 3) motor.setPower(powers[x] * 1.2);
+            if(x == 0 || x == 2) motor.setPower(powers[x] * 0.5555);
             motor.setPower(powers[x]);
             x++;
         }
@@ -169,14 +169,15 @@ public class SimpleAutonBlue extends LinearOpMode {
     static final double WHEEL_DIAMETER_INCHES = 3;     // For figuring circumference
     static final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER_INCHES * PI;
     static final double COUNTS_PER_INCH =  ((WHEEL_CIRCUMFERENCE)/(COUNTS_PER_WHEEL_REV));
+    static final float distanceMultiplier = 1.25f;
 
     @Override
     public void runOpMode(){
 
-        left_front_drive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        left_back_drive = hardwareMap.get(DcMotor.class, "leftBackDrive");
-        right_front_drive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
-        right_back_drive = hardwareMap.get(DcMotor.class, "rightBackDrive");
+        left_front_drive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        left_back_drive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
         right_front_drive.setDirection(DcMotor.Direction.REVERSE);
         right_back_drive.setDirection(DcMotor.Direction.REVERSE);
@@ -211,8 +212,7 @@ public class SimpleAutonBlue extends LinearOpMode {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
-        telemetry.addData("Status:", "Ready!");
-        telemetry.update();
+
         waitForStart();
 
 
@@ -230,7 +230,7 @@ public class SimpleAutonBlue extends LinearOpMode {
 
         switch (skystonePos){
             case 0:
-                strafeL(0.3, 10);
+                strafeL(0.3, 9);
                 sleep(400);
 
                 moveDriveByPos(0.3f, 19);
@@ -275,7 +275,7 @@ public class SimpleAutonBlue extends LinearOpMode {
                 claw.setPower(0);
                 break;
             case 2:
-                strafeR(0.3, 6);
+                strafeR(0.3, 7);
                 sleep(400);
 
                 moveDriveByPos(0.3f, 19);

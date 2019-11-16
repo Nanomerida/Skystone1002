@@ -4,8 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Methods.MecMoveProcedureStorage;
 import java.util.HashMap;
 
@@ -39,7 +41,7 @@ public class TeleOpMain extends OpMode {
     }
     
     //Array to hold movement instructions
-    private float[][] matrix = {{0.5f, 0.7f, 0.5f, 0.7f}, {-0.5f, 0.7f, 0.5f, -0.7f}, {0.5f, 0.7f, -0.5f, -0.7f}};
+    private float[][] matrix = {{0.55f, 1.0f, 0.55f, 1.0f}, {0.55f, -1.0f, -0.55f, 1.0f}, {0.65f, 1.0f, -0.65f, -1.0f}};
 
     //Initializes with the hardwareMap
     @Override
@@ -60,6 +62,9 @@ public class TeleOpMain extends OpMode {
         right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
+        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
+
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -79,7 +84,6 @@ public class TeleOpMain extends OpMode {
 
         //Manipulator gamepad readings
         double armPower = gamepad2.right_stick_y;
-        double armPowerSlow = gamepad2.left_stick_y;
         double clawPowerClose = -gamepad2.left_trigger;
         double clawPowerOpen = gamepad2.right_trigger;
 
@@ -107,7 +111,7 @@ public class TeleOpMain extends OpMode {
 
 
         //Read from controller
-        float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x};
+        float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
         
         //Update telemetry if moving
         if(gamepad1.left_stick_y == 0.0 && gamepad1.right_stick_x == 0.0) driveStatus = "IDLE";
@@ -124,7 +128,7 @@ public class TeleOpMain extends OpMode {
         right_back_drive.setPower(outputs[3] * speed);
 
         //Control arm
-        arm.setPower(0.5555*armPower);
+        arm.setPower(0.5555 * armPower);
         
         //Control claw
         if(clawPowerOpen != 0.0) claw.setPower(0.7*clawPowerOpen);

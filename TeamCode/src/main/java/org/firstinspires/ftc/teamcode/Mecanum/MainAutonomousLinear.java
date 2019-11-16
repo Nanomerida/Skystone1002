@@ -340,7 +340,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         left_y_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "left_y_encoder");
         right_y_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "right_y_encoder");
         x_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "x_encoder");
-        
+
         //Intake wheels
         intake_wheel_left = hardwareMap.get(CRServo.class, "intake_wheel_left");
         intake_wheel_right = hardwareMap.get(CRServo.class, "intake_wheel_right");
