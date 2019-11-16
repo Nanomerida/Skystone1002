@@ -175,7 +175,7 @@ public class SimpleAutonRed extends LinearOpMode {
     @Override
     public void runOpMode(){
 
-        /*left_front_drive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        left_front_drive  = hardwareMap.get(DcMotor.class, "left_front_drive");
         left_back_drive = hardwareMap.get(DcMotor.class, "left_back_drive");
         right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
         right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
@@ -187,7 +187,7 @@ public class SimpleAutonRed extends LinearOpMode {
 
         //webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        claw = hardwareMap.get(CRServo.class, "claw"); */
+        claw = hardwareMap.get(CRServo.class, "claw");
 
         //blockPosBlue.blueInit(webcam);
 
