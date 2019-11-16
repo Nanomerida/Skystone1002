@@ -27,7 +27,7 @@ public interface MecanumMovement {
      * @return motorPower The array of motor powers in [LF, LB, RF, RB] format.
      */
 
-    public double[] AngleChange(double thetaG);
+    public double[] AngleChange(double thetaG, double thetaA);
 
     /**
      * Goal Check for position

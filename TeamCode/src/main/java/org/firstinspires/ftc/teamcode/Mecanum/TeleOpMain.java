@@ -84,8 +84,8 @@ public class TeleOpMain extends OpMode {
 
         //Manipulator gamepad readings
         double armPower = gamepad2.right_stick_y;
-        double clawPowerClose = -gamepad2.left_trigger;
-        double clawPowerOpen = gamepad2.right_trigger;
+        double clawPowerClose = -gamepad2.right_trigger;
+        double clawPowerOpen = gamepad2.left_trigger;
 
         //Turn slow mode of, if pressed and not already active
         if(gamepad1.x && !prevX) slowModeOn = !slowModeOn;

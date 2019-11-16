@@ -50,9 +50,10 @@ public class SimpleAutonBlue extends LinearOpMode {
         //Use odometry to rotate
         do {
             boolean goalReachedAngle = methods.GoalCheckAngle(angleGoal, degreesConversion()); //check if we are at angle.
-            if (goalReachedAngle) moveDriveByPower(methods.AngleChange(angleGoal));
+            if (goalReachedAngle) moveDriveByPower(methods.AngleChange(angleGoal, degreesConversion()));
         }
         while(!goalReachedAngle);
+
         stopDrive();
     }
 
@@ -60,22 +61,23 @@ public class SimpleAutonBlue extends LinearOpMode {
 
         resetDrive();
 
-        //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
-        //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
-
-        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-
-        moveDriveByPower(new double[] {power, power , power, power});
-
+        left_front_drive.setTargetPosition(1000);
+        left_back_drive.setTargetPosition(1000);
+        right_front_drive.setTargetPosition(1000);
+        right_back_drive.setTargetPosition(1000);
 
         setRunToPosition();
 
-        waitForDrive();
+        //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
+        //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        moveDriveByPower(new double[] {0, 0, 0, 0});
+        /*left_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH))); */
+
+        moveDriveByPower(new double[] {-power, -power , -power, -power});
+
     }
 
     private void strafeL(double power, double inches){
@@ -85,10 +87,10 @@ public class SimpleAutonBlue extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {-power, power, power, -power }); //strafe Left
 
@@ -103,13 +105,14 @@ public class SimpleAutonBlue extends LinearOpMode {
 
         resetDrive();
 
+
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {power, -power, -power, power}); //strafe Left
 
@@ -137,7 +140,7 @@ public class SimpleAutonBlue extends LinearOpMode {
     }
     private void waitForDrive(){
         while(left_front_drive.isBusy() ||left_back_drive.isBusy() || right_front_drive.isBusy() || right_back_drive.isBusy()){
-            idle();
+            sleep(1);
         }
     }
 
@@ -222,7 +225,13 @@ public class SimpleAutonBlue extends LinearOpMode {
         sleep(1000);
         claw.setPower(0);
 
-        moveDriveByPos(0.5f,29.6f);
+        moveDriveByPos(0.5f,-29.6f);
+
+        waitForDrive();
+
+        moveDriveByPower(new double[] {0, 0, 0, 0});
+
+        idle();
 
         //Vuforia
 
