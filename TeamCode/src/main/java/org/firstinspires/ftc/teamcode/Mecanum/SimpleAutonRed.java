@@ -29,8 +29,8 @@ import static java.lang.Math.round;
 @Autonomous(name="MecaunmAutonRed", group = "Mecanum")
 public class SimpleAutonRed extends LinearOpMode {
 
-    //VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
-//    GeneralMethods methods = new GeneralMethods();
+    VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
+    GeneralMethods methods = new GeneralMethods();
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
@@ -50,8 +50,8 @@ public class SimpleAutonRed extends LinearOpMode {
     private void MoveAngle(double power, double angleGoal){
         //Use odometry to rotate
         do {
-//            boolean goalReachedAngle = methods.GoalCheckAngle(angleGoal, degreesConversion()); //check if we are at angle.
-//            if (goalReachedAngle) moveDriveByPower(methods.AngleChange(angleGoal));
+            boolean goalReachedAngle = methods.GoalCheckAngle(angleGoal, degreesConversion()); //check if we are at angle.
+            if (goalReachedAngle) moveDriveByPower(methods.AngleChange(angleGoal, degreesConversion()));
         }
         while(!goalReachedAngle);
         stopDrive();
@@ -64,10 +64,10 @@ public class SimpleAutonRed extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {power, power , power, power});
 
@@ -86,10 +86,10 @@ public class SimpleAutonRed extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {-power, power, power, -power }); //strafe Left
 
@@ -107,10 +107,10 @@ public class SimpleAutonRed extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        left_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_front_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
-        right_back_drive.setTargetPosition((int) (distanceMultiplier * (inches / COUNTS_PER_INCH)));
+        left_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        left_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        right_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
 
         moveDriveByPower(new double[] {power, -power, -power, power}); //strafe Left
 
@@ -180,28 +180,26 @@ public class SimpleAutonRed extends LinearOpMode {
         right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
         right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
-        //right_front_drive.setDirection(DcMotor.Direction.REVERSE);
-        //right_back_drive.setDirection(DcMotor.Direction.REVERSE);
+        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
+        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.get(DcMotor.class, "arm");
 
-        //webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         claw = hardwareMap.get(CRServo.class, "claw");
 
-        //blockPosBlue.blueInit(webcam);
+        blockPosBlue.blueInit(webcam);
 
-        /*driveMotors.add(left_front_drive);
+        driveMotors.add(left_front_drive);
         driveMotors.add(left_back_drive);
         driveMotors.add(right_front_drive);
-        driveMotors.add(right_back_drive); */
-
         // MORE IMU STUFF
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
-        /*BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
@@ -210,7 +208,7 @@ public class SimpleAutonRed extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        */
+
 
 
 
@@ -222,7 +220,7 @@ public class SimpleAutonRed extends LinearOpMode {
         sleep(1000);
         claw.setPower(0);
 
-        moveDriveByPos(0.5f,29.6f);
+        moveDriveByPos(0.5f,-29.6f);
 
         //Vuforia
 

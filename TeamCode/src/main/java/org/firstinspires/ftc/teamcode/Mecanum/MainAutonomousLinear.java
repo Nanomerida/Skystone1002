@@ -244,7 +244,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         do {
             goalReachedAngle = methods.GoalCheckAngle(goalLibrary[stepNumber][1], degreesConversion()); //check if we are at angle.
             if (goalReachedAngle) {
-                moveDrivebyPower(methods.AngleChange(goalLibrary[stepNumber][1]));
+                moveDrivebyPower(methods.AngleChange(goalLibrary[stepNumber][1], degreesConversion()));
             }
         }
         while(!goalReachedAngle);

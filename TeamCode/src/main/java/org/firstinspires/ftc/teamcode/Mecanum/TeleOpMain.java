@@ -24,6 +24,7 @@ public class TeleOpMain extends OpMode {
     public DcMotor right_back_drive = null;
     public DcMotor arm = null;
     public CRServo claw = null;
+    public DcMotor lift = null;
     
     private boolean slowModeOn = false;
     private boolean prevX = false;
@@ -55,6 +56,8 @@ public class TeleOpMain extends OpMode {
 
         arm = hardwareMap.get(DcMotor.class, "arm");
         claw = hardwareMap.get(CRServo.class, "claw");
+        
+        lift = hardwareMap.get(DcMotor.class, "lift");
 
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -68,6 +71,9 @@ public class TeleOpMain extends OpMode {
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSTION);
 
     }
 
@@ -84,8 +90,8 @@ public class TeleOpMain extends OpMode {
 
         //Manipulator gamepad readings
         double armPower = gamepad2.right_stick_y;
-        double clawPowerClose = -gamepad2.left_trigger;
-        double clawPowerOpen = gamepad2.right_trigger;
+        double clawPowerClose = -gamepad2.right_trigger;
+        double clawPowerOpen = gamepad2.left_trigger;
 
         //Turn slow mode of, if pressed and not already active
         if(gamepad1.x && !prevX) slowModeOn = !slowModeOn;

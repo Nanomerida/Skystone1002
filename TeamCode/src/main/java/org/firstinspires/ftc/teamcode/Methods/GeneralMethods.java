@@ -12,7 +12,7 @@ public class GeneralMethods  implements MecanumMovement{
     public GeneralMethods(){
 
     }
-    MainAutonomousLinear heading = new MainAutonomousLinear();
+
     Reference vars = new Reference();
     MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
     private HashMap<String, float[]> mecanum = procedures.getMecanum();
@@ -37,8 +37,7 @@ public class GeneralMethods  implements MecanumMovement{
     }
 
     //Angle change method for mecanum
-    public double[] AngleChange(double thetaG) { /**/
-        double thetaA = heading.degreesConversion();
+    public double[] AngleChange(double thetaG, double thetaA) { /**/
         float[] TurnBasePower = mecanum.get("turnCC");
         thetaA -= thetaG;
         double[] motorPower = new double[4];
