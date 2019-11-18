@@ -24,9 +24,8 @@ public class BulkDataHub {
     RevBulkData bulkData;
     ExpansionHubMotor left_y_encoder, right_y_encoder, x_encoder = null;
     
+    ImuUtil imu;
     
-    BNO055IMU imu;
-    private Orientation angles;
     private float heading;
     
     OpMode opMode;
@@ -37,14 +36,13 @@ public class BulkDataHub {
       this.left_y_encoder = (ExpansionHubMotor) encoders[0];
       this.right_y_encoder = (ExpansionHubMotor) encoders[1];
       this.x_encoder = (ExpansionHubMotor) encoders[2];
-      this.imu = revImu;
+      imu = new ImuUtil(revImu);
       
     }
     
     public void refreshData() {
       bulkData = expansionHub.getBulkInputData();
-      angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-      heading = angles.firstAngle;
+      heading = imu.getHeading();
     }
     
     public float getHeading(){
