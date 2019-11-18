@@ -24,6 +24,7 @@ public class TeleOpMain extends OpMode {
     public DcMotor right_back_drive = null;
     public DcMotor arm = null;
     public CRServo claw = null;
+    public DcMotor lift = null;
     
     private boolean slowModeOn = false;
     private boolean prevX = false;
@@ -55,6 +56,8 @@ public class TeleOpMain extends OpMode {
 
         arm = hardwareMap.get(DcMotor.class, "arm");
         claw = hardwareMap.get(CRServo.class, "claw");
+        
+        lift = hardwareMap.get(DcMotor.class, "lift");
 
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -68,6 +71,9 @@ public class TeleOpMain extends OpMode {
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSTION);
 
     }
 
