@@ -49,6 +49,7 @@ public class SimpleAutonBlue extends LinearOpMode {
     private void MoveAngle(double power, double angleGoal){
         //Use odometry to rotate
         do {
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             boolean goalReachedAngle = methods.GoalCheckAngle(angleGoal, degreesConversion()); //check if we are at angle.
             if (goalReachedAngle) moveDriveByPower(methods.AngleChange(angleGoal, degreesConversion()));
         }
@@ -87,10 +88,10 @@ public class SimpleAutonBlue extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
-        left_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
-        right_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
-        right_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        left_front_drive.setTargetPosition((int) ((inches/12) / COUNTS_PER_INCH));
+        left_back_drive.setTargetPosition((int) ((inches/12) / COUNTS_PER_INCH));
+        right_front_drive.setTargetPosition((int) ((inches/12) / COUNTS_PER_INCH));
+        right_back_drive.setTargetPosition((int)((inches/12) / COUNTS_PER_INCH));
 
         moveDriveByPower(new double[] {-power, power, power, -power }); //strafe Left
 
@@ -109,10 +110,11 @@ public class SimpleAutonBlue extends LinearOpMode {
         //left_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
         //right_drive.setTargetPosition((int) round(inches * COUNTS_PER_INCH));
 
-        left_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
-        left_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
-        right_front_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
-        right_back_drive.setTargetPosition((int) (distanceMultiplier * ((inches/12) / COUNTS_PER_INCH)));
+        left_front_drive.setTargetPosition((int) ((inches/12) / COUNTS_PER_INCH));
+        left_back_drive.setTargetPosition((int) ((inches/12) / COUNTS_PER_INCH));
+        right_front_drive.setTargetPosition((int) ((inches/12) / COUNTS_PER_INCH));
+        right_back_drive.setTargetPosition((int)((inches/12) / COUNTS_PER_INCH));
+
 
         moveDriveByPower(new double[] {power, -power, -power, power}); //strafe Left
 

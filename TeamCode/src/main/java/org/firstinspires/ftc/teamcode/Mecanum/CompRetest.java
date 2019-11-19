@@ -60,7 +60,7 @@ public class CompRetest extends LinearOpMode {
 
         claw = hardwareMap.get(CRServo.class, "claw");
 
-        //blockPosBlue.blueInit(webcam);
+        blockPosBlue.blueInit(webcam);
 
 
         right_front_drive.setDirection(DcMotor.Direction.REVERSE);
@@ -105,33 +105,153 @@ public class CompRetest extends LinearOpMode {
 
 
 
-        sleep(1800);
-
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
+        sleep(660);
 
 
-        claw.setPower(-0.3);
-        sleep(3000);
-        claw.setPower(-0.1);
 
-        sleep(500);
+        int skystonePos = blockPosBlue.visionTest();
 
-        left_front_drive.setPower(0.3);
-        left_back_drive.setPower(0.3);
-        right_front_drive.setPower(0.3);
-        right_back_drive.setPower(0.3);
 
-        sleep(1000);
 
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
+        switch(skystonePos){
+            case 0:
 
-        sleep(500);
+                left_front_drive.setPower(-0.6);
+                left_back_drive.setPower(0.9);
+                right_front_drive.setPower(0.6);
+                right_back_drive.setPower(-0.9);
+
+                sleep(800);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(600);
+
+
+                left_front_drive.setPower(-0.3);
+                left_back_drive.setPower(-0.3);
+                right_front_drive.setPower(-0.3);
+                right_back_drive.setPower(-0.3);
+
+                sleep(1140);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                claw.setPower(-0.3);
+                sleep(3000);
+                claw.setPower(-0.1);
+
+                sleep(500);
+
+                left_front_drive.setPower(0.3);
+                left_back_drive.setPower(0.3);
+                right_front_drive.setPower(0.3);
+                right_back_drive.setPower(0.3);
+
+                sleep(1000);
+
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+                break;
+
+            case 1:
+
+
+                left_front_drive.setPower(-0.3);
+                left_back_drive.setPower(-0.3);
+                right_front_drive.setPower(-0.3);
+                right_back_drive.setPower(-0.3);
+
+                sleep(1140);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                claw.setPower(-0.3);
+                sleep(3000);
+                claw.setPower(-0.1);
+
+                sleep(500);
+
+                left_front_drive.setPower(0.3);
+                left_back_drive.setPower(0.3);
+                right_front_drive.setPower(0.3);
+                right_back_drive.setPower(0.3);
+
+                sleep(1000);
+
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+                break;
+
+            case 2:
+
+                left_front_drive.setPower(0.6);
+                left_back_drive.setPower(-0.9);
+                right_front_drive.setPower(-0.6);
+                right_back_drive.setPower(0.9);
+
+
+                sleep(800);
+
+
+                left_front_drive.setPower(-0.3);
+                left_back_drive.setPower(-0.3);
+                right_front_drive.setPower(-0.3);
+                right_back_drive.setPower(-0.3);
+
+                sleep(1140);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                claw.setPower(-0.3);
+                sleep(3000);
+                claw.setPower(-0.1);
+
+                sleep(500);
+
+                left_front_drive.setPower(0.3);
+                left_back_drive.setPower(0.3);
+                right_front_drive.setPower(0.3);
+                right_back_drive.setPower(0.3);
+
+                sleep(1000);
+
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+
+
+        }
+
 
         left_front_drive.setPower(-0.6);
         left_back_drive.setPower(0.9);

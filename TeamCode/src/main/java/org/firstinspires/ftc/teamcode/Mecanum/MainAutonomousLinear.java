@@ -61,8 +61,6 @@ public class MainAutonomousLinear extends LinearOpMode {
     //public DcMotor  right_y_encoder = null;
     //public DcMotor  x_encoder = null;
     public DcMotor  lift = null;
-    public CRServo intake_wheel_left = null;
-    public CRServo intake_wheel_right = null;
     public WebcamName webcam = null;
     ExpansionHubEx expansionHub4;
     RevBulkData bulkData;
@@ -131,6 +129,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     public double degreesConversion(){
         while(refreshTimer.milliseconds() < 3){sleep(1);}
         refreshTimer.reset();
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double theta = this.angles.firstAngle;
         if(theta < 0) theta += 360;
         if(redSide){
@@ -140,19 +139,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         return theta;
     }
 
-    private void intake(){
-        robotState.setIntakeState(RobotState.IntakeState.ACTIVE);
-        showTelemetry.updateTelem.updateTelemetry();
-
-        intake_wheel_left.setPower(1);
-        intake_wheel_right.setPower(1);
-        sleep(2000);
-        intake_wheel_left.setPower(0);
-        intake_wheel_right.setPower(0);
-
-        robotState.setIntakeState(RobotState.IntakeState.IDLE);
-        showTelemetry.updateTelem.updateTelemetry();
-    }
 
     private void resetDrive(){
         for(DcMotor motor : driveMotors){
@@ -341,9 +327,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_y_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "right_y_encoder");
         x_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "x_encoder");
 
-        //Intake wheels
-        intake_wheel_left = hardwareMap.get(CRServo.class, "intake_wheel_left");
-        intake_wheel_right = hardwareMap.get(CRServo.class, "intake_wheel_right");
 
         //Webcam
         webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
@@ -371,8 +354,6 @@ public class MainAutonomousLinear extends LinearOpMode {
         right_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         x_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //reverse the right intake
-        intake_wheel_right.setDirection(CRServo.Direction.REVERSE);
 
         //reverse the opposite drive motors
         right_front_drive.setDirection(DcMotor.Direction.REVERSE);
@@ -625,7 +606,7 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                     //MAYBE INTAKE HERE:
                 case 3:
-                    intake();
+                    //things
                     break;
 
 

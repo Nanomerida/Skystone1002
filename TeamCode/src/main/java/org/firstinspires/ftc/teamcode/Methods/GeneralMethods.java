@@ -38,7 +38,7 @@ public class GeneralMethods  implements MecanumMovement{
 
     //Angle change method for mecanum
     public double[] AngleChange(double thetaG, double thetaA) { /**/
-        float[] TurnBasePower = mecanum.get("turnCC");
+        float[] TurnBasePower = mecanum.get("rotateCC");
         thetaA -= thetaG;
         double[] motorPower = new double[4];
         for(int i = 0; i < 4; i++) {
