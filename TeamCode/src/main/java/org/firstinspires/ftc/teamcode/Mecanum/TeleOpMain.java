@@ -42,7 +42,7 @@ public class TeleOpMain extends OpMode {
     }
     
     //Array to hold movement instructions
-    private float[][] matrix = {{0.55f, 1.0f, 0.55f, 1.0f}, {0.55f, -1.0f, -0.55f, 1.0f}, {0.65f, 1.0f, -0.65f, -1.0f}};
+    private float[][] matrix = {{0.55f, 1.0f, 0.5f, 1.0f}, {0.7f, -0.95f, -0.6f, 0.95f}, {0.65f, 1.0f, -0.65f, -1.0f}};
 
     //Initializes with the hardwareMap
     @Override

@@ -278,7 +278,7 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
 
         telemetry.addData("Start:", "telem");
         telemetry.update();
@@ -415,8 +415,6 @@ public class MainAutonomousLinear extends LinearOpMode {
 
         while(opModeIsActive()){
 
-            showTelemetry.updateTelem.setStepNumbV(stepNumber);
-            showTelemetry.updateTelem.updateTelemetry();
 
 
 
@@ -429,25 +427,16 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Position Change */
                 case 0:
-                    robotState.setDriveState(RobotState.DriveState.MOVING);
-                    showTelemetry.updateTelem.updateTelemetry();
 
                     MovePosition();
-
-                    robotState.setDriveState(RobotState.DriveState.IDLE);
-                    showTelemetry.updateTelem.updateTelemetry();
                     break;
 
 
                 /* Angle Change */
                 case 1:
-                    robotState.setDriveState(RobotState.DriveState.MOVING);
-                    showTelemetry.updateTelem.updateTelemetry();
 
                     MoveAngle();
 
-                    robotState.setDriveState(RobotState.DriveState.IDLE);
-                    showTelemetry.updateTelem.updateTelemetry();
                     break;
 
 
@@ -455,20 +444,9 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 /* Vuforia.java :( ugh... */
                 case 2:
-                        robotState.setVisionState(RobotState.VisionState.SEARCHING);
-                        showTelemetry.updateTelem.updateTelemetry();
 
                         stonePos = blockPosBlue.visionTest();
-                        if(stonePos == 4) {
-                            stonePos = 1;
-                            robotState.setVisionState(RobotState.VisionState.ERROR);
-                            showTelemetry.updateTelem.updateTelemetry();
-                        }
-                        robotState.setVisionState(RobotState.VisionState.FOUND);
-                        showTelemetry.updateTelem.updateTelemetry();
                         if(goalLibrary[stepNumber][1] == 1){ //for blue side
-                            robotState.setVisionState(RobotState.VisionState.DISABLED);
-                            showTelemetry.updateTelem.updateTelemetry();
                             switch(stonePos) {
                                 case 0: //bridge
 
@@ -532,8 +510,6 @@ public class MainAutonomousLinear extends LinearOpMode {
                         }
 
                         else{ //Red side
-                            robotState.setVisionState(RobotState.VisionState.DISABLED);
-                            showTelemetry.updateTelem.updateTelemetry();
                             switch (stonePos){
                                 case 0:
 
@@ -612,8 +588,6 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 //LIFT MOTOR UP:
                 case 4:
-                    robotState.setLiftState(RobotState.LiftState.MOVING_UP);
-                    showTelemetry.updateTelem.updateTelemetry();
 
                     lift.setTargetPosition(1000);
                     lift.setPower(0.5);
@@ -622,8 +596,6 @@ public class MainAutonomousLinear extends LinearOpMode {
                         sleep(1);
                     }
 
-                    robotState.setLiftState(RobotState.LiftState.IDLE);
-                    showTelemetry.updateTelem.updateTelemetry();
                     break;
 
                 //LIFT MOTOR DOWN:
@@ -633,14 +605,9 @@ public class MainAutonomousLinear extends LinearOpMode {
 
                 //WAIT:
                 case 6:
-                    robotState.setMainState(RobotState.MainState.IDLE);
-                    showTelemetry.updateTelem.updateTelemetry();
 
                     //Wait for indicated time
                     sleep((long) goalLibrary[stepNumber][1]);
-
-                    robotState.setMainState(RobotState.MainState.ACTIVE);
-                    showTelemetry.updateTelem.updateTelemetry();
                     break;
             }
             stepNumber++;

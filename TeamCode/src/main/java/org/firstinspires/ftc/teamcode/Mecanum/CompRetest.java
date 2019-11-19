@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -105,7 +106,14 @@ public class CompRetest extends LinearOpMode {
 
 
 
-        sleep(660);
+        sleep(750);
+
+
+        left_front_drive.setPower(0);
+        left_back_drive.setPower(0);
+        right_front_drive.setPower(0);
+        right_back_drive.setPower(0);
+
 
 
 
@@ -122,6 +130,7 @@ public class CompRetest extends LinearOpMode {
                 right_back_drive.setPower(-0.9);
 
                 sleep(800);
+
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -145,7 +154,7 @@ public class CompRetest extends LinearOpMode {
 
                 claw.setPower(-0.3);
                 sleep(3000);
-                claw.setPower(-0.1);
+                //claw.setPower(-0.1);
 
                 sleep(500);
 
@@ -174,7 +183,7 @@ public class CompRetest extends LinearOpMode {
                 right_front_drive.setPower(-0.3);
                 right_back_drive.setPower(-0.3);
 
-                sleep(1140);
+                sleep(1240);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);

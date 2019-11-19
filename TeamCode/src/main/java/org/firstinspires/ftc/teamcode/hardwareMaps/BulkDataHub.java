@@ -30,7 +30,7 @@ public class BulkDataHub {
     
     OpMode opMode;
     
-    public BulkDataHub(OpMode aOpMode, String expansionHubName, DcMotor[] encoders, BNBNO055IMU revImu) {
+    public BulkDataHub(OpMode aOpMode, String expansionHubName, DcMotor[] encoders, BNO055IMU revImu) {
       this.opMode = aOpMode;
       this.expansionHub = aOpMode.hardwareMap.get(ExpansionHubEx.class, expansionHubName);
       this.left_y_encoder = (ExpansionHubMotor) encoders[0];
@@ -54,7 +54,7 @@ public class BulkDataHub {
       return averageY;
     }
     
-    public double getYTicks(){
+    public double getXTicks(){
       return bulkData.getMotorCurrentPosition(x_encoder);
     }
     

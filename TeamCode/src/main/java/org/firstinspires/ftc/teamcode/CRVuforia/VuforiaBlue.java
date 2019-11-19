@@ -122,8 +122,8 @@ public class VuforiaBlue {
                 skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
 
                 VectorF skystoneCoords = skystonePositionCoords.getTranslation();
-                float closestX = Range.clip(skystoneCoords.get(0), -20f, 20f);
-                if (closestX == -20) skystonePosition = 1;
+                float closestX = Range.clip(skystoneCoords.get(0), -10f, 10f);
+                if (closestX == -10) skystonePosition = 1;
                 else skystonePosition = 2;
                 break;
             }
