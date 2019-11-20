@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.Mecanum;
 
 
-public class 2dOrientation {
+public class TwoDOrientation {
   
   
   double heading;
   String unit;
   
-  public 2dOrientation(double heading, String unit) {
+  public TwoDOrientation(double heading, String unit) {
     this.heading = heading;
     this.unit = unit;
   }
