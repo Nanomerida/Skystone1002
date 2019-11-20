@@ -17,6 +17,11 @@ public class TwoDPosition {
     return new double[] {x, y};
   }
   
+  public void setCurrentPosition(double x, double y){
+    this.x = x;
+    this.y = y;
+  }
+  
   public long getTimeStam() {
     return timeStamp;
   }
