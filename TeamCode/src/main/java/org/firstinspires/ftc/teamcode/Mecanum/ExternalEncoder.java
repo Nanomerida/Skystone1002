@@ -1,23 +1,30 @@
 package org.firstinspires.ftc.teamcode.Mecanum;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import org.openftc.revextensions2.ExpansionHubMotor;
+import org.openftc.revextensions2.RevBulkData;
 
 public class ExternalEncoder {
   
-  DcMotor encoder;
-  int totalCounts;
-  int deltaCounts;
+  ExpansionHubMotor encoder;
+  private int previousCounts;
+  private int deltaCounts;
   
   
-  public ExternalEncoder(DcMotor encoder) {
+  public ExternalEncoder(ExpansionHubMotor encoder) {
     this.encoder = encoder;
   }
   
-  public void syncEncoders(){
-    totalCounts = encoder.getCurrentPosition();
-  }  
+  
+  public void syncEncoders(RevBulkData bulkData){
+    previousCounts = bulkData.getMotorCurrentPosition(encoder);
+    deltaCounts = 0;
+  }
+  
+  public int getCounts(RevBulkData bulkData){ 
+    deltaCounts = (bulkData.getMotorCurrentPosition(encoder) - previousCounts);
+    return deltaCounts;
+  }
   
 
 
