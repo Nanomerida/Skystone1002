@@ -105,17 +105,17 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
     private int ticksLeftY(){
-        int deltaTicks = (previousTicksYLeft - bulkData.getMotorCurrentPosition(left_y_encoder));
+        int deltaTicks = -1 *(previousTicksYLeft - bulkData.getMotorCurrentPosition(left_y_encoder));
         return deltaTicks;
     }
 
     private int ticksRightY(){
-        int deltaTicks = (previousTicksYRight - bulkData.getMotorCurrentPosition(right_y_encoder));
+        int deltaTicks = -1 * (previousTicksYRight - bulkData.getMotorCurrentPosition(right_y_encoder));
         return deltaTicks;
     }
 
     private int ticksX(){
-        int deltaTicks = (previousTicksX - bulkData.getMotorCurrentPosition(x_encoder));
+        int deltaTicks = -1 * (previousTicksX - bulkData.getMotorCurrentPosition(x_encoder));
         return deltaTicks;
     }
 
