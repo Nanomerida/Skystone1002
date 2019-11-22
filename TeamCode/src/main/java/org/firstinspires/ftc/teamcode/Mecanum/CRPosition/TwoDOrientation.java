@@ -1,24 +1,24 @@
-package org.firstinspires.ftc.teamcode.Mecanum;
+package org.firstinspires.ftc.teamcode.Mecanum.CRPosition;
 
 
 public class TwoDOrientation {
   
   
-  double heading;
+  static double Currentheading;
   String unit;
   
   public TwoDOrientation(double heading, String unit) {
-    this.heading = heading;
+    Currentheading = heading;
     this.unit = unit;
   }
 
 
   public double getHeading(){
-    return heading;
+    return Currentheading;
   }
   
   public void setHeading(double heading){
-    this.heading = heading;
+    Currentheading = heading;
   }
   
   public void setUnit(String unit){
@@ -26,6 +26,6 @@ public class TwoDOrientation {
   }
   
   public String toString() {
-    return heading + " " + unit;
+    return Currentheading + " " + unit;
   }
 }

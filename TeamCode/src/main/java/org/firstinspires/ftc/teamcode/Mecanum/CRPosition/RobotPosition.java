@@ -1,7 +1,5 @@
-package org.firstinspires.ftc.teamcode.Mecanum;
+package org.firstinspires.ftc.teamcode.Mecanum.CRPosition;
 
-import org.firstinspires.ftc.teamcode.Mecanum.TwoDPosition;
-import org.firstinspires.ftc.teamcode.Mecanum.TwoDOrientation;
 
 
 public class RobotPosition {
@@ -13,21 +11,34 @@ public class RobotPosition {
      this.position = new TwoDPosition(x, y);
      this.heading = new TwoDOrientation(heading, headingUnit);
   }
- 
- 
+
+  /**
+   * Returns a double array with the robot's position as (x,y)
+   * @return (x, y)
+   */
   public double[] getPosition(){
     return position.getCurrentPosition();
   }
-  
+
+
+  /**
+   * Sets the current robot position to the given x, y
+   * @param x
+   * @param y
+   */
   public void setPosition(double x, double y){
     position.setCurrentPosition(x, y);
   }
-  
+
+  /**
+   * Returns the current robot heading, normalized.
+   * @return
+   */
   public double getHeading(){
-    heading.getHeading();
+    return heading.getHeading();
   }
   
   public void setHeading (double heading){
-    heading.setHeading(heading);
+    this.heading.setHeading(heading);
   }
 }

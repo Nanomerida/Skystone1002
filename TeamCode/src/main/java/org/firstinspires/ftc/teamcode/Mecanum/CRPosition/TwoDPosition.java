@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.Mecanum;
+package org.firstinspires.ftc.teamcode.Mecanum.CRPosition;
 
 
 public class TwoDPosition {
 
-  double x;
-  double y;
+  static double x;
+  static double y;
   final long timeStamp;
 
   public TwoDPosition(double x, double y) {
