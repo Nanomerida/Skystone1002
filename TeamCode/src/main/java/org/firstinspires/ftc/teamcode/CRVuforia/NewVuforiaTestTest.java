@@ -122,15 +122,16 @@ public class NewVuforiaTestTest extends LinearOpMode {
             boolean stoneVisible = false;
 
             // check all the trackable targets to see which one (if any) is visible.
-            if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
+            if (((CRVuforiaImage) stoneTarget.getListener()).imageVisible()) { //((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()
                 telemetry.addData("Visible Target", stoneTarget.getName());
-                OpenGLMatrix location = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget();
-                if (location != null) {
+                ///OpenGLMatrix location = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget();
+                VectorF translation = ((CRVuforiaImage) stoneTarget.getListener()).findImagePos();
+                if (translation != null) {
                     // express position (translation) of robot in inches.
-                    VectorF translation = location.getTranslation();
-                    float closestX = Range.clip(translation.get(0), -20f, 20f);
-                    if (closestX == -20) telemetry.addData("Skystone Target:", "Center");
-                    if (closestX == 20) telemetry.addData("Skystone Target:", "Right");
+                    //VectorF translation = location.getTranslation();
+                    float closestX = Range.clip(translation.get(0), -10f, 10f);
+                    if (closestX == -10) telemetry.addData("Skystone Target:", "Center");
+                    if (closestX == 10) telemetry.addData("Skystone Target:", "Right");
 
                     telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                             translation.get(0), translation.get(1), translation.get(2));

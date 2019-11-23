@@ -405,7 +405,6 @@ public class MainAutonomousLinear extends LinearOpMode {
 
 
 
-        robotState.setMainState(RobotState.MainState.ACTIVE);
 
 
 

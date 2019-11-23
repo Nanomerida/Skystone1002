@@ -120,7 +120,6 @@ public class VuforiaBlue {
             // check all the trackable targets to see which one (if any) is visible.
             if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
                 skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
-
                 VectorF skystoneCoords = skystonePositionCoords.getTranslation();
                 float closestX = Range.clip(skystoneCoords.get(0), -10f, 10f);
                 if (closestX == -10) skystonePosition = 1;

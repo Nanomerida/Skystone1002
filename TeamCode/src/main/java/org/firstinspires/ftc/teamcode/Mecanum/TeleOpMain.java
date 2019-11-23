@@ -1,19 +1,27 @@
 package org.firstinspires.ftc.teamcode.Mecanum;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.Methods.MecMoveProcedureStorage;
 import java.util.HashMap;
 
 @TeleOp(name = "TeleOpMain", group="TeleOp")
 
 public class TeleOpMain extends OpMode {
+
+    TeleOpFieldCentric fieldCentric;
 
     MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
     private HashMap<String, float[]> mecanum = procedures.getMecanum();
@@ -27,8 +35,13 @@ public class TeleOpMain extends OpMode {
     public DcMotor lift = null;
     
     private boolean slowModeOn = false;
+    private boolean fieldCentricOn = false;
     private boolean prevX = false;
+    private boolean prevY = false;
     private String driveStatus;
+
+    public BNO055IMU imu;
+    float[] inputs;
     
     
 
@@ -75,6 +88,17 @@ public class TeleOpMain extends OpMode {
         //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        fieldCentric = new TeleOpFieldCentric(imu);
+
     }
 
     @Override
@@ -96,6 +120,7 @@ public class TeleOpMain extends OpMode {
         //Turn slow mode of, if pressed and not already active
         if(gamepad1.x && !prevX) slowModeOn = !slowModeOn;
         float speed = (slowModeOn) ? 0.5f : 1.0f;
+        if(gamepad1.y && !prevY) fieldCentricOn =  !fieldCentricOn;
         
         //Useful telemetry
         telemetry.addLine("Motor Powers | ")
@@ -118,6 +143,7 @@ public class TeleOpMain extends OpMode {
 
         //Read from controller
         float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
+        if(slowModeOn) inputs = fieldCentric.driveFieldRelative(inputs[1], inputs[0], inputs[2]);
         
         //Update telemetry if moving
         if(gamepad1.left_stick_y == 0.0 && gamepad1.right_stick_x == 0.0) driveStatus = "IDLE";
@@ -143,6 +169,7 @@ public class TeleOpMain extends OpMode {
 
         //store current slow mode status
         prevX = gamepad1.x;
+        prevY = gamepad1.y;
         
         //update telemetry
         telemetry.update();
