@@ -55,7 +55,7 @@ public class TeleOpMain extends OpMode {
     }
     
     //Array to hold movement instructions
-    private float[][] matrix = {{0.55f, 1.0f, 0.5f, 1.0f}, {0.7f, -0.95f, -0.6f, 0.95f}, {0.65f, 1.0f, -0.65f, -1.0f}};
+    private float[][] matrix = {{0.55f, 1.0f, 0.5f, 1.0f}, {0.4f, -0.95f, -0.45f, 0.95f}, {0.65f, 1.0f, -0.65f, -1.0f}};
 
     //Initializes with the hardwareMap
     @Override
@@ -91,6 +91,7 @@ public class TeleOpMain extends OpMode {
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
@@ -143,7 +144,7 @@ public class TeleOpMain extends OpMode {
 
         //Read from controller
         float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
-        if(slowModeOn) inputs = fieldCentric.driveFieldRelative(inputs[1], inputs[0], inputs[2]);
+        if(fieldCentricOn) inputs = fieldCentric.driveFieldRelative(-inputs[1], inputs[0], inputs[2]);
         
         //Update telemetry if moving
         if(gamepad1.left_stick_y == 0.0 && gamepad1.right_stick_x == 0.0) driveStatus = "IDLE";

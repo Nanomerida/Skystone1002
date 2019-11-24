@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 
 
-public class CRVuforiaImage extends VuforiaTrackableDefaultListener {
+public class CRVuforiaImage extends VuforiaTrackableDefaultListener implements VuforiaTrackable.Listener{
 
   OpenGLMatrix stoneLocation;
   VectorF stoneTranslation;
@@ -35,6 +35,21 @@ public class CRVuforiaImage extends VuforiaTrackableDefaultListener {
   }
 
   protected boolean imageVisible(){ return super.isVisible();}
+
+  @Override
+  public void onTracked(TrackableResult trackableResult, CameraName cameraName, Camera camera, VuforiaTrackable child){
+    super.onTracked(trackableResult, cameraName, camera, child);
+  }
+
+  @Override
+  public void onNotTracked(){
+    super.onNotTracked();
+  }
+
+  @Override
+  public void addTrackable(VuforiaTrackable trackable){
+    super.addTrackable(trackable);
+  }
 
 
 }
