@@ -128,6 +128,7 @@ public class VuforiaBlue {
             }
         }
         if(skystonePosition != 0 && skystonePosition != 1) skystonePosition = 0;
+        //if(!(timer.seconds() >= 5)) skystonePosition = 0;
 
 
         // Disable Tracking when we are done;

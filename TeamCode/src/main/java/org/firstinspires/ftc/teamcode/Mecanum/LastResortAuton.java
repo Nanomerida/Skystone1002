@@ -177,7 +177,7 @@ to strafe (right?):
         int skystonePos = blockPosBlue.visionTest();
 
         switch(skystonePos){
-            case 0://left
+            case 0://right
                 left_front_drive.setPower(-0.6);
                 left_back_drive.setPower(0.9);
                 right_front_drive.setPower(0.6);
@@ -358,7 +358,7 @@ to strafe (right?):
 
                 break;
 
-            case 2://right
+            case 2://left
 
                 left_front_drive.setPower(0.6);
                 left_back_drive.setPower(-0.9);
@@ -455,6 +455,90 @@ to strafe (right?):
 
                 sleep(500);
                 break;
+
+            /*case 3://NOTHING
+                left_front_drive.setPower(0.3);
+                left_back_drive.setPower(0.3);
+                right_front_drive.setPower(0.3);
+                right_back_drive.setPower(0.3);
+
+                sleep(1200);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+
+                claw.setPower(-0.3);
+                sleep(3000);
+                claw.setPower(-0.1);
+
+                sleep(500);
+
+                left_front_drive.setPower(-0.3);
+                left_back_drive.setPower(-0.3);
+                right_front_drive.setPower(-0.3);
+                right_back_drive.setPower(-0.3);
+
+                sleep(1299);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+                left_front_drive.setPower(0.6);
+                left_back_drive.setPower(-0.9);
+                right_front_drive.setPower(-0.6);
+                right_back_drive.setPower(0.9);
+
+                sleep(1800);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+                claw.setPower(0.3);
+                sleep(2000);
+                claw.setPower(0);
+
+                sleep(500);
+
+                left_front_drive.setPower(-0.6);
+                left_back_drive.setPower(0.3);
+                right_front_drive.setPower(0.2);
+                right_back_drive.setPower(-0.3);
+
+                sleep(1100);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+                left_front_drive.setPower(0.3);
+                left_back_drive.setPower(0.3);
+                right_front_drive.setPower(0.3);
+                right_back_drive.setPower(0.3);
+
+                sleep(1300);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+                break;*/
         }
     }
 }

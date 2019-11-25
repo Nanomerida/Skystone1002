@@ -121,7 +121,7 @@ public class TeleOpMain extends OpMode {
         //Turn slow mode of, if pressed and not already active
         if(gamepad1.x && !prevX) slowModeOn = !slowModeOn;
         float speed = (slowModeOn) ? 0.5f : 1.0f;
-        if(gamepad1.y && !prevY) fieldCentricOn =  !fieldCentricOn;
+        //if(gamepad1.y && !prevY) fieldCentricOn =  !fieldCentricOn;
         
         //Useful telemetry
         telemetry.addLine("Motor Powers | ")
@@ -144,7 +144,7 @@ public class TeleOpMain extends OpMode {
 
         //Read from controller
         float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
-        if(fieldCentricOn) inputs = fieldCentric.driveFieldRelative(-inputs[1], inputs[0], inputs[2]);
+        //if(fieldCentricOn) inputs = fieldCentric.driveFieldRelative(-inputs[1], inputs[0], inputs[2]);
         
         //Update telemetry if moving
         if(gamepad1.left_stick_y == 0.0 && gamepad1.right_stick_x == 0.0) driveStatus = "IDLE";
