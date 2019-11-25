@@ -115,7 +115,7 @@ public class VuforiaBlue {
         targetsSkyStone.activate();
         boolean noFoundSkystone = true;
         searchTime.reset();
-        while (searchTime.seconds() != 5) {
+        while (searchTime.seconds() <= 5) {
 
             // check all the trackable targets to see which one (if any) is visible.
             if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
@@ -127,8 +127,8 @@ public class VuforiaBlue {
                 break;
             }
         }
-        if(skystonePosition != 0 && skystonePosition != 1) skystonePosition = 0;
-        //if(!(timer.seconds() >= 5)) skystonePosition = 0;
+        if(skystonePosition != 1 && skystonePosition != 2) skystonePosition = 0;
+       
 
 
         // Disable Tracking when we are done;
