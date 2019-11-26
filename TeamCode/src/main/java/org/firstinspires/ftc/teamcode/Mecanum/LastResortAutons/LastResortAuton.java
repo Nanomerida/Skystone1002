@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mecanum;
+package org.firstinspires.ftc.teamcode.Mecanum.LastResortAutons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 
-@Autonomous(name="Last Resort", group = "Autonomous")
+@Autonomous(name="Last Resort BlueLoadingZone", group = "Last Resort")
 public class LastResortAuton extends LinearOpMode {
 
     VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
@@ -158,7 +158,7 @@ to strafe (right?):
         idle();
         */
 // ---------------------------------------------------------------------------------------------------------------------------
-
+/**This code finds the skystone, scores it, and then parks*/
 
 
         left_front_drive.setPower(0.3);
@@ -455,90 +455,6 @@ to strafe (right?):
 
                 sleep(500);
                 break;
-
-            /*case 3://NOTHING
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
-
-                sleep(1200);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-
-                claw.setPower(-0.3);
-                sleep(3000);
-                claw.setPower(-0.1);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.3);
-                left_back_drive.setPower(-0.3);
-                right_front_drive.setPower(-0.3);
-                right_back_drive.setPower(-0.3);
-
-                sleep(1299);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(0.6);
-                left_back_drive.setPower(-0.9);
-                right_front_drive.setPower(-0.6);
-                right_back_drive.setPower(0.9);
-
-                sleep(1800);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                claw.setPower(0.3);
-                sleep(2000);
-                claw.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.6);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.2);
-                right_back_drive.setPower(-0.3);
-
-                sleep(1100);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
-
-                sleep(1300);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                break;*/
         }
     }
 }
