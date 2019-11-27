@@ -54,11 +54,11 @@ public class LastResortAuton extends LinearOpMode {
 
 
 /*
-to strafe (right?):
-        left_front_drive.setPower(-0.6);
-        left_back_drive.setPower(0.9);
-        right_front_drive.setPower(0.6);
-        right_back_drive.setPower(-0.9);
+to strafe (right):
+        left_front_drive.setPower(-0.55);
+        left_back_drive.setPower(1);
+        right_front_drive.setPower(0.43);
+        right_back_drive.setPower(-1);
 */
 
         waitForStart();
@@ -157,6 +157,7 @@ to strafe (right?):
 
         idle();
         */
+
 // ---------------------------------------------------------------------------------------------------------------------------
 /**This code finds the skystone, scores it, and then parks*/
 
@@ -177,13 +178,13 @@ to strafe (right?):
         int skystonePos = blockPosBlue.visionTest();
 
         switch(skystonePos){
-            case 0://right
-                left_front_drive.setPower(-0.6);
-                left_back_drive.setPower(0.9);
-                right_front_drive.setPower(0.6);
-                right_back_drive.setPower(-0.9);
+            case 0://left
+                left_front_drive.setPower(0.6);
+                left_back_drive.setPower(-0.9);
+                right_front_drive.setPower(-0.6);
+                right_back_drive.setPower(0.9);
 
-                sleep(200);
+                sleep(185);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -216,7 +217,7 @@ to strafe (right?):
                 right_front_drive.setPower(-0.3);
                 right_back_drive.setPower(-0.3);
 
-                sleep(1300);
+                sleep(500);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -225,12 +226,26 @@ to strafe (right?):
 
                 sleep(500);
 
-                left_front_drive.setPower(0.6);
-                left_back_drive.setPower(-0.9);
-                right_front_drive.setPower(-0.6);
-                right_back_drive.setPower(0.9);
+                left_front_drive.setPower(1);
+                left_back_drive.setPower(1);
+                right_front_drive.setPower(-1);
+                right_back_drive.setPower(-1);
 
-                sleep(1800);
+                sleep(200);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+                left_front_drive.setPower(1);
+                left_back_drive.setPower(-1);
+                right_front_drive.setPower(-1);
+                right_back_drive.setPower(1);
+
+                sleep(1100);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -245,12 +260,12 @@ to strafe (right?):
 
                 sleep(500);
 
-                left_front_drive.setPower(-0.6);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.2);
-                right_back_drive.setPower(-0.3);
+                left_front_drive.setPower(-1);
+                left_back_drive.setPower(-1);
+                right_front_drive.setPower(1);
+                right_back_drive.setPower(1);
 
-                sleep(1100);
+                sleep(300);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -259,12 +274,12 @@ to strafe (right?):
 
                 sleep(500);
 
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
+                left_front_drive.setPower(-0.55);
+                left_back_drive.setPower(1);
+                right_front_drive.setPower(0.65);
+                right_back_drive.setPower(-1);
 
-                sleep(1300);
+                sleep(600);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -280,7 +295,7 @@ to strafe (right?):
                 right_front_drive.setPower(0.3);
                 right_back_drive.setPower(0.3);
 
-                sleep(1200);
+                sleep(1000);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -299,7 +314,7 @@ to strafe (right?):
                 right_front_drive.setPower(-0.3);
                 right_back_drive.setPower(-0.3);
 
-                sleep(1300);
+                sleep(475);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -308,12 +323,12 @@ to strafe (right?):
 
                 sleep(500);
 
-                left_front_drive.setPower(0.6);
-                left_back_drive.setPower(-0.9);
-                right_front_drive.setPower(-0.6);
-                right_back_drive.setPower(0.9);
+                left_front_drive.setPower(1);
+                left_back_drive.setPower(-1);
+                right_front_drive.setPower(-1);
+                right_back_drive.setPower(1);
 
-                sleep(1800);
+                sleep(1200);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -328,12 +343,12 @@ to strafe (right?):
 
                 sleep(500);
 
-                left_front_drive.setPower(-0.6);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.2);
-                right_back_drive.setPower(-0.3);
+                left_front_drive.setPower(-1);
+                left_back_drive.setPower(-1);
+                right_front_drive.setPower(1);
+                right_back_drive.setPower(1);
 
-                sleep(1100);
+                sleep(300);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -342,12 +357,12 @@ to strafe (right?):
 
                 sleep(500);
 
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
+                left_front_drive.setPower(-0.55);
+                left_back_drive.setPower(1);
+                right_front_drive.setPower(0.65);
+                right_back_drive.setPower(-1);
 
-                sleep(1300);
+                sleep(600);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -358,14 +373,13 @@ to strafe (right?):
 
                 break;
 
-            case 2://left
+            case 2://right
+                left_front_drive.setPower(-0.6);
+                left_back_drive.setPower(0.9);
+                right_front_drive.setPower(0.6);
+                right_back_drive.setPower(-0.9);
 
-                left_front_drive.setPower(0.6);
-                left_back_drive.setPower(-0.9);
-                right_front_drive.setPower(-0.6);
-                right_back_drive.setPower(0.9);
-
-                sleep(300);
+                sleep(160);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -398,7 +412,7 @@ to strafe (right?):
                 right_front_drive.setPower(-0.3);
                 right_back_drive.setPower(-0.3);
 
-                sleep(1300);
+                sleep(475);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -407,12 +421,26 @@ to strafe (right?):
 
                 sleep(500);
 
-                left_front_drive.setPower(0.6);
-                left_back_drive.setPower(-0.9);
-                right_front_drive.setPower(-0.6);
-                right_back_drive.setPower(0.9);
+                left_front_drive.setPower(-1);
+                left_back_drive.setPower(-1);
+                right_front_drive.setPower(1);
+                right_back_drive.setPower(1);
 
-                sleep(1800);
+                sleep(200);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+                left_front_drive.setPower(1);
+                left_back_drive.setPower(-1);
+                right_front_drive.setPower(-1);
+                right_back_drive.setPower(1);
+
+                sleep(1300);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -426,7 +454,7 @@ to strafe (right?):
                 claw.setPower(0);
 
                 sleep(500);
-
+/*
                 left_front_drive.setPower(-0.6);
                 left_back_drive.setPower(0.3);
                 right_front_drive.setPower(0.2);
@@ -447,6 +475,32 @@ to strafe (right?):
                 right_back_drive.setPower(0.3);
 
                 sleep(1300);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);*/
+
+                left_front_drive.setPower(-1);
+                left_back_drive.setPower(-1);
+                right_front_drive.setPower(1);
+                right_back_drive.setPower(1);
+
+                sleep(300);
+
+                left_front_drive.setPower(0);
+                left_back_drive.setPower(0);
+                right_front_drive.setPower(0);
+                right_back_drive.setPower(0);
+
+                sleep(500);
+
+                left_front_drive.setPower(-0.55);
+                left_back_drive.setPower(1);
+                right_front_drive.setPower(0.65);
+                right_back_drive.setPower(-1);
+
+                sleep(700);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
