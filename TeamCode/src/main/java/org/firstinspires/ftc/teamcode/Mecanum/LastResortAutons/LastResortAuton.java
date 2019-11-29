@@ -72,8 +72,8 @@ to strafe (right):
 
 
 //---------------------------------------------------------------------------------------------------------------------------
-        /**This picks up a random stone and drops it off. Then parks*/
-        /*
+        /**This picks up a random stone and drops it off. Puts it on foundation, then parks*/
+
         left_front_drive.setPower(0.3);
         left_back_drive.setPower(0.3);
         right_front_drive.setPower(0.3);
@@ -98,7 +98,7 @@ to strafe (right):
         right_front_drive.setPower(-0.3);
         right_back_drive.setPower(-0.3);
 
-        sleep(1300);
+        sleep(700);
 
         left_front_drive.setPower(0);
         left_back_drive.setPower(0);
@@ -107,32 +107,12 @@ to strafe (right):
 
         sleep(500);
 
-        left_front_drive.setPower(0.6);
-        left_back_drive.setPower(-0.9);
-        right_front_drive.setPower(-0.6);
-        right_back_drive.setPower(0.9);
+        left_front_drive.setPower(1);
+        left_back_drive.setPower(-1);
+        right_front_drive.setPower(-1);
+        right_back_drive.setPower(1);
 
-        sleep(1800);
-
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
-
-        sleep(500);
-
-        claw.setPower(0.3);
-        sleep(2000);
-        claw.setPower(0);
-
-        sleep(500);
-
-        left_front_drive.setPower(-0.6);
-        left_back_drive.setPower(0.3);
-        right_front_drive.setPower(0.2);
-        right_back_drive.setPower(-0.3);
-
-        sleep(1100);
+        sleep(1400);
 
         left_front_drive.setPower(0);
         left_back_drive.setPower(0);
@@ -146,7 +126,68 @@ to strafe (right):
         right_front_drive.setPower(0.3);
         right_back_drive.setPower(0.3);
 
-        sleep(1300);
+        sleep(250);
+
+        left_front_drive.setPower(0);
+        left_back_drive.setPower(0);
+        right_front_drive.setPower(0);
+        right_back_drive.setPower(0);
+
+        sleep(500);
+
+
+        left_front_drive.setPower(-1);
+        left_back_drive.setPower(-1);
+        right_front_drive.setPower(1);
+        right_back_drive.setPower(1);
+
+        sleep(200);
+
+        left_front_drive.setPower(0);
+        left_back_drive.setPower(0);
+        right_front_drive.setPower(0);
+        right_back_drive.setPower(0);
+
+        sleep(500);
+
+        arm.setPower(-0.69420);
+        sleep(2000);
+        claw.setPower(0);
+
+        sleep(500);
+
+        claw.setPower(0.3);
+        sleep(2000);
+        claw.setPower(0);
+
+        sleep(500);
+
+        arm.setPower(0.69420);
+        sleep(2000);
+        claw.setPower(0);
+
+        sleep(500);
+
+        left_front_drive.setPower(-1);
+        left_back_drive.setPower(-1);
+        right_front_drive.setPower(1);
+        right_back_drive.setPower(1);
+
+        sleep(200);
+
+        left_front_drive.setPower(0);
+        left_back_drive.setPower(0);
+        right_front_drive.setPower(0);
+        right_back_drive.setPower(0);
+
+        sleep(500);
+
+        left_front_drive.setPower(-0.55);
+        left_back_drive.setPower(1);
+        right_front_drive.setPower(0.65);
+        right_back_drive.setPower(-1);
+
+        sleep(1000);
 
         left_front_drive.setPower(0);
         left_back_drive.setPower(0);
@@ -156,11 +197,11 @@ to strafe (right):
 
 
         idle();
-        */
+
 
 // ---------------------------------------------------------------------------------------------------------------------------
 /**This code finds the skystone, scores it, and then parks*/
-
+/*
 
         left_front_drive.setPower(0.3);
         left_back_drive.setPower(0.3);
@@ -217,7 +258,7 @@ to strafe (right):
                 right_front_drive.setPower(-0.3);
                 right_back_drive.setPower(-0.3);
 
-                sleep(500);
+                sleep(600);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -454,32 +495,6 @@ to strafe (right):
                 claw.setPower(0);
 
                 sleep(500);
-/*
-                left_front_drive.setPower(-0.6);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.2);
-                right_back_drive.setPower(-0.3);
-
-                sleep(1100);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
-
-                sleep(1300);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);*/
 
                 left_front_drive.setPower(-1);
                 left_back_drive.setPower(-1);
@@ -509,6 +524,6 @@ to strafe (right):
 
                 sleep(500);
                 break;
-        }
+        }*/
     }
 }
