@@ -28,7 +28,7 @@ public class CROdometery {
 
     private OpMode opMode;
 
-    public CROdometery(OpMode opMode, ExpansionHubEx expansionHubEx, ExpansionHubMotor left_y_encoder, ExpansionHubMotor right_y_encoder, ExpansionHubMotor x_encoder,
+/*    public CROdometery(OpMode opMode, ExpansionHubEx expansionHubEx, ExpansionHubMotor left_y_encoder, ExpansionHubMotor right_y_encoder, ExpansionHubMotor x_encoder,
                        double[] start, double heading, ArrayList<DcMotor> driveMotors){
 
         this.opMode = opMode;
@@ -69,7 +69,7 @@ public class CROdometery {
                 double[] CurrentPosition = new double[2];
                 double[] XEncoderPosition = new double[2];
                 double[] YEncoderPosition = new double[2];
-                double ConvRate = (PI * 90) / 208076.8; /** Change this */
+                double ConvRate = (PI * 90) / 208076.8; // Change this
                 double[] WeirdOrlandoMathsX = {sin(theta), cos(theta)};
                 double[] WeirdOrlandoMathsY = {cos(theta), sin(theta)};
                 //Get bulk data from hub
@@ -88,9 +88,9 @@ public class CROdometery {
                 syncEncoders();
                 robotPosition.setPosition(CurrentPosition[0], CurrentPosition[1]);
                 return CurrentPosition;
-            }
-            
-            public static double[] PositionChange(double Xg, double Xa, double Yg, double Ya) { /**/
+            }*/
+
+       /*     public static double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
                 float[] MoveYBasePower = {0.55f, 1.0f, 0.5f, 1.0f};                             //Base Motor Power for Y movement
                 float[] MoveXBasePower = {0.4f, -0.95f, -0.45f, 0.95f};                            //Base Motor Power for X movement
                 Yg -= Ya;
@@ -109,6 +109,7 @@ public class CROdometery {
             }
             
             public static boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg) { /**/
+       /*
                 boolean reachedGoal = false;
                 if(abs(Xg - Xa) < 1) {
                     reachedGoal = true;
@@ -126,7 +127,7 @@ public class CROdometery {
         public static class Turning {
             
             public static double[] AngleChange(double thetaG, double thetaA) { /**/
-                float[] TurnBasePower = {0.65f, 1.0f, -0.65f, -1.0f};
+           /*     float[] TurnBasePower = {0.65f, 1.0f, -0.65f, -1.0f};
                 thetaA -= thetaG;
                 double[] motorPower = new double[4];
                 for(int i = 0; i < 4; i++) {
@@ -135,7 +136,7 @@ public class CROdometery {
                 return motorPower;
             }
             public static boolean GoalCheckAngle(double thetaG, double thetaA) { /**/
-                boolean reachedGoal = false;
+           /*     boolean reachedGoal = false;
                 double thetaDif = (thetaG - thetaA);
                 if(abs(thetaDif) < 1) {
                     reachedGoal = true;
@@ -143,7 +144,8 @@ public class CROdometery {
                 return reachedGoal;
             }
         }
-    }
+    }*/
+
     
     
     
