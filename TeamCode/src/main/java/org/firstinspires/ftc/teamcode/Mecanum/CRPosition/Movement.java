@@ -43,9 +43,9 @@ public class Movement {
         }
         return motorPower;
     }
-/*  public Movement(ExternalEncoder ly, ExternalEncoder ry, ExternalEnocoder x) {
+  public Movement(ExternalEncoder ly, ExternalEncoder ry, ExternalEncoder x) {
     this.left_y_encoder = ly;
     this.right_y_encoder = ry;
     this.x_encoder = x;
-  }*/
+  }
 }
