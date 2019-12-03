@@ -13,3 +13,7 @@
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
+
+dependencies{
+  implementation group: 'org.jdom', name:'jdom2', version'2.0.5'
+}
