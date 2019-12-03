@@ -15,5 +15,5 @@
 apply from: '../build.common.gradle'
 
 dependencies{
-  implementation group: 'org.jdom', name:'jdom2', version'2.0.5'
+  implementation 'org.jdom:jdom2:2.0.6'//'org.jdom', name:'jdom2', version'2.0.5'
 }
