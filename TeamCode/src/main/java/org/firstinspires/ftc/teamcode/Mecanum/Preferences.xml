@@ -1,0 +1,36 @@
+<?xml version = "1.0" encoding="UTF-8"?>
+<Preferences>
+    <IntakeParams>
+        <LiftMaxHeight>4000</LiftMaxHeight>
+        <LiftMinHeight>10</LiftMinHeight>
+    </IntakeParams>
+
+    <Drivers>
+        <!-- Parker's Config -->
+        <Driver name = "Parker">
+            <slowModeButton>x</slowModeButton>
+            <fieldCentric>no</fieldCentric>
+            <fieldCentricButton>x</fieldCentricButton>
+        </Driver>
+        <!-- Aidan's Config -->
+        <Driver name = "Aidan">
+            <slowModeButton>x</slowModeButton>
+            <fieldCentric>no</fieldCentric>
+            <fieldCentricButton>x</fieldCentricButton>
+        </Driver>
+        <!-- Jonah's Config -->
+        <Manipulator name = "Jonah">
+            <liftMode>smooth</liftMode>
+            <!-- dpad or joystick. If joystick, right_sticm or left_stick -->
+            <liftControls>dpad</liftControls>
+            <!-- If dpad, up is dpad_up and down is dpad_down -->
+            <!-- If joystick, up and down are not needed -->
+            <liftUpButton>dpad_up</liftUpButton>
+            <liftDownButton>dpad_down</liftDownButton>
+            <liftSlowModeButton>x</liftSlowModeButton>
+            <armControls>left_stick</armControls>
+            <clawControl>triggers</clawControl>
+
+        </Manipulator>
+    </Drivers>
+</Preferences>
