@@ -40,10 +40,11 @@ try {
     if(gamepad1.a) a = 0;
     if(gamepad1.b) a = 1;
   }
-  
+
   
   
 } catch(Exception e) { }
 
 
+} */
 }
