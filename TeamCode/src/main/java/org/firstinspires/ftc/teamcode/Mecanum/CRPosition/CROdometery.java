@@ -30,17 +30,15 @@ public class CROdometery {
     public DcMotor  right_front_drive = null;
     public DcMotor  right_back_drive = null;
 
-    private OpMode opMode;
     public Moving move;
     public Turning turn;
     
-    private int previousAngle;
-    public int currentAngle;
+    private double previousAngle;
+    public double currentAngle;
 
-    public CROdometery(OpMode opMode, ExpansionHubEx expansionHubEx, ExpansionHubMotor left_y_encoder, ExpansionHubMotor right_y_encoder, ExpansionHubMotor x_encoder,
+    public CROdometery(ExpansionHubEx expansionHubEx, ExpansionHubMotor left_y_encoder, ExpansionHubMotor right_y_encoder, ExpansionHubMotor x_encoder,
                        double[] start, double heading, DcMotor[] driveMotors){
 
-        this.opMode = opMode;
         this.expansionHubEx = expansionHubEx;
         this.left_y_encoder = new ExternalEncoder(left_y_encoder);
         this.right_y_encoder = new ExternalEncoder(right_y_encoder);
@@ -69,7 +67,7 @@ public class CROdometery {
         }
         while(!goalreachedPos);
         setDrivePower(new double[] {0,0,0,0});
-        return goalReachedPos;
+        return goalreachedPos;
     }
 
     public boolean MoveAngle(double thetaG, double thetaA){
@@ -79,7 +77,7 @@ public class CROdometery {
         //Use odometry to rotate
         do {
             //NEED TO RECALL METHOD UNTIL DONE!!!!!!!
-            turn.TurningPosition(AngleUnit.DEGREES.toRadians(currentAngle), AngleUnit.DEGREES.toRadians(previousAngle));
+            turn.TurningPositon(AngleUnit.DEGREES.toRadians(currentAngle), AngleUnit.DEGREES.toRadians(previousAngle));
             goalReachedAngle = turn.GoalCheckAngle(thetaG, thetaA); //check if we are at angle.
             if (!goalReachedAngle) {
                 setDrivePower(turn.AngleChange(thetaG, thetaA));
@@ -87,7 +85,7 @@ public class CROdometery {
         }
         while(!goalReachedAngle);
         setDrivePower(new double[] {0,0,0,0});
-        return goalRechedAngle;
+        return goalReachedAngle;
     }
     
      public class Moving {

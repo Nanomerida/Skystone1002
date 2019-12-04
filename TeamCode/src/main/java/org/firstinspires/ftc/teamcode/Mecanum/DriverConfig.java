@@ -32,7 +32,7 @@ public class DriverConfig {
         START_BUTTON,
         GUIDE_BUTTON
     }
-    public enum Claw controls {
+    public enum ClawControls {
         TRIGGERS,
         BUMPERS
     }
@@ -100,8 +100,8 @@ public class DriverConfig {
                  case "right_stick": armControls = DirectionalControls.RIGHT_STICK;
             }
              switch (manipulatorList.get(4).getText()){
-                 case "triggers": armControls = ClawControls.TRIGGERS;
-                 case "bumpers": armControls = ClawControls.BUMPERS;
+                 case "triggers": clawControls = ClawControls.TRIGGERS;
+                 case "bumpers": clawControls = ClawControls.BUMPERS;
             } 
             
             
