@@ -1,13 +1,17 @@
 <?xml version = "1.0" encoding="UTF-8"?>
 <Preferences>
+    <!-- Ignore this -->
     <IntakeParams>
         <LiftMaxHeight>4000</LiftMaxHeight>
         <LiftMinHeight>10</LiftMinHeight>
     </IntakeParams>
 
     <Drivers>
+    <!-- Drivers and manipulators, please add to the configs below following the format of the current ones -->
+    <!-- Manipulators should note that the "arm" is a rotating arm which holds the claw, and is moved by the lift -->
         <!-- Parker's Config -->
         <Driver name = "Parker">
+            <!-- buttons are x,y,a,b for Slow-Mode -->
             <slowModeButton>x</slowModeButton>
             <fieldCentric>no</fieldCentric>
             <fieldCentricButton>x</fieldCentricButton>
@@ -15,7 +19,7 @@
         <!-- Aidan's Config -->
         <Driver name = "Aidan">
             <slowModeButton>x</slowModeButton>
-            <fieldCentric>no</fieldCentric>
+            <fieldCentric>ues</fieldCentric>
             <fieldCentricButton>x</fieldCentricButton>
         </Driver>
         <!-- Jonah's Config -->
