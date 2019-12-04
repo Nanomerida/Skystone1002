@@ -7,6 +7,7 @@ import org.openftc.revextensions2.ExpansionHubEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -32,6 +33,9 @@ public class CROdometery {
     private OpMode opMode;
     public Moving move;
     public Turning turn;
+    
+    private int previousAngle;
+    public int currentAngle;
 
     public CROdometery(OpMode opMode, ExpansionHubEx expansionHubEx, ExpansionHubMotor left_y_encoder, ExpansionHubMotor right_y_encoder, ExpansionHubMotor x_encoder,
                        double[] start, double heading, DcMotor[] driveMotors){
@@ -52,7 +56,7 @@ public class CROdometery {
     }
     
     
-     public void MoveOdomPosition(double GoalX, double GoalY, double theta){
+     public boolean MoveOdomPosition(double GoalX, double GoalY, double theta){
         boolean goalreachedPos;
         //Use odometry to move to a given position
         do {
@@ -65,19 +69,25 @@ public class CROdometery {
         }
         while(!goalreachedPos);
         setDrivePower(new double[] {0,0,0,0});
+        return goalReachedPos;
     }
 
-    private void MoveAngle(double thetaG, double thetaA){
+    public boolean MoveAngle(double thetaG, double thetaA){
         boolean goalReachedAngle;
+        previousAngle = thetaA;
+        currentAngle = thetaA;
         //Use odometry to rotate
         do {
+            //NEED TO RECALL METHOD UNTIL DONE!!!!!!!
+            turn.TurningPosition(AngleUnit.DEGREES.toRadians(currentAngle), AngleUnit.DEGREES.toRadians(previousAngle));
             goalReachedAngle = turn.GoalCheckAngle(thetaG, thetaA); //check if we are at angle.
-            if (goalReachedAngle) {
+            if (!goalReachedAngle) {
                 setDrivePower(turn.AngleChange(thetaG, thetaA));
             }
         }
         while(!goalReachedAngle);
         setDrivePower(new double[] {0,0,0,0});
+        return goalRechedAngle;
     }
     
      public class Moving {
