@@ -20,15 +20,16 @@
         </Driver>
         <!-- Jonah's Config -->
         <Manipulator name = "Jonah">
+            <!-- smooth (raise/lower manually) or staged(set heights) -->
+            <!-- Note that if staged, lift controls must be dpad -->
             <liftMode>smooth</liftMode>
-            <!-- dpad or joystick. If joystick, right_sticm or left_stick -->
+            <!-- dpad or joystick. If joystick, right_stick or left_stick -->
             <liftControls>dpad</liftControls>
-            <!-- If dpad, up is dpad_up and down is dpad_down -->
-            <!-- If joystick, up and down are not needed -->
-            <liftUpButton>dpad_up</liftUpButton>
-            <liftDownButton>dpad_down</liftDownButton>
+            <!-- can be any button(left_bumper, right_bumper, x, y, a, b, stick buttons(press down stick, either left_stick_button or right_stick_button), etc) -->
             <liftSlowModeButton>x</liftSlowModeButton>
+            <!-- dpad or joystick. If joystick, right_stick or left_stick. DIFFERENT THAN LIFT -->
             <armControls>left_stick</armControls>
+            <!-- triggers or bumpers -->
             <clawControl>triggers</clawControl>
 
         </Manipulator>
