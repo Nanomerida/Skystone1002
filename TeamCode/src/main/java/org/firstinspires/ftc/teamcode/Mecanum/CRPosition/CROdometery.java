@@ -82,7 +82,7 @@ public class CROdometery {
         return goalReachedAngle;
     }
 
-    /** LINEAR MOEMENT PROCEDURES */
+    /** LINEAR MOVEMENT PROCEDURES */
 
     public double[] AbsolutePosition(double theta) {
         robotPosition.setHeading(theta);
