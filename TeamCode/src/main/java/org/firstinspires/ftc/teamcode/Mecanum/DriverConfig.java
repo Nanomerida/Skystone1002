@@ -4,10 +4,14 @@ package org.firstinspires.ftc.teamcode.Mecanum;
 import org.jdom2.Element;
 
 import java.util.List;
+import java.util.HashMap;
+
 
 /** Contains the current configurations of the drive team. */
 
 public class DriverConfig {
+    
+    public static List< List<String> > driverControls = new ArrayList< ArrayList<String> >();
 
     public enum LiftMode {
         SMOOTH,
@@ -43,6 +47,7 @@ public class DriverConfig {
     public static class Driver {
         public Button slowModeButton, fieldCentricButton;
         public boolean fieldCentric;
+        ArrayList<String> driver = new ArrayList<String>();
 
         public Driver(List<Element> driverPref){
             switch(driverPref.get(0).getText()){
@@ -66,6 +71,9 @@ public class DriverConfig {
                 case "left_stick_button": slowModeButton = Button.LEFT_STICK_BUTTON;
                 case "right_stick_button": slowModeButton = Button.RIGHT_STICK_BUTTON;
             }
+            driver.add(slowModeButton.toString());
+            driver.add(valueOf(fieldCentric);
+            driver.add(fieldCentricButton.valueOf());
 
         }
     }
@@ -76,6 +84,7 @@ public class DriverConfig {
         public DirectionalControls liftControls, armControls;
         public Button liftSlowModeButton;
         public ClawControls clawControls;
+        ArrayList<String> manipulator = new ArrayList<String>();
 
         public Manipulator(List<Element> manipulatorList){
             liftMode = (manipulatorList.get(0).getText().equals("smooth")) ? LiftMode.SMOOTH : LiftMode.STAGED;
@@ -102,9 +111,13 @@ public class DriverConfig {
              switch (manipulatorList.get(4).getText()){
                  case "triggers": clawControls = ClawControls.TRIGGERS;
                  case "bumpers": clawControls = ClawControls.BUMPERS;
-            } 
+            }
+            manipulator.add(liftMode.toString());
+            manipulator.add(liftControls.toString());
+            manipulator.add(liftSlowModeButton.toString());
             
             
-        }
+            
+        } 
     }
 }
