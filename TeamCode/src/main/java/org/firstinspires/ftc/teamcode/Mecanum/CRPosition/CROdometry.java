@@ -20,7 +20,7 @@ import static java.lang.Math.abs;
 import java.util.List;
 
 
-public class CROdometery {
+public class CROdometry {
 
 
     private RobotPosition robotPosition;
@@ -41,7 +41,7 @@ public class CROdometery {
     /** All hardware must be initialized.
      * Encoders should go in List in the order of left y, right y, x.
      * Please remember to reverse the right y encoder.*/
-    public CROdometery(ExpansionHubEx expansionHubEx, ExpansionHubMotor left_y_encoder, ExpansionHubMotor right_y_encoder, ExpansionHubMotor x_encoder,
+    public CROdometry(ExpansionHubEx expansionHubEx, ExpansionHubMotor left_y_encoder, ExpansionHubMotor right_y_encoder, ExpansionHubMotor x_encoder,
                        double[] start, double heading, List<? extends DcMotor> driveMotors) {
 
         this.expansionHubEx = expansionHubEx;

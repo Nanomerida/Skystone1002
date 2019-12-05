@@ -9,6 +9,8 @@ import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 
+import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.CROdometry;
+
 @TeleOp(name= "ff", group = "f")
 public class jkfhkasfj extends LinearOpMode {
 
@@ -20,17 +22,16 @@ public class jkfhkasfj extends LinearOpMode {
     RevBulkData g;
     ExpansionHubEx t;
 
+    CROdometry odometry;
 
     @Override
     public void runOpMode(){
 
-
-
-        ly = (ExpansionHubMotor)hardwareMap.get(DcMotor.class, "ly");
-        ry = (ExpansionHubMotor)hardwareMap.get(DcMotor.class, "ry");
-        x = (ExpansionHubMotor)hardwareMap.get(DcMotor.class, "x");
+        ly = (ExpansionHubMotor)hardwareMap.dcMotor.get("ly");
+        ry = (ExpansionHubMotor)hardwareMap.dcMotor.get("ry");
+        x = (ExpansionHubMotor)hardwareMap.dcMotor.get("x");
         t = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
-
+        
         ry.setDirection(ExpansionHubMotor.Direction.REVERSE);
 
         ly.setMode(ExpansionHubMotor.RunMode.STOP_AND_RESET_ENCODER);

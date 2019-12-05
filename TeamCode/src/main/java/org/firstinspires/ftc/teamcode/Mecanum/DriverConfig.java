@@ -3,15 +3,18 @@ package org.firstinspires.ftc.teamcode.Mecanum;
 
 import org.jdom2.Element;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+
+import static java.lang.String.valueOf;
 
 
 /** Contains the current configurations of the drive team. */
 
 public class DriverConfig {
     
-    public static List< List<String> > driverControls = new ArrayList< ArrayList<String> >();
+    public static ArrayList<ArrayList<String>> driverControls = new ArrayList<ArrayList<String>>();
 
     public enum LiftMode {
         SMOOTH,
@@ -72,8 +75,8 @@ public class DriverConfig {
                 case "right_stick_button": slowModeButton = Button.RIGHT_STICK_BUTTON;
             }
             driver.add(slowModeButton.toString());
-            driver.add(valueOf(fieldCentric);
-            driver.add(fieldCentricButton.valueOf());
+            driver.add(valueOf(fieldCentric));
+            driver.add(valueOf(fieldCentricButton));
 
         }
     }
