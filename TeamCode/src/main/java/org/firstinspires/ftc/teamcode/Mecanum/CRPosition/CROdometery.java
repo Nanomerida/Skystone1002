@@ -35,9 +35,6 @@ public class CROdometery {
     public DcMotor right_front_drive = null;
     public DcMotor right_back_drive = null;
 
-    private Moving move;
-    private Turning turn;
-
     private double previousAngle;
     private double currentAngle;
 
@@ -57,8 +54,6 @@ public class CROdometery {
         this.right_front_drive = driveMotors.get(2);
         this.right_back_drive = driveMotors.get(3);
         bulkData = this.expansionHubEx.getBulkInputData();
-        move = new Moving();
-        turn = new Turning();
     }
 
 
@@ -66,9 +61,9 @@ public class CROdometery {
         boolean goalReachedPos;
         //Use odometry to move to a given position
 
-        double[] actualPos = move.AbsolutePosition(theta);
-        goalReachedPos = move.GoalCheckPos(actualPos[0], GoalX, actualPos[1], GoalY); //check if we are at position
-        if (!goalReachedPos) setDrivePower(move.PositionChange(actualPos[0], GoalX, actualPos[2], GoalY));
+        double[] actualPos = AbsolutePosition(theta);
+        goalReachedPos = GoalCheckPos(actualPos[0], GoalX, actualPos[1], GoalY); //check if we are at position
+        if (!goalReachedPos) setDrivePower(PositionChange(actualPos[0], GoalX, actualPos[2], GoalY));
         robotPosition.setPosition(actualPos[0], actualPos[1]);
 
         return goalReachedPos;
@@ -81,124 +76,122 @@ public class CROdometery {
         //Use odometry to rotate
 
         //NEED TO RECALL METHOD UNTIL DONE!!!!!!!
-        turn.TurningPosition(AngleUnit.DEGREES.toRadians(currentAngle), AngleUnit.DEGREES.toRadians(previousAngle));
-        goalReachedAngle = turn.GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
-        if (!goalReachedAngle) setDrivePower(turn.AngleChange(thetaG, currentAngle));
+        TurningPosition(AngleUnit.DEGREES.toRadians(currentAngle), AngleUnit.DEGREES.toRadians(previousAngle));
+        goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
+        if (!goalReachedAngle) setDrivePower(AngleChange(thetaG, currentAngle));
         return goalReachedAngle;
     }
 
-    public class Moving {
+    /** LINEAR MOEMENT PROCEDURES */
 
-        public double[] AbsolutePosition(double theta) {
-            robotPosition.setHeading(theta);
-            double[] PreviousPosition = robotPosition.getPosition();
-            double[] CurrentPosition = new double[2];
-            double[] XEncoderPosition = new double[2];
-            double[] YEncoderPosition = new double[2];
-            double ConvRate = 0.006184246955207152778; // Change this
-            double[] WeirdOrlandoMathsX = {sin(theta), cos(theta)};
-            double[] WeirdOrlandoMathsY = {cos(theta), sin(theta)};
-            //Get bulk data from hub
-            bulkData = expansionHubEx.getBulkInputData();
-            //get x encoder
-            int XClicks = x_encoder.getCounts(bulkData);
-            //Get the y encoders
-            int YClicks = ((left_y_encoder.getCounts(bulkData) + right_y_encoder.getCounts(bulkData)) / 2);
-            for (int i = 0; i < 2; i++) {
-                XEncoderPosition[i] = ConvRate * XClicks * WeirdOrlandoMathsX[i];
-                YEncoderPosition[i] = ConvRate * YClicks * WeirdOrlandoMathsY[i];
-            }
-            for (int k = 0; k < 2; k++) {
-                CurrentPosition[k] = XEncoderPosition[k] + YEncoderPosition[k] + PreviousPosition[k];
-            }
-            syncEncoders();
-            robotPosition.setPosition(CurrentPosition[0], CurrentPosition[1]);
-            return CurrentPosition;
+    public double[] AbsolutePosition(double theta) {
+        robotPosition.setHeading(theta);
+        double[] PreviousPosition = robotPosition.getPosition();
+        double[] CurrentPosition = new double[2];
+        double[] XEncoderPosition = new double[2];
+        double[] YEncoderPosition = new double[2];
+        double ConvRate = 0.006184246955207152778; // Change this
+        double[] WeirdOrlandoMathsX = {sin(theta), cos(theta)};
+        double[] WeirdOrlandoMathsY = {cos(theta), sin(theta)};
+        //Get bulk data from hub
+        bulkData = expansionHubEx.getBulkInputData();
+        //get x encoder
+        int XClicks = x_encoder.getCounts(bulkData);
+        //Get the y encoders
+        int YClicks = ((left_y_encoder.getCounts(bulkData) + right_y_encoder.getCounts(bulkData)) / 2);
+        for (int i = 0; i < 2; i++) {
+            XEncoderPosition[i] = ConvRate * XClicks * WeirdOrlandoMathsX[i];
+            YEncoderPosition[i] = ConvRate * YClicks * WeirdOrlandoMathsY[i];
         }
-
-        public double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
-            float[] MoveYBasePower = {0.55f, 1.0f, 0.5f, 1.0f};                             //Base Motor Power for Y movement
-            float[] MoveXBasePower = {0.4f, -0.95f, -0.45f, 0.95f};                            //Base Motor Power for X movement
-            Yg -= Ya;
-            Xg -= Xa;
-            Yg /= 144;
-            Xg /= 144;
-            for (int j = 0; j < 4; j++) {
-                MoveYBasePower[j] *= Yg;
-                MoveXBasePower[j] *= Xg;
-            }
-            double[] motorPower = new double[4];
-            for (int k = 0; k < 4; k++) {
-                motorPower[k] = MoveXBasePower[k] + MoveYBasePower[k];
-            }
-            return motorPower;
+        for (int k = 0; k < 2; k++) {
+            CurrentPosition[k] = XEncoderPosition[k] + YEncoderPosition[k] + PreviousPosition[k];
         }
-
-        public boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg) { /**/
-
-            boolean reachedGoal = false;
-            if (abs(Xg - Xa) < 1) {
-                reachedGoal = true;
-                if (abs(Yg - Ya) < 1) {
-                    reachedGoal = true;
-                }
-            } else {
-                reachedGoal = false;
-            }
-            return reachedGoal;
-        }
-
+        syncEncoders();
+        robotPosition.setPosition(CurrentPosition[0], CurrentPosition[1]);
+        return CurrentPosition;
     }
 
-    public class Turning {
-        /**
-         * Note: wheelDelta - angleChange * wheelOffset
-         */
-        public double[] TurningPosition(double theta, double previous) {
-            robotPosition.setHeading(theta);
-            double[] PreviousPosition = robotPosition.getPosition();
-            double[] CurrentPosition = new double[2];
-            double[] XEncoderPosition = new double[2];
-            double[] YEncoderPosition = new double[2];
-            double ConvRate = 0.006184246955207152778; // Change this
-            double[] WeirdOrlandoMathsX = {sin(theta), cos(theta)};
-            double[] WeirdOrlandoMathsY = {cos(theta), sin(theta)};
-            //Get bulk data from hub
-            bulkData = expansionHubEx.getBulkInputData();
-            //get x encoder
-            int XClicks = (int) (x_encoder.getCounts(bulkData) - ((theta - previous) * 1));
-            //Get the y encoders
-            int YClicks = ((left_y_encoder.getCounts(bulkData) + right_y_encoder.getCounts(bulkData)) / 2);
-            for (int i = 0; i < 2; i++) {
-                XEncoderPosition[i] = ConvRate * XClicks * WeirdOrlandoMathsX[i];
-                YEncoderPosition[i] = ConvRate * YClicks * WeirdOrlandoMathsY[i];
-            }
-            for (int k = 0; k < 2; k++) {
-                CurrentPosition[k] = XEncoderPosition[k] + YEncoderPosition[k] + PreviousPosition[k];
-            }
-            syncEncoders();
-            robotPosition.setPosition(CurrentPosition[0], CurrentPosition[1]);
-            return CurrentPosition;
+    public double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
+        float[] MoveYBasePower = {0.55f, 1.0f, 0.5f, 1.0f};                             //Base Motor Power for Y movement
+        float[] MoveXBasePower = {0.4f, -0.95f, -0.45f, 0.95f};                            //Base Motor Power for X movement
+        Yg -= Ya;
+        Xg -= Xa;
+        Yg /= 144;
+        Xg /= 144;
+        for (int j = 0; j < 4; j++) {
+            MoveYBasePower[j] *= Yg;
+            MoveXBasePower[j] *= Xg;
         }
-
-        public double[] AngleChange(double thetaG, double thetaA) { /**/
-            float[] TurnBasePower = {0.65f, 1.0f, -0.65f, -1.0f};
-            thetaA -= thetaG;
-            double[] motorPower = new double[4];
-            for (int i = 0; i < 4; i++) {
-                motorPower[i] = thetaA * TurnBasePower[i];
-            }
-            return motorPower;
+        double[] motorPower = new double[4];
+        for (int k = 0; k < 4; k++) {
+            motorPower[k] = MoveXBasePower[k] + MoveYBasePower[k];
         }
+        return motorPower;
+    }
 
-        private boolean GoalCheckAngle(double thetaG, double thetaA) { /**/
-            boolean reachedGoal = false;
-            double thetaDif = (thetaG - thetaA);
-            if (abs(thetaDif) < 1) {
+    public boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg) { /**/
+
+        boolean reachedGoal = false;
+        if (abs(Xg - Xa) < 1) {
+            reachedGoal = true;
+            if (abs(Yg - Ya) < 1) {
                 reachedGoal = true;
             }
-            return reachedGoal;
+        } else {
+            reachedGoal = false;
         }
+        return reachedGoal;
+    }
+
+    /** TURNING PROCEDURES */
+
+    /**
+     * Note: wheelDelta - angleChange * wheelOffset
+     */
+    public double[] TurningPosition(double theta, double previous) {
+        robotPosition.setHeading(theta);
+        double[] PreviousPosition = robotPosition.getPosition();
+        double[] CurrentPosition = new double[2];
+        double[] XEncoderPosition = new double[2];
+        double[] YEncoderPosition = new double[2];
+        double ConvRate = 0.006184246955207152778; // Change this
+        double[] WeirdOrlandoMathsX = {sin(theta), cos(theta)};
+        double[] WeirdOrlandoMathsY = {cos(theta), sin(theta)};
+        //Get bulk data from hub
+        bulkData = expansionHubEx.getBulkInputData();
+        //get x encoder
+        int XClicks = (int) (x_encoder.getCounts(bulkData) - ((theta - previous) * 1));
+        //Get the y encoders
+        int YClicks = ((left_y_encoder.getCounts(bulkData) + right_y_encoder.getCounts(bulkData)) / 2);
+        for (int i = 0; i < 2; i++) {
+            XEncoderPosition[i] = ConvRate * XClicks * WeirdOrlandoMathsX[i];
+            YEncoderPosition[i] = ConvRate * YClicks * WeirdOrlandoMathsY[i];
+        }
+        for (int k = 0; k < 2; k++) {
+            CurrentPosition[k] = XEncoderPosition[k] + YEncoderPosition[k] + PreviousPosition[k];
+        }
+        syncEncoders();
+        robotPosition.setPosition(CurrentPosition[0], CurrentPosition[1]);
+        return CurrentPosition;
+    }
+
+    public double[] AngleChange(double thetaG, double thetaA) { /**/
+        float[] TurnBasePower = {0.65f, 1.0f, -0.65f, -1.0f};
+        thetaA -= thetaG;
+        double[] motorPower = new double[4];
+        for (int i = 0; i < 4; i++) {
+            motorPower[i] = thetaA * TurnBasePower[i];
+        }
+        return motorPower;
+    }
+
+    private boolean GoalCheckAngle(double thetaG, double thetaA) { /**/
+        boolean reachedGoal = false;
+        double thetaDif = (thetaG - thetaA);
+        if (abs(thetaDif) < 1) {
+            reachedGoal = true;
+        }
+        return reachedGoal;
     }
 
     private void setDrivePower(double[] powers) {
