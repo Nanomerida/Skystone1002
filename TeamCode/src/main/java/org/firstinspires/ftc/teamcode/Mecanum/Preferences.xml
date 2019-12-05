@@ -23,7 +23,7 @@
             <fieldCentricButton>x</fieldCentricButton>
         </Driver>
         <!-- Jonah's Config -->
-        <Manipulator name = "Jonah">
+        <Manipulator name = "Example">
             <!-- smooth (raise/lower manually) or staged(set heights) -->
             <!-- Note that if staged, lift controls must be dpad -->
             <liftMode>smooth</liftMode>
@@ -34,6 +34,15 @@
             <!-- dpad or joystick. If joystick, right_stick or left_stick. DIFFERENT THAN LIFT -->
             <armControls>left_stick</armControls>
             <!-- triggers or bumpers -->
+            <clawControl>triggers</clawControl>
+
+        </Manipulator>
+        <!-- Jonah's Config -->
+        <Manipulator name = "Jonah">
+            <liftMode>smooth</liftMode>
+            <liftControls>right_stick</liftControls>
+            <liftSlowModeButton>right_bumper</liftSlowModeButton>
+            <armControls>left_stick</armControls>
             <clawControl>triggers</clawControl>
 
         </Manipulator>
