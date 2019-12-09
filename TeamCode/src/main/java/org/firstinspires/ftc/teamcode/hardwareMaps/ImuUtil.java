@@ -1,34 +1,58 @@
 package org.firstinspires.ftc.teamcode.hardwareMaps;
 
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class ImuUtil {
+@TeleOp(name = "Duo motor rtp test", group = "Testing")
 
-
-
-    private float heading;
-
-    private BNO055IMU imu;
-    private Orientation angles;
+public class ImuUtil extends LinearOpMode {
     
-    public ImuUtil(BNO055IMU imu) {
-      this.imu = imu;
-    }
+    DcMotor lift = null;
     
-    public float getHeading(){
-      angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-      heading = angles.firstAngle;
-      return heading;
-    }
+    int counts;
+
+
+    @Override
+    public void runOpMode(){
+        
+        lift = hardwareMap.get(DcMotor.class, "lift");
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setTargetPosition(0);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        lift.setPower(0);
+        
+        waitForstart();
+        
+        while(opModeIsActive()){
+            counts = lift.getCurrentPosition();
+            
+            if(gamepad1.dpad_up) {
+                counts += 1;
+                lift.setTargetPosition(counts);
+                lift.setPower(.5);
+            } 
+            else if(gamepad.dpad_down){
+                counts -= 1;
+                lift.setTargetPosition(counts);
+                lift.setPower(.5);
+            }
+            else {
+                lift.setTargetPosition(counts);
+                lift.setPower(0);
+            }
+            
+        }
+        lift.setPower(0);
+        
+        
+    }    
+
     
     
-    }
+ }
     
     
       
