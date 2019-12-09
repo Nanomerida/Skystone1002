@@ -30,8 +30,8 @@ public class TeleOpMain extends OpMode {
     public DcMotor left_back_drive = null;
     public DcMotor right_front_drive = null;
     public DcMotor right_back_drive = null;
-    public DcMotor arm = null;
-    public CRServo claw = null;
+    //public DcMotor arm = null;
+    //public CRServo claw = null;
     public DcMotor lift = null;
     
     private boolean slowModeOn = false;
@@ -67,10 +67,10 @@ public class TeleOpMain extends OpMode {
         right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
 
-        arm = hardwareMap.get(DcMotor.class, "arm");
-        claw = hardwareMap.get(CRServo.class, "claw");
+        //arm = hardwareMap.get(DcMotor.class, "arm");
+        //claw = hardwareMap.get(CRServo.class, "claw");
         
-        //lift = hardwareMap.get(DcMotor.class, "lift");
+        lift = hardwareMap.get(DcMotor.class, "lift");
 
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -82,11 +82,10 @@ public class TeleOpMain extends OpMode {
         right_back_drive.setDirection(DcMotor.Direction.REVERSE);
 
 
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        
-        //lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -160,13 +159,25 @@ public class TeleOpMain extends OpMode {
         right_front_drive.setPower(outputs[2] * speed);
         right_back_drive.setPower(outputs[3] * speed);
 
+
+        if (gamepad1.dpad_up) {
+            telemetry.addData("Direction:", "up");
+            lift.setPower(.5);
+        } else if (gamepad1.dpad_down) {
+            telemetry.addData("Direction:", "down");
+            lift.setPower(-.5);
+        } else {
+            telemetry.addData("Direction:", "none");
+            lift.setPower(0);
+        }
+
         //Control arm
-        arm.setPower(0.5555 * armPower);
+        //arm.setPower(0.5555 * armPower);
         
         //Control claw
-        if(clawPowerOpen != 0.0) claw.setPower(0.7*clawPowerOpen);
-        else if(clawPowerClose != 0.0) claw.setPower(0.8*clawPowerClose);
-        else claw.setPower(0);
+        //if(clawPowerOpen != 0.0) claw.setPower(0.7*clawPowerOpen);
+        //else if(clawPowerClose != 0.0) claw.setPower(0.8*clawPowerClose);
+        //else claw.setPower(0);
 
         //store current slow mode status
         prevX = gamepad1.x;
@@ -184,7 +195,7 @@ public class TeleOpMain extends OpMode {
         left_back_drive.setPower(0);
         right_front_drive.setPower(0);
         right_back_drive.setPower(0);
-        arm.setPower(0);
-        claw.setPower(0);
+        //arm.setPower(0);
+        //claw.setPower(0);
     }
 }
