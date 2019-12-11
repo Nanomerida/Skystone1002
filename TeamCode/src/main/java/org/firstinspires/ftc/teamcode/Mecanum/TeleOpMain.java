@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Mecanum;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,6 +17,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.Methods.MecMoveProcedureStorage;
 import java.util.HashMap;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.ExpansionHubMotor;
+import org.openftc.revextensions2.RevBulkData;
 
 @TeleOp(name = "TeleOpMain", group="TeleOp")
 
@@ -23,25 +27,29 @@ public class TeleOpMain extends OpMode {
 
     TeleOpFieldCentric fieldCentric;
 
-    MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
-    private HashMap<String, float[]> mecanum = procedures.getMecanum();
-
-    public DcMotor left_front_drive = null;
-    public DcMotor left_back_drive = null;
-    public DcMotor right_front_drive = null;
-    public DcMotor right_back_drive = null;
-    //public DcMotor arm = null;
-    //public CRServo claw = null;
-    public DcMotor lift = null;
+    public ExpansionHubMotor left_front_drive = null;
+    public ExpansionHubMotor left_back_drive = null;
+    public ExpansionHubMotor right_front_drive = null;
+    public ExpansionHubMotor right_back_drive = null;
+    public Servo claw = null;
+    public ExpansionHubMotor lift = null;
+    private ExpansionHubEx expansionHub1; //hub for motors
+    private ExpansionHubEx expansionHub10; //hub for others
+    private RevBulkData revBulkData1;
+    private RevBulkData revBulkData10;
     
     private boolean slowModeOn = false;
-    private boolean fieldCentricOn = false;
+    //private boolean fieldCentricOn = false;
     private boolean prevX = false;
-    private boolean prevY = false;
-    private String driveStatus;
+    //private boolean prevY = false;
 
-    public BNO055IMU imu;
+    private float clawOpenPos = 1; // Nelitha change these based on servo
+    private float clawClosedPos = 0;
+
+    //public BNO055IMU imu;
     float[] inputs;
+
+    int loopNum = 0;
     
     
 
@@ -61,16 +69,18 @@ public class TeleOpMain extends OpMode {
     @Override
     public void init() {
 
-        left_front_drive = hardwareMap.get(DcMotor.class, "left_front_drive");
-        left_back_drive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        left_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "left_front_drive");
+        left_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "left_back_drive");
+        right_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "right_front_drive");
+        right_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "right_back_drive");
 
 
-        //arm = hardwareMap.get(DcMotor.class, "arm");
-        //claw = hardwareMap.get(CRServo.class, "claw");
+        claw = hardwareMap.get(Servo.class, "claw");
         
-        lift = hardwareMap.get(DcMotor.class, "lift");
+        lift = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "lift");
+
+        expansionHub1 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
+        expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
 
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -82,13 +92,11 @@ public class TeleOpMain extends OpMode {
         right_back_drive.setDirection(DcMotor.Direction.REVERSE);
 
 
-        //arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        /* BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
 
@@ -96,8 +104,8 @@ public class TeleOpMain extends OpMode {
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        fieldCentric = new TeleOpFieldCentric(imu);
+        imu.initialize(parameters); */
+        //fieldCentric = new TeleOpFieldCentric(imu);
 
     }
 
@@ -107,47 +115,38 @@ public class TeleOpMain extends OpMode {
 
     @Override
     public void start() {
+        //expansionHub10.setLedColor(255, 0, 0);
+        //expansionHub1.setLedColor(0, 255, 0);
     }
     
     @Override
     public void loop() {
 
+        /*switch (loopNum){
+            case 1:         expansionHub10.setLedColor(255, 0, 0); expansionHub1.setLedColor(0, 255, 0); break;
+            case 2:        expansionHub10.setLedColor(0, 255, 0); expansionHub1.setLedColor(0, 0, 255); break;
+            case 3:         expansionHub10.setLedColor(0, 0, 255); expansionHub1.setLedColor(255, 0, 0); break;
+            case 4: loopNum = 1; break;
+        } */
+
+        revBulkData1 = expansionHub1.getBulkInputData();
+        revBulkData10 = expansionHub10.getBulkInputData();
+
         //Manipulator gamepad readings
-        double armPower = gamepad2.right_stick_y;
-        double clawPowerClose = -gamepad2.right_trigger;
-        double clawPowerOpen = gamepad2.left_trigger;
+        double liftPower = (gamepad2.right_stick_y != 0&& revBulkData10.getMotorCurrentPosition(lift) != 0)? gamepad2.right_stick_y : 0;
+        boolean clawOpen = (gamepad2.left_bumper && claw.getPosition() != clawOpenPos);
+        boolean clawClosed = (gamepad2.right_bumper && claw.getPosition() != clawClosedPos);
 
         //Turn slow mode of, if pressed and not already active
         if(gamepad1.x && !prevX) slowModeOn = !slowModeOn;
         float speed = (slowModeOn) ? 0.5f : 1.0f;
         //if(gamepad1.y && !prevY) fieldCentricOn =  !fieldCentricOn;
-        
-        //Useful telemetry
-        telemetry.addLine("Motor Powers | ")
-                .addData("Drive Status:", driveStatus)
-                .addData("Left Front:", left_front_drive.getPower())
-                .addData("Left Back:", left_back_drive.getPower())
-                .addData("Right Front:", right_front_drive.getPower())
-                .addData("Right Back:", right_back_drive.getPower());
 
-
-        telemetry.addLine("Arm Power | ")
-                .addData("Arm Motor:", armPower);
-        
-        telemetry.addLine("Claw Power | ")
-                .addData("Claw Servo Closing:", clawPowerClose)
-                .addData("Claw Servo Opening:", clawPowerOpen);
-        
-        telemetry.addData("Slow Mode:", slowModeOn);
 
 
         //Read from controller
         float[] inputs = {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
         //if(fieldCentricOn) inputs = fieldCentric.driveFieldRelative(-inputs[1], inputs[0], inputs[2]);
-        
-        //Update telemetry if moving
-        if(gamepad1.left_stick_y == 0.0 && gamepad1.right_stick_x == 0.0) driveStatus = "IDLE";
-        else driveStatus = "MOVING";
 
         
         //Calculate power for drive
@@ -160,31 +159,30 @@ public class TeleOpMain extends OpMode {
         right_back_drive.setPower(outputs[3] * speed);
 
 
-        if (gamepad1.dpad_up) {
-            telemetry.addData("Direction:", "up");
-            lift.setPower(.5);
-        } else if (gamepad1.dpad_down) {
-            telemetry.addData("Direction:", "down");
-            lift.setPower(-.5);
-        } else {
-            telemetry.addData("Direction:", "none");
-            lift.setPower(0);
-        }
-
-        //Control arm
-        //arm.setPower(0.5555 * armPower);
+        lift.setPower(liftPower);
         
         //Control claw
-        //if(clawPowerOpen != 0.0) claw.setPower(0.7*clawPowerOpen);
-        //else if(clawPowerClose != 0.0) claw.setPower(0.8*clawPowerClose);
+        if(clawOpen) claw.setPosition(clawOpenPos);
+        else if(clawClosed) claw.setPosition(clawClosedPos);
         //else claw.setPower(0);
 
         //store current slow mode status
         prevX = gamepad1.x;
-        prevY = gamepad1.y;
+
+        //Useful telemetry
+        telemetry.addData("Motor Velocities" , ":");
+        telemetry.addData("Left Front:", revBulkData1.getMotorVelocity(left_front_drive));
+        telemetry.addData("Left Back:", revBulkData1.getMotorVelocity(left_back_drive));
+        telemetry.addData("Right Front:", revBulkData1.getMotorVelocity(right_front_drive));
+        telemetry.addData("Right Back:", revBulkData1.getMotorVelocity(right_back_drive));
+
+
+        telemetry.addData("Slow Mode:", slowModeOn);
         
         //update telemetry
         telemetry.update();
+
+        loopNum++;
 
 
     }
