@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import org.firstinspires.ftc.teamcode.Methods.Refresher;
 
 
 
@@ -37,6 +38,9 @@ public class TeleOpMain extends OpMode {
     private ExpansionHubEx expansionHub10; //hub for others
     private RevBulkData revBulkData1;
     private RevBulkData revBulkData10;
+    
+    Refresher bulkData1 = () -> expansionHub1.getBulkInputData();
+    Refresher bulkData10 = () -> expansionHub10.getBulkInputData();
     
     private boolean slowModeOn = false;
     //private boolean fieldCentricOn = false;
@@ -131,6 +135,9 @@ public class TeleOpMain extends OpMode {
 
         revBulkData1 = expansionHub1.getBulkInputData();
         revBulkData10 = expansionHub10.getBulkInputData();
+        
+        bulkData1.refresh();
+        bulkData10.refresh();
 
         //Manipulator gamepad readings
         double liftPower = (gamepad2.right_stick_y != 0&& revBulkData10.getMotorCurrentPosition(lift) != 0)? gamepad2.right_stick_y : 0;
@@ -164,7 +171,6 @@ public class TeleOpMain extends OpMode {
         //Control claw
         if(clawOpen) claw.setPosition(clawOpenPos);
         else if(clawClosed) claw.setPosition(clawClosedPos);
-        //else claw.setPower(0);
 
         //store current slow mode status
         prevX = gamepad1.x;
