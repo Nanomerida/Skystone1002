@@ -39,8 +39,8 @@ public class TeleOpMain extends OpMode {
     private RevBulkData revBulkData1;
     private RevBulkData revBulkData10;
     
-    Refresher bulkData1 = () -> expansionHub1.getBulkInputData();
-    Refresher bulkData10 = () -> expansionHub10.getBulkInputData();
+   // Refresher bulkData1 = () -> expansionHub1.getBulkInputData();
+    //Refresher bulkData10 = () -> expansionHub10.getBulkInputData();
     
     private boolean slowModeOn = false;
     //private boolean fieldCentricOn = false;
@@ -136,8 +136,8 @@ public class TeleOpMain extends OpMode {
         revBulkData1 = expansionHub1.getBulkInputData();
         revBulkData10 = expansionHub10.getBulkInputData();
         
-        bulkData1.refresh();
-        bulkData10.refresh();
+        //bulkData1.refresh();
+        //bulkData10.refresh();
 
         //Manipulator gamepad readings
         double liftPower = (gamepad2.right_stick_y != 0&& revBulkData10.getMotorCurrentPosition(lift) != 0)? gamepad2.right_stick_y : 0;
