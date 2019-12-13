@@ -38,6 +38,7 @@ public class TeleOpMain extends OpMode {
 
     float[] inputs;
     float[] outputs;
+    float[] prevOutputs;
 
 
     enum DriveState {
@@ -56,13 +57,26 @@ public class TeleOpMain extends OpMode {
     
     
 
-    private float[] m_v_mult(float[][] m, float[] v) {
+    private static float[] m_v_mult(float[][] m, float[] v) {
         float[] out = new float[4];
         out[0] = v[0] * m[0][0] + v[1] * m[1][0] + v[2] * m[2][0];
         out[1] = v[0] * m[0][1] + v[1] * m[1][1] + v[2] * m[2][1];
         out[2] = v[0] * m[0][2] + v[1] * m[1][2] + v[2] * m[2][2];
         out[3] = v[0] * m[0][3] + v[1] * m[1][3] + v[2] * m[2][3];
         return out;
+    }
+
+    private boolean isDriveUpdateWorthy(){
+        float total = 0;
+        for(int i=0; i<3; i++){
+            total += (outputs[i] - prevOutputs[i]);
+        }
+        total /= 4;
+        return (Math.abs(total) >= 0.001);
+    }
+
+    private boolean isLiftUpdateWorthy(double previous, double update){
+        return (Math.abs((update - previous)) >= 0.01);
     }
     
     //Array to hold movement instructions
@@ -112,8 +126,8 @@ public class TeleOpMain extends OpMode {
     public void loop() {
 
 
-
         revBulkData1 = expansionHub1.getBulkInputData();
+        double currentPower = ((lift_left.getPower() + lift_right.getPower()) / 2);
 
 
         //Manipulator gamepad readings
@@ -121,7 +135,7 @@ public class TeleOpMain extends OpMode {
         boolean clawOpen = (gamepad2.left_bumper && claw.getPosition() != clawOpenPos);
         boolean clawClosed = (gamepad2.right_bumper && claw.getPosition() != clawClosedPos);
 
-        //Turn slow mode of, if pressed and not already active
+        //Turn slow mode off, if pressed and not already active
         driveState = (gamepad1.x && !prevX) ? DriveState.FAST : DriveState.ULTRA_EPIC_FAST;
 
         //The same for the lift
@@ -131,40 +145,48 @@ public class TeleOpMain extends OpMode {
 
         inputs = new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
 
-        
+
+
         //Calculate power for drive
         outputs = m_v_mult(matrix, inputs);
 
-        switch (driveState){
-            case ULTRA_EPIC_FAST:
-                left_front_drive.setPower(outputs[0]);
-                left_back_drive.setPower(outputs[1]);
-                right_front_drive.setPower(outputs[2]);
-                right_back_drive.setPower(outputs[3]);
 
-                break;
 
-            case FAST:
-                left_front_drive.setPower(outputs[0] * 0.5f);
-                left_back_drive.setPower(outputs[1] * 0.5f);
-                right_front_drive.setPower(outputs[2] * 0.5f);
-                right_back_drive.setPower(outputs[3] * 0.5f);
 
-                break;
+
+        if(isDriveUpdateWorthy()) {
+            switch (driveState) {
+                case ULTRA_EPIC_FAST:
+                    left_front_drive.setPower(outputs[0]);
+                    left_back_drive.setPower(outputs[1]);
+                    right_front_drive.setPower(outputs[2]);
+                    right_back_drive.setPower(outputs[3]);
+
+                    break;
+
+                case FAST:
+                    left_front_drive.setPower(outputs[0] * 0.5f);
+                    left_back_drive.setPower(outputs[1] * 0.5f);
+                    right_front_drive.setPower(outputs[2] * 0.5f);
+                    right_back_drive.setPower(outputs[3] * 0.5f);
+
+                    break;
+            }
         }
+        if(isLiftUpdateWorthy(currentPower, liftPower)) {
+            switch (liftState) {
+                case ULTRA_EPIC_FAST:
+                    lift_left.setPower(liftPower);
+                    lift_right.setPower(liftPower);
 
-        switch (liftState){
-            case ULTRA_EPIC_FAST:
-                lift_left.setPower(liftPower);
-                lift_right.setPower(liftPower);
+                    break;
 
-                break;
+                case FAST:
+                    lift_left.setPower(liftPower * 0.5f);
+                    lift_right.setPower(liftPower * 0.5f);
 
-            case FAST:
-                lift_left.setPower(liftPower * 0.5f);
-                lift_right.setPower(liftPower * 0.5f);
-
-                break;
+                    break;
+            }
         }
 
 
@@ -178,12 +200,15 @@ public class TeleOpMain extends OpMode {
         prevX = gamepad1.x;
         prevY = gamepad2.y;
 
+        //store this iteration's outputs
+        prevOutputs = outputs.clone();
+
         //Useful telemetry
         telemetry.addData("Motor Velocities" , ":");
-        telemetry.addData("Left Front:", revBulkData1.getMotorVelocity(left_front_drive));
-        telemetry.addData("Left Back:", revBulkData1.getMotorVelocity(left_back_drive));
-        telemetry.addData("Right Front:", revBulkData1.getMotorVelocity(right_front_drive));
-        telemetry.addData("Right Back:", revBulkData1.getMotorVelocity(right_back_drive));
+        telemetry.addData("Left Front:", "%2.2f", left_front_drive.getPower());
+        telemetry.addData("Left Back:", "%2.2f", left_back_drive.getPower());
+        telemetry.addData("Right Front:", "%2.2f", right_front_drive.getPower());
+        telemetry.addData("Right Back:", "%2.2f",right_back_drive.getPower());
 
         
         //update telemetry
