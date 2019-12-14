@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -26,8 +27,7 @@ public class LastResortAuton extends LinearOpMode {
     DcMotor left_back_drive = null;
     DcMotor right_front_drive = null;
     DcMotor right_back_drive = null;
-    DcMotor arm = null;
-    CRServo claw = null;
+    Servo claw = null;
     public WebcamName webcam = null;
 
     //public BNO055IMU imu;
@@ -42,9 +42,8 @@ public class LastResortAuton extends LinearOpMode {
         right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
         right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
-        arm = hardwareMap.get(DcMotor.class, "arm");
         webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
-        claw = hardwareMap.get(CRServo.class, "claw");
+        claw = hardwareMap.get(Servo.class, "claw");
 
         blockPosBlue.blueInit(webcam);
 
@@ -226,7 +225,7 @@ to strafe (right):
                 right_front_drive.setPower(-0.6);
                 right_back_drive.setPower(0.9);
 
-                sleep(185);
+                sleep(210);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -248,9 +247,9 @@ to strafe (right):
                 right_back_drive.setPower(0);
 
 
-                claw.setPower(-0.3);
+                claw.setPosition(0.2);
                 sleep(3000);
-                claw.setPower(-0.1);
+                claw.setPosition(.7);
 
                 sleep(500);
 
@@ -296,9 +295,9 @@ to strafe (right):
 
                 sleep(500);
 
-                claw.setPower(0.3);
-                sleep(2000);
-                claw.setPower(0);
+                claw.setPosition(0.2);
+                sleep(3000);
+                claw.setPosition(.7);
 
                 sleep(500);
 
@@ -345,9 +344,9 @@ to strafe (right):
                 right_back_drive.setPower(0);
 
 
-                claw.setPower(-0.3);
+                claw.setPosition(0.2);
                 sleep(3000);
-                claw.setPower(-0.1);
+                claw.setPosition(.7);
 
                 sleep(500);
 
@@ -379,9 +378,9 @@ to strafe (right):
 
                 sleep(500);
 
-                claw.setPower(0.3);
-                sleep(2000);
-                claw.setPower(0);
+                claw.setPosition(0.2);
+                sleep(3000);
+                claw.setPosition(.7);
 
                 sleep(500);
 
@@ -421,7 +420,7 @@ to strafe (right):
                 right_front_drive.setPower(0.6);
                 right_back_drive.setPower(-0.9);
 
-                sleep(160);
+                sleep(140);
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -443,9 +442,9 @@ to strafe (right):
                 right_back_drive.setPower(0);
 
 
-                claw.setPower(-0.3);
+                claw.setPosition(0.2);
                 sleep(3000);
-                claw.setPower(-0.1);
+                claw.setPosition(.7);
 
                 sleep(500);
 
@@ -491,9 +490,9 @@ to strafe (right):
 
                 sleep(500);
 
-                claw.setPower(0.3);
-                sleep(2000);
-                claw.setPower(0);
+                claw.setPosition(0.2);
+                sleep(3000);
+                claw.setPosition(.7);
 
                 sleep(500);
 

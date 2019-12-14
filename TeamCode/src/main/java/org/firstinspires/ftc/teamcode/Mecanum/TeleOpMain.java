@@ -12,6 +12,8 @@ import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 
+import static java.lang.Math.abs;
+
 @TeleOp(name = "TeleOpMain", group="TeleOp")
 
 public class TeleOpMain extends OpMode {
@@ -24,21 +26,25 @@ public class TeleOpMain extends OpMode {
     public ExpansionHubMotor right_front_drive = null;
     public ExpansionHubMotor right_back_drive = null;
     public Servo claw = null;
-    public DcMotorSimple lift_left = null;
-    public DcMotorSimple lift_right = null;
+    public Servo arm = null;
+    public ExpansionHubMotor lift_left = null;
+    public ExpansionHubMotor lift_right = null;
     private ExpansionHubEx expansionHub1; //hub for motors
+    private ExpansionHubEx expansionHub10;
     private RevBulkData revBulkData1;
+    private RevBulkData revBulkData10;
 
 
     private boolean prevX = false;
     private boolean prevY = false;
 
     private float clawOpenPos = 1; // Nelitha change these based on servo
-    private float clawClosedPos = 0;
+    private float clawClosedPos = 0f;
+    private float armUp = 0;
 
     float[] inputs;
     float[] outputs;
-    float[] prevOutputs;
+    float[] prevOutputs = {0.0f ,0.0f ,0,0f, 0.0f};
 
 
     enum DriveState {
@@ -72,11 +78,11 @@ public class TeleOpMain extends OpMode {
             total += (outputs[i] - prevOutputs[i]);
         }
         total /= 4;
-        return (Math.abs(total) >= 0.001);
+        return (abs(total) >= 0.001);
     }
 
     private boolean isLiftUpdateWorthy(double previous, double update){
-        return (Math.abs((update - previous)) >= 0.01);
+        return (abs((update - previous)) >= 0.01);
     }
     
     //Array to hold movement instructions
@@ -93,23 +99,34 @@ public class TeleOpMain extends OpMode {
 
 
         claw = hardwareMap.get(Servo.class, "claw");
+        arm = hardwareMap.get(Servo.class, "arm");
         
-        lift_left =  hardwareMap.get(DcMotorSimple.class, "lift_left");
-        lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
+        lift_left =  (ExpansionHubMotor)hardwareMap.get(DcMotor.class, "lift_left");
+        lift_right =  (ExpansionHubMotor)hardwareMap.get(DcMotor.class, "lift_right");
 
         expansionHub1 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
+        expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
 
+        lift_left.setMode(ExpansionHubMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift_right.setMode(ExpansionHubMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
+        lift_left.setMode(ExpansionHubMotor.RunMode.RUN_USING_ENCODER);
+        lift_right.setMode(ExpansionHubMotor.RunMode.RUN_USING_ENCODER);
+
+        lift_left.setZeroPowerBehavior(ExpansionHubMotor.ZeroPowerBehavior.FLOAT);
+        lift_right.setZeroPowerBehavior(ExpansionHubMotor.ZeroPowerBehavior.FLOAT);
+
         right_front_drive.setDirection(DcMotor.Direction.REVERSE);
         right_back_drive.setDirection(DcMotor.Direction.REVERSE);
 
 
-        lift_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift_left.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
     }
@@ -131,7 +148,7 @@ public class TeleOpMain extends OpMode {
 
 
         //Manipulator gamepad readings
-        double liftPower = gamepad2.right_stick_y;
+        double liftPower = -gamepad2.right_stick_y;
         boolean clawOpen = (gamepad2.left_bumper && claw.getPosition() != clawOpenPos);
         boolean clawClosed = (gamepad2.right_bumper && claw.getPosition() != clawClosedPos);
 
@@ -141,6 +158,8 @@ public class TeleOpMain extends OpMode {
         //The same for the lift
         liftState  = (gamepad2.y && !prevY) ? LiftState.FAST : LiftState.ULTRA_EPIC_FAST;
 
+        if(gamepad1.right_bumper) arm.setPosition(0);
+
 
 
         inputs = new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
@@ -148,6 +167,7 @@ public class TeleOpMain extends OpMode {
 
 
         //Calculate power for drive
+        telemetry.addData("breakpoints","code got to here");
         outputs = m_v_mult(matrix, inputs);
 
 
@@ -173,19 +193,21 @@ public class TeleOpMain extends OpMode {
                     break;
             }
         }
-        if(isLiftUpdateWorthy(currentPower, liftPower)) {
-            switch (liftState) {
-                case ULTRA_EPIC_FAST:
-                    lift_left.setPower(liftPower);
-                    lift_right.setPower(liftPower);
+        if(lift_left.getCurrentPosition() != -450 || lift_right.getCurrentPosition() != -450) {
+            if (isLiftUpdateWorthy(currentPower, liftPower)) {
+                switch (liftState) {
+                    case ULTRA_EPIC_FAST:
+                        lift_left.setPower(liftPower * 0.5f);
+                        lift_right.setPower(liftPower * 0.5f);
 
-                    break;
+                        break;
 
-                case FAST:
-                    lift_left.setPower(liftPower * 0.5f);
-                    lift_right.setPower(liftPower * 0.5f);
+                    case FAST:
+                        lift_left.setPower(liftPower * 0.4f);
+                        lift_right.setPower(liftPower * 0.4f);
 
-                    break;
+                        break;
+                }
             }
         }
 
@@ -203,12 +225,16 @@ public class TeleOpMain extends OpMode {
         //store this iteration's outputs
         prevOutputs = outputs.clone();
 
+
         //Useful telemetry
         telemetry.addData("Motor Velocities" , ":");
-        telemetry.addData("Left Front:", "%2.2f", left_front_drive.getPower());
-        telemetry.addData("Left Back:", "%2.2f", left_back_drive.getPower());
-        telemetry.addData("Right Front:", "%2.2f", right_front_drive.getPower());
-        telemetry.addData("Right Back:", "%2.2f",right_back_drive.getPower());
+        telemetry.addData("Left Front:", revBulkData1.getMotorVelocity(left_front_drive));
+        telemetry.addData("Left Back:",  revBulkData1.getMotorVelocity(left_back_drive));
+        telemetry.addData("Right Front:",  revBulkData1.getMotorVelocity(right_front_drive));
+        telemetry.addData("Right Back:", revBulkData1.getMotorVelocity(right_back_drive));
+
+        telemetry.addData("Lift left:", lift_left.getCurrentPosition());
+        telemetry.addData("Lift right:", lift_right.getCurrentPosition());
 
         
         //update telemetry
