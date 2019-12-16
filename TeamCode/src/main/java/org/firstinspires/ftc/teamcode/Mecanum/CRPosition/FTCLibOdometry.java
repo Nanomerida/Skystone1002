@@ -96,7 +96,7 @@ public class FTCLibOdometry {
      * @param deltaTheta          the change in the robot's orientation
      * @param parallelEncoderVals the value of the encoders for the parallel odometers
      */
-    public void updateCurve(double deltaTheta, double... parallelEncoderVals) {
+    protected void updateCurve(double deltaTheta, double... parallelEncoderVals) {
         double centralEncoderVal = 0;
         for (double val : parallelEncoderVals) {
             centralEncoderVal += val / parallelEncoderVals.length;
@@ -116,7 +116,7 @@ public class FTCLibOdometry {
      * @param deltaTheta              the change in the robot's orientation
      * @param perpendicularEncoderVal the value of encoders for the perpendicular odometers
      */
-    public void updateStrafe(double deltaTheta, double perpendicularEncoderVal) {
+    protected void updateStrafe(double deltaTheta, double perpendicularEncoderVal) {
         double theta = robotPos.getHeading();
         double deltaX = perpendicularEncoderVal * Math.sin(theta + deltaTheta / 2);
         double deltaY = perpendicularEncoderVal * Math.cos(theta + deltaTheta / 2);

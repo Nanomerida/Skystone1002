@@ -109,6 +109,7 @@ public class Vector2d {
      */
     public double getY() {return m_y;}
 
+
     /**
      * Returns dot product of this vector with argument.
      *

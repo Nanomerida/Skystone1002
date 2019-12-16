@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.cos;
@@ -35,8 +34,11 @@ public class CROdometry {
     public DcMotor right_front_drive = null;
     public DcMotor right_back_drive = null;
 
+    private FTCLibOdometry odometry;
+
     private double previousAngle;
     private double currentAngle;
+    private double  ConvRate = 0.006184246955207152778;
 
     /** All hardware must be initialized.
      * Encoders should go in List in the order of left y, right y, x.
@@ -44,6 +46,7 @@ public class CROdometry {
     public CROdometry(ExpansionHubEx expansionHubEx, List<ExpansionHubMotor> encoders,
                        double[] start, double heading, List<DcMotor> driveMotors) {
 
+        this.odometry = new FTCLibOdometry(new Pose2d(start[0], start[1], heading), 18);
         this.expansionHubEx = expansionHubEx;
         this.left_y_encoder = new ExternalEncoder(encoders.get(0));
         this.right_y_encoder = new ExternalEncoder(encoders.get(1));
@@ -60,8 +63,11 @@ public class CROdometry {
     public boolean MoveOdomPosition(double GoalX, double GoalY, double theta) {
         boolean goalReachedPos;
         //Use odometry to move to a given position
+        bulkData = expansionHubEx.getBulkInputData();
 
-        double[] actualPos = AbsolutePosition(theta);
+        odometry.update(theta, (x_encoder.getCounts(bulkData) * ConvRate), (left_y_encoder.getCounts(bulkData) * ConvRate), (right_y_encoder.getCounts(bulkData)
+        * ConvRate));
+        double[] actualPos = AbsolutePosition(theta); //BADDDDDDDDDDDD
         goalReachedPos = GoalCheckPos(actualPos[0], GoalX, actualPos[1], GoalY); //check if we are at position
         if (!goalReachedPos) setDrivePower(PositionChange(actualPos[0], GoalX, actualPos[2], GoalY));
         robotPosition.setPosition(actualPos[0], actualPos[1]);
