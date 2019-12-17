@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.*;
 
 import java.util.ArrayList;
 @Autonomous(name = "BlueOdometry", group = "Mecanum")
-public class BlueOdometry extends LinearOpMode {
+public class RedOdometry extends LinearOpMode {
 
     VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
@@ -41,7 +41,7 @@ public class BlueOdometry extends LinearOpMode {
     private Orientation angles;
 
     private static int stonePos;
-    private static final boolean redSide = false;
+    private static final boolean redSide = true;
     private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();
     private ArrayList<ExpansionHubMotor> encoders = new ArrayList<>();
 
@@ -50,7 +50,6 @@ public class BlueOdometry extends LinearOpMode {
 
     //Telemetry items
     Telemetry.Item currentGoal;
-    Telemetry.Item currentPos;
 
 
 
@@ -187,7 +186,7 @@ public class BlueOdometry extends LinearOpMode {
 
         sleep(2000);
 
-        //odometry.MoveOdomPosition(-36, -48, degreesConversion());
+        //odometry.MoveOdomPosition(36, 48, degreesConversion());
 
         while (!isStopRequested()){
             telemetry.addLine("DONE!!!!!!!!!!");

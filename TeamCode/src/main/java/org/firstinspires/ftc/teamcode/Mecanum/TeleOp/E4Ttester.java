@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mecanum;
+package org.firstinspires.ftc.teamcode.Mecanum.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +12,7 @@ import org.openftc.revextensions2.RevBulkData;
 import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.CROdometry;
 
 @TeleOp(name= "ff", group = "f")
-public class jkfhkasfj extends LinearOpMode {
+public class E4Ttester extends LinearOpMode {
 
 
 

@@ -32,15 +32,9 @@ package org.firstinspires.ftc.teamcode.OKIIIcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.*;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 
-import org.firstinspires.ftc.teamcode.hardwareMaps.HardwarePushbot;
+import org.firstinspires.ftc.teamcode.hardware.HardwarePushbot;
 
 
 /**

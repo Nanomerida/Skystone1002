@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mecanum;
+package org.firstinspires.ftc.teamcode.Mecanum.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,7 +10,7 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 
 
 @TeleOp(name = "Pls work")
-public class Fihusdhad extends LinearOpMode {
+public class TempCompTeleOp extends LinearOpMode {
 
 
 

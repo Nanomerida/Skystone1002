@@ -127,6 +127,7 @@ public class MainAutonomousLinear extends LinearOpMode {
     }
 
 
+    /** This is wrong, copy method from {@link BlueOdometry#degreesConversion()} */
     public double degreesConversion(){
         while(refreshTimer.milliseconds() < 3){sleep(1);}
         refreshTimer.reset();

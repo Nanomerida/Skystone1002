@@ -1,6 +1,5 @@
-package org.firstinspires.ftc.teamcode.Mecanum;
+package org.firstinspires.ftc.teamcode.Mecanum.TeleOp;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,9 +25,9 @@ public class TeleOpMain extends OpMode {
     public ExpansionHubMotor right_front_drive = null;
     public ExpansionHubMotor right_back_drive = null;
     public Servo claw = null;
-    public Servo arm = null;
-    public ExpansionHubMotor lift_left = null;
-    public ExpansionHubMotor lift_right = null;
+    public CRServo arm = null;
+    public DcMotorSimple lift_left = null;
+    public DcMotorSimple lift_right = null;
     private ExpansionHubEx expansionHub1; //hub for motors
     private ExpansionHubEx expansionHub10;
     private RevBulkData revBulkData1;
@@ -36,18 +35,14 @@ public class TeleOpMain extends OpMode {
 
 
     private boolean prevX = false;
-    private boolean prevY = false;
 
-    private float clawOpenPos = 0.0f; // Nelitha change these based on servo
-    private float clawClosedPos = 0.5f;
-    private float armUp = 0;
 
     float[] inputs;
     float[] outputs;
-    float[] prevOutputs = {0.0f ,0.0f ,0,0f, 0.0f};
 
 
     enum DriveState {
+        SUPER_ULTRA_TURBO ,
         ULTRA_EPIC_FAST,
         FAST
     }
@@ -60,8 +55,7 @@ public class TeleOpMain extends OpMode {
     private DriveState driveState = DriveState.ULTRA_EPIC_FAST;
     private LiftState liftState = LiftState.ULTRA_EPIC_FAST;
 
-    
-    
+
 
     private static float[] m_v_mult(float[][] m, float[] v) {
         float[] out = new float[4];
@@ -72,21 +66,10 @@ public class TeleOpMain extends OpMode {
         return out;
     }
 
-    private boolean isDriveUpdateWorthy(){
-        float total = 0;
-        for(int i=0; i<3; i++){
-            total += (outputs[i] - prevOutputs[i]);
-        }
-        total /= 4;
-        return (abs(total) >= 0.001);
-    }
 
-    private boolean isLiftUpdateWorthy(double previous, double update){
-        return (abs((update - previous)) >= 0.01);
-    }
     
     //Array to hold movement instructions
-    private float[][] matrix = {{0.55f, 1.0f, 0.5f, 1.0f}, {0.4f, -0.95f, -0.45f, 0.95f}, {0.65f, 1.0f, -0.65f, -1.0f}};
+    private float[][] matrix = {{0.55f, 1.0f, 0.5f, 1.0f}, {0.8f, -0.95f, -0.85f, 0.95f}, {0.65f, 1.0f, -0.65f, -1.0f}};
 
     //Initializes with the hardwareMap
     @Override
@@ -99,16 +82,13 @@ public class TeleOpMain extends OpMode {
 
 
         claw = hardwareMap.get(Servo.class, "claw");
-        arm = hardwareMap.get(Servo.class, "arm");
+        arm = hardwareMap.get(CRServo.class, "arm");
         
-        //lift_left =  (ExpansionHubMotor)hardwareMap.get(DcMotor.class, "lift_left");
-        //lift_right =  (ExpansionHubMotor)hardwareMap.get(DcMotor.class, "lift_right");
+        lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
+        lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
 
         expansionHub1 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
         expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
-
-        lift_left.setMode(ExpansionHubMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift_right.setMode(ExpansionHubMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -116,16 +96,10 @@ public class TeleOpMain extends OpMode {
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
-        lift_left.setMode(ExpansionHubMotor.RunMode.RUN_USING_ENCODER);
-        lift_right.setMode(ExpansionHubMotor.RunMode.RUN_USING_ENCODER);
-
-        lift_left.setZeroPowerBehavior(ExpansionHubMotor.ZeroPowerBehavior.FLOAT);
-        lift_right.setZeroPowerBehavior(ExpansionHubMotor.ZeroPowerBehavior.FLOAT);
-
         right_front_drive.setDirection(DcMotor.Direction.REVERSE);
         right_back_drive.setDirection(DcMotor.Direction.REVERSE);
 
-
+        //Reverse the left side
         lift_left.setDirection(DcMotor.Direction.REVERSE);
 
 
@@ -144,21 +118,12 @@ public class TeleOpMain extends OpMode {
 
 
         revBulkData1 = expansionHub1.getBulkInputData();
-        //double currentPower = ((lift_left.getPower() + lift_right.getPower()) / 2);
 
 
-        //Manipulator gamepad readings
-        //double liftPower = -gamepad2.right_stick_y;
-        boolean clawOpen = (gamepad2.left_bumper && claw.getPosition() != clawOpenPos);
-        boolean clawClosed = (gamepad2.right_bumper && claw.getPosition() != clawClosedPos);
 
         //Turn slow mode off, if pressed and not already active
         driveState = (gamepad1.x && !prevX) ? DriveState.FAST : DriveState.ULTRA_EPIC_FAST;
 
-        //The same for the lift
-        //liftState  = (gamepad2.y && !prevY) ? LiftState.FAST : LiftState.ULTRA_EPIC_FAST;
-
-        if(gamepad1.right_bumper) arm.setPosition(0);
 
 
 
@@ -173,8 +138,7 @@ public class TeleOpMain extends OpMode {
 
 
 
-
-        if(isDriveUpdateWorthy()) {
+        //Move drive base
             switch (driveState) {
                 case ULTRA_EPIC_FAST:
                     left_front_drive.setPower(outputs[0]);
@@ -192,38 +156,24 @@ public class TeleOpMain extends OpMode {
 
                     break;
             }
-        }
-        /*if(lift_left.getCurrentPosition() != -450 || lift_right.getCurrentPosition() != -450) {
-            if (isLiftUpdateWorthy(currentPower, liftPower)) {
-                switch (liftState) {
-                    case ULTRA_EPIC_FAST:
-                        lift_left.setPower(liftPower * 0.5f);
-                        lift_right.setPower(liftPower * 0.5f);
 
-                        break;
-
-                    case FAST:
-                        lift_left.setPower(liftPower * 0.4f);
-                        lift_right.setPower(liftPower * 0.4f);
-
-                        break;
-                }
-            }
-        } */
-
+        //Move lift
+        if(gamepad2.dpad_up) {lift_left.setPower(-0.5); lift_right.setPower(-0.5); }
+        else if(gamepad2.dpad_down) {lift_left.setPower(0.1); lift_right.setPower(0.1); }
+        else lift_left.setPower(0); lift_right.setPower(0);
 
 
         
         //Control claw
-        if(clawOpen) claw.setPosition(clawOpenPos);
-        else if(clawClosed) claw.setPosition(clawClosedPos);
+        if(gamepad2.right_bumper) claw.setPosition(0);
+        else if(gamepad2.left_bumper) claw.setPosition(0.4);
+
+        //Move arm
+        arm.setPower(-gamepad2.left_stick_y);
 
         //store current slow mode statuses
         prevX = gamepad1.x;
-        //prevY = gamepad2.y;
 
-        //store this iteration's outputs
-        prevOutputs = outputs.clone();
 
 
         //Useful telemetry
@@ -232,9 +182,6 @@ public class TeleOpMain extends OpMode {
         telemetry.addData("Left Back:",  revBulkData1.getMotorVelocity(left_back_drive));
         telemetry.addData("Right Front:",  revBulkData1.getMotorVelocity(right_front_drive));
         telemetry.addData("Right Back:", revBulkData1.getMotorVelocity(right_back_drive));
-
-        telemetry.addData("Lift left:", lift_left.getCurrentPosition());
-        telemetry.addData("Lift right:", lift_right.getCurrentPosition());
 
         
         //update telemetry

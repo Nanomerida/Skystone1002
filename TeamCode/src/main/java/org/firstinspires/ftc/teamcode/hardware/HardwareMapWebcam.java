@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardwareMaps;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import com.qualcomm.robotcore.hardware.HardwareMap;

@@ -1,14 +1,12 @@
-package org.firstinspires.ftc.teamcode.hardwareMaps;
+package org.firstinspires.ftc.teamcode.hardware;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public abstract class HardwareMapBase {
 
