@@ -6,12 +6,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.DifferentialControlLoopCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-import static java.lang.Math.abs;
+import java.util.ArrayList;
 
 @TeleOp(name = "TeleOpMain", group="TeleOp")
 
@@ -24,14 +26,22 @@ public class TeleOpMain extends OpMode {
     public ExpansionHubMotor left_back_drive = null;
     public ExpansionHubMotor right_front_drive = null;
     public ExpansionHubMotor right_back_drive = null;
-    public Servo claw = null;
-    public CRServo arm = null;
-    public DcMotorSimple lift_left = null;
-    public DcMotorSimple lift_right = null;
+    private Servo claw = null;
+    private CRServo arm = null;
+    private DcMotorSimple lift_left = null;
+    private DcMotorSimple lift_right = null;
     private ExpansionHubEx expansionHub1; //hub for motors
     private ExpansionHubEx expansionHub10;
     private RevBulkData revBulkData1;
     private RevBulkData revBulkData10;
+
+    private ArrayList<DigitalChannel> liftLimitSwitchesTop = new ArrayList<>();
+    private ArrayList<DigitalChannel> liftLimitSwitchesBottom = new ArrayList<>();
+
+    private DigitalChannel left_top_switch;
+    private DigitalChannel left_bottom_switch;
+    private DigitalChannel right_top_switch;
+    private DigitalChannel right_bottom_switch;
 
 
     private boolean prevX = false;
@@ -41,19 +51,32 @@ public class TeleOpMain extends OpMode {
     float[] outputs;
 
 
+    /**
+     * Enum to represent the current speed mode of the drive base.
+     */
     enum DriveState {
         SUPER_ULTRA_TURBO ,
         ULTRA_EPIC_FAST,
         FAST
     }
 
-    enum LiftState {
-        ULTRA_EPIC_FAST,
-        FAST
+
+    /**
+     * Enum to represent the current state of the lift, whether it has reached the bottom, top, or
+     * moving/down, or has stopped and needs power to keep it in place.
+     *
+     */
+    enum LiftState{
+        BOTTOM,
+        TOP,
+        MOVING_UP,
+        MOVING_DOWN,
+        STOPPED,
     }
 
+
     private DriveState driveState = DriveState.ULTRA_EPIC_FAST;
-    private LiftState liftState = LiftState.ULTRA_EPIC_FAST;
+    private LiftState liftState = LiftState.BOTTOM;
 
 
 
@@ -90,6 +113,11 @@ public class TeleOpMain extends OpMode {
         expansionHub1 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
         expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
 
+        left_top_switch = hardwareMap.get(DigitalChannel.class, "left_top_switch");
+        left_bottom_switch = hardwareMap.get(DigitalChannel.class, "left_bottom_switch");
+        right_top_switch = hardwareMap.get(DigitalChannel.class, "right_top_switch");
+        right_bottom_switch = hardwareMap.get(DigitalChannel.class, "right_bottom_switch");
+
         left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -101,6 +129,17 @@ public class TeleOpMain extends OpMode {
 
         //Reverse the left side
         lift_left.setDirection(DcMotor.Direction.REVERSE);
+
+        left_top_switch.setMode(DigitalChannel.Mode.INPUT);
+        left_bottom_switch.setMode(DigitalChannel.Mode.INPUT);
+        right_top_switch.setMode(DigitalChannel.Mode.INPUT);
+        right_bottom_switch.setMode(DigitalChannel.Mode.INPUT);
+
+
+        liftLimitSwitchesTop.add(left_top_switch);
+        liftLimitSwitchesBottom.add(left_bottom_switch);
+        liftLimitSwitchesTop.add(right_top_switch);
+        liftLimitSwitchesBottom.add(right_bottom_switch);
 
 
     }
@@ -115,9 +154,30 @@ public class TeleOpMain extends OpMode {
     
     @Override
     public void loop() {
-
-
+        //Get the data for this iteration
         revBulkData1 = expansionHub1.getBulkInputData();
+
+        liftState = LiftState.STOPPED;
+
+        //See if any of the limit switches have been tripped
+        for(DigitalChannel limitSwitch : liftLimitSwitchesBottom){
+            if(revBulkData1.getDigitalInputState(limitSwitch)) {
+                liftState = LiftState.BOTTOM;
+            }
+        }
+        for(DigitalChannel limitSwitch : liftLimitSwitchesTop){
+            if(revBulkData1.getDigitalInputState(limitSwitch)){
+                liftState = LiftState.TOP;
+            }
+        }
+
+        //Check to see if the lift has stopped in mid-air.
+        if(gamepad2.dpad_up || !gamepad2.dpad_down || liftState != LiftState.TOP || liftState != LiftState.BOTTOM){
+            liftState = LiftState.MOVING_UP;
+        }
+        else if(!gamepad2.dpad_up || gamepad2.dpad_down || liftState != LiftState.TOP || liftState != LiftState.BOTTOM){
+            liftState = LiftState.MOVING_DOWN;
+        }
 
 
 
@@ -126,13 +186,12 @@ public class TeleOpMain extends OpMode {
 
 
 
-
+        //Read driver inputs
         inputs = new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
 
 
 
         //Calculate power for drive
-        telemetry.addData("breakpoints","code got to here");
         outputs = m_v_mult(matrix, inputs);
 
 
@@ -157,10 +216,34 @@ public class TeleOpMain extends OpMode {
                     break;
             }
 
+            //Move lift based on state
+            switch (liftState){
+                case TOP:
+                    if(gamepad2.dpad_up || gamepad2.dpad_down){
+                        liftState = LiftState.MOVING_DOWN;
+                    }
+                    break;
+                case BOTTOM:
+                    if(gamepad2.dpad_up || gamepad2.dpad_down){
+                        liftState = LiftState.MOVING_UP;
+                    }
+                    break;
+                case MOVING_UP:
+                    lift_left.setPower(-0.5); lift_right.setPower(-0.5);
+
+                    break;
+                case MOVING_DOWN:
+                    lift_left.setPower(0.1); lift_right.setPower(0.1);
+                    break;
+                case STOPPED:
+                    lift_left.setPower(0.1); lift_right.setPower(0.05);
+                    break;
+            }
+
         //Move lift
-        if(gamepad2.dpad_up) {lift_left.setPower(-0.5); lift_right.setPower(-0.5); }
+        /*if(gamepad2.dpad_up) {lift_left.setPower(-0.5); lift_right.setPower(-0.5); }
         else if(gamepad2.dpad_down) {lift_left.setPower(0.1); lift_right.setPower(0.1); }
-        else lift_left.setPower(0); lift_right.setPower(0);
+        else lift_left.setPower(0); lift_right.setPower(0); */
 
 
         
@@ -171,7 +254,7 @@ public class TeleOpMain extends OpMode {
         //Move arm
         arm.setPower(-gamepad2.left_stick_y);
 
-        //store current slow mode statuses
+        //store current slow mode status
         prevX = gamepad1.x;
 
 

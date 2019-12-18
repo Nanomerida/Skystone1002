@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -35,6 +35,7 @@ public class CROdometry {
     public DcMotor right_back_drive = null;
 
     private FTCLibOdometry odometry;
+    private ElapsedTime update = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     private double previousAngle;
     private double currentAngle;
@@ -65,38 +66,54 @@ public class CROdometry {
 
 
     public boolean MoveOdomPosition(double GoalX, double GoalY, double theta) {
-        boolean goalReachedPos;
-        //Use odometry to move to a given position
-        bulkData = expansionHubEx.getBulkInputData();
 
-        odometry.update(theta, (x_encoder.getCounts(bulkData) * ConvRate), (left_y_encoder.getCounts(bulkData) * ConvRate), (right_y_encoder.getCounts(bulkData)
-        * ConvRate));
+        if(update.milliseconds() <= 16.7  && opMode.opModeIsActive()) {
+            boolean goalReachedPos;
+            //Use odometry to move to a given position
+            bulkData = expansionHubEx.getBulkInputData();
+
+            odometry.update(AngleUnit.RADIANS.toRadians(theta), (x_encoder.getCounts(bulkData) * ConvRate), (left_y_encoder.getCounts(bulkData) * ConvRate),
+                    (right_y_encoder.getCounts(bulkData) * ConvRate)); //update pos
 
 
-        goalReachedPos = GoalCheckPos(globalPos.getPos().getX(), GoalX, globalPos.getPos().getY(), GoalY); //check if we are at position
+            goalReachedPos = GoalCheckPos(globalPos.getPos().getX(), GoalX, globalPos.getPos().getY(), GoalY); //check if we are at position
 
-        if (!goalReachedPos && opMode.opModeIsActive()) setDrivePower(PositionChange(globalPos.getPos().getX(), GoalX, globalPos.getPos().getY(), GoalY)); //If we aren't, set power again
+            if (!goalReachedPos)
+                setDrivePower(PositionChange(globalPos.getPos().getX(), GoalX, globalPos.getPos().getY(), GoalY)); //If we aren't, set power again
 
-        syncEncoders();
+            syncEncoders();
 
-        return goalReachedPos;
+            update.reset();
+            return goalReachedPos;
+
+        }
+        else {
+            return true;
+        }
+
     }
 
     public boolean MoveAngle(double thetaG, double[] theta) {
-        boolean goalReachedAngle;
-        previousAngle = theta[0];
-        currentAngle = theta[1];
-        //Use odometry to rotate
+        if(update.milliseconds() <= 16.7 && opMode.opModeIsActive() ) {
+            boolean goalReachedAngle;
+            previousAngle = theta[0];
+            currentAngle = theta[1];
+            //Use odometry to rotate
 
-        //NEED TO RECALL METHOD UNTIL DONE!!!!!!!
+            //NEED TO RECALL METHOD UNTIL DONE!!!!!!!
 
-        odometry.update(AngleUnit.DEGREES.toRadians(currentAngle), ((x_encoder.getCounts(bulkData) * ConvRate)-((AngleUnit.DEGREES.toRadians(currentAngle) - AngleUnit.DEGREES.toRadians(previousAngle)) * 1)),
-                (left_y_encoder.getCounts(bulkData) * ConvRate), (right_y_encoder.getCounts(bulkData) * ConvRate));
+            odometry.update(AngleUnit.DEGREES.toRadians(currentAngle), ((x_encoder.getCounts(bulkData) * ConvRate) - ((AngleUnit.DEGREES.toRadians(currentAngle) - AngleUnit.DEGREES.toRadians(previousAngle)) * 1)),
+                    (left_y_encoder.getCounts(bulkData) * ConvRate), (right_y_encoder.getCounts(bulkData) * ConvRate));
 
-        goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
-        if (!goalReachedAngle && opMode.opModeIsActive()) setDrivePower(AngleChange(thetaG, currentAngle));
-        syncEncoders();
-        return goalReachedAngle;
+            goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
+            if (!goalReachedAngle && opMode.opModeIsActive())
+                setDrivePower(AngleChange(thetaG, currentAngle));
+            syncEncoders();
+            return goalReachedAngle;
+        }
+        else {
+            return true;
+        }
 
     }
 
