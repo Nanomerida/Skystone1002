@@ -19,7 +19,7 @@ import org.openftc.revextensions2.RevBulkData;
 import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.*;
 
 import java.util.ArrayList;
-@Autonomous(name = "BlueOdometry", group = "Mecanum")
+@Autonomous(name = "RedOdometry", group = "Mecanum")
 public class RedOdometry extends LinearOpMode {
 
     VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
