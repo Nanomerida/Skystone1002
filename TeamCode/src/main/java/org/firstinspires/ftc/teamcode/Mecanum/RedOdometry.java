@@ -28,10 +28,6 @@ public class RedOdometry extends LinearOpMode {
     VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
-    public DcMotor left_front_drive   = null;
-    public DcMotor  left_back_drive  = null;
-    public DcMotor  right_front_drive = null;
-    public DcMotor  right_back_drive = null;
 
     public WebcamName webcam = null;
     ExpansionHubEx expansionHub10;
@@ -120,6 +116,7 @@ public class RedOdometry extends LinearOpMode {
 
         //Expansion Hub with encoders
         expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
+        expansionHub10.setAllI2cBusSpeeds(ExpansionHubEx.I2cBusSpeed.FASTPLUS_1M);
 
 
         //Webcam
@@ -135,11 +132,12 @@ public class RedOdometry extends LinearOpMode {
         // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.mode = BNO055IMU.SensorMode.GYRONLY;
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu 1");
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 

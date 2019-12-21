@@ -48,7 +48,7 @@ public class CROdometry implements Subsystem {
 
     private LinearOpMode opMode;
 
-    private static double trackWidth = 18;
+    private static double trackWidth = 14.72071;
 
     /**
      * The expansion hub with the odometers is needed. The passing of the opMode is necessary because
@@ -134,7 +134,7 @@ public class CROdometry implements Subsystem {
                 left_y_encoder.getInches(), right_y_encoder.getInches());
 
         goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
-        if (!goalReachedAngle && opMode.opModeIsActive())
+        if (!goalReachedAngle)
             setDrivePower(AngleChange(thetaG, currentAngle));
         else setDrivePower(new double[]{0, 0, 0, 0});
 
