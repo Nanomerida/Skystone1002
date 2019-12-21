@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mecanum.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,15 +12,16 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.*;
+
 import java.util.ArrayList;
-import org.firstinspires.ftc.teamcode.CRTelemetry.TeleOpTelem;
-import org.firstinspires.ftc.teamcode.Mecanum.MecanumIntake;
 
 @TeleOp(name = "TeleOpMain", group="TeleOp")
 
 public class TeleOpMain extends OpMode {
 
     TeleOpFieldCentric fieldCentric;
+    Driver driver;
     ElapsedTime ping = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     //MecanumIntake intake = new MecanumIntake(hardwareMap);
@@ -38,32 +38,23 @@ public class TeleOpMain extends OpMode {
     private ExpansionHubEx expansionHub10;
     private RevBulkData revBulkData1;
 
-    private DigitalChannel left_top_switch;
-    private DigitalChannel left_bottom_switch;
-    private DigitalChannel right_top_switch;
-    private DigitalChannel right_bottom_switch;
+    private DigitalChannel left_top_switch = null;
+    private DigitalChannel left_bottom_switch = null;
+    private DigitalChannel right_top_switch = null;
+    private DigitalChannel right_bottom_switch = null;
 
 
-    private boolean prevX = false;
+    private boolean prevLeftBumper = false;
+    private boolean prevRightBumper = false;
 
 
     float[] inputs;
     float[] outputs;
 
-
-    /**
-     * Enum to represent the current speed mode of the drive base.
-     */
-    enum DriveState {
-        SUPER_ULTRA_TURBO ,
-        ULTRA_EPIC_FAST,
-        FAST
-    }
+    private ArrayList<ExpansionHubMotor> driveMotors = new ArrayList<>();
 
 
-
-
-    private DriveState driveState = DriveState.ULTRA_EPIC_FAST;
+    private Driver.DriveState driveState = Driver.DriveState.ULTRA_EPIC_FAST;
 
 
 
@@ -79,7 +70,7 @@ public class TeleOpMain extends OpMode {
 
     
     //Array to hold movement instructions
-    private float[][] matrix = {{0.55f, 1.0f, 0.5f, 1.0f}, {0.8f, -0.95f, -0.85f, 0.95f}, {0.65f, 1.0f, -0.65f, -1.0f}};
+    private float[][] matrix = {{0.75f, 1.0f, 0.7f, 1.0f}, {0.8f, -0.95f, -0.85f, 0.95f}, {0.75f, 1.0f, -0.75f, -1.0f}};
 
     //Initializes with the hardwareMap
     @Override
@@ -89,19 +80,6 @@ public class TeleOpMain extends OpMode {
         left_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_back_drive");
         right_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "right_front_drive");
         right_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "right_back_drive");
-
-
-        claw = hardwareMap.get(Servo.class, "claw");
-        try {
-            arm = hardwareMap.get(Servo.class, "arm");
-        } catch(Exception e){
-            telemetry.addLine("Hey guys if you are seeing this it's because you didn't change the phone config " +
-                    "from CRServo to regular servo on the arm.");
-            telemetry.update();
-        }
-        
-        lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
-        lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
 
         expansionHub1 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
         expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
@@ -128,7 +106,15 @@ public class TeleOpMain extends OpMode {
         right_top_switch.setMode(DigitalChannel.Mode.INPUT);
         right_bottom_switch.setMode(DigitalChannel.Mode.INPUT); */
 
-        //intake.initIntake();
+        //intake.init();
+
+        driveMotors.add(left_front_drive);
+        driveMotors.add(left_back_drive);
+        driveMotors.add(right_front_drive);
+        driveMotors.add(right_back_drive);
+
+
+        driver = new Driver(gamepad1, driveMotors);
 
 
 
@@ -141,7 +127,7 @@ public class TeleOpMain extends OpMode {
     @Override
     public void start() {
     }
-    
+
     @Override
     public void loop() {
         //Get the data for this iteration
@@ -175,22 +161,22 @@ public class TeleOpMain extends OpMode {
 
 
         //Turn slow mode off, if pressed and not already active
-        driveState = (gamepad1.x && !prevX) ? DriveState.FAST : DriveState.ULTRA_EPIC_FAST;
-
-
+        //driveState = (gamepad1.left_bumper && !prevLeftBumper) ? Driver.DriveState.FAST : Driver.DriveState.ULTRA_EPIC_FAST;
 
         //Read driver inputs
-        inputs = new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
+        //inputs = new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
 
 
 
         //Calculate power for drive
-        outputs = m_v_mult(matrix, inputs);
+        //outputs = m_v_mult(matrix, inputs);
+
+        driver.drive(m_v_mult(matrix, new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x}));
 
 
 
 
-        //Move drive base
+        /*//Move drive base
             switch (driveState) {
                 case ULTRA_EPIC_FAST:
                     left_front_drive.setPower(outputs[0]);
@@ -208,6 +194,8 @@ public class TeleOpMain extends OpMode {
 
                     break;
             }
+
+         */
 
         //Move lift
         /*if(gamepad2.dpad_up) {lift_left.setPower(-0.5); lift_right.setPower(-0.5); }
@@ -227,15 +215,17 @@ public class TeleOpMain extends OpMode {
         else if(gamepad2.b) arm.setPosition(0.9);
 
         /*if(gamepad2.a) intake.armDown();
-        else if(gamepad2.b) intake.armUpSlight(); */
+        else if(gamepad2.b) intake.armUp(); */
 
         //store current slow mode status
-        prevX = gamepad1.x;
+        prevLeftBumper = gamepad1.left_bumper;
+        prevRightBumper = gamepad1.right_bumper;
+
 
 
 
         //Useful telemetry
-        telemetry.addData("Motor Velocities" , ":");
+        telemetry.addLine("Motor Velocities: ");
         telemetry.addData("Left Front:", revBulkData1.getMotorVelocity(left_front_drive));
         telemetry.addData("Left Back:",  revBulkData1.getMotorVelocity(left_back_drive));
         telemetry.addData("Right Front:",  revBulkData1.getMotorVelocity(right_front_drive));

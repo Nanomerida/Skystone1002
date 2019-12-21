@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -13,6 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
+import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.FoundationMover;
+import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.MecanumIntake;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
@@ -46,10 +49,18 @@ public class RedOdometry extends LinearOpMode {
     private ArrayList<ExpansionHubMotor> encoders = new ArrayList<>();
 
     //Our odometry instance
-    protected CROdometry odometry;
+    private CROdometry odometry;
+    private MecanumIntake intake;
+    private FoundationMover foundationMover;
 
     //Telemetry items
-    Telemetry.Item currentGoal;
+    Telemetry.Item currentPosGoal;
+    Telemetry.Item currentPos;
+    Telemetry.Item currentAngleGoal;
+    Telemetry.Item currentAngle;
+
+    /**Define starting info here! */
+    public Pose2d globalPos = new Pose2d(0,0,180);
 
 
 
@@ -71,22 +82,34 @@ public class RedOdometry extends LinearOpMode {
 
     public boolean goToPos(double x, double y){
 
-        currentGoal.setValue("%.3f, %.3f", x, y);
+        currentPosGoal.setValue("%.3f, %.3f", x, y);
         try {
             while (odometry.MoveOdomPosition(x, y, degreesConversion()) && opModeIsActive()) {
-
+                telemetry.update();
             }
         } catch (Exception e){
             telemetry.addData("ODOMETRY ERROR!!!!!!", e.getLocalizedMessage());
             telemetry.update();
             return false;
         }
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
         return true;
 
+    }
+
+    public boolean goToAngle(double angle){
+
+        currentAngleGoal.setValue(angle);
+        double previousAngle = degreesConversion();
+        try {
+            while (odometry.MoveAngle(angle , new double[] {previousAngle, degreesConversion()}) && opModeIsActive()) {
+                telemetry.update();
+            }
+        } catch (Exception e){
+            telemetry.addData("ODOMETRY ERROR!!!!!!", e.getLocalizedMessage());
+            telemetry.update();
+            return false;
+        }
+        return true;
     }
 
 
@@ -95,64 +118,14 @@ public class RedOdometry extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
 
-        //Initialize motors
-        left_front_drive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        left_back_drive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
-
-
         //Expansion Hub with encoders
         expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
-
-        //External encoders
-        left_y_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "left_y_encoder");
-        right_y_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "right_y_encoder");
-        x_encoder = (ExpansionHubMotor) hardwareMap.get(DcMotor.class, "x_encoder");
 
 
         //Webcam
         webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
         //Initialize vuforia with webcam
         blockPosBlue.blueInit(webcam);
-
-
-
-        //Set up the drive base
-        left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        //reset the external encoders
-        left_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        right_y_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        x_encoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        left_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_y_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        x_encoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-
-        //reverse the opposite drive motors
-        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
-        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
-
-        right_y_encoder.setDirection(ExpansionHubMotor.Direction.REVERSE);
-
-
-        //adds motors to ArrayList
-        driveMotors.add(left_front_drive);
-        driveMotors.add(left_back_drive);
-        driveMotors.add(right_front_drive);
-        driveMotors.add(right_back_drive);
-
-
-        //add encoders
-        encoders.add(left_y_encoder);
-        encoders.add(right_y_encoder);
-        encoders.add(x_encoder);
 
 
         // MORE IMU STUFF
@@ -173,11 +146,32 @@ public class RedOdometry extends LinearOpMode {
 
 
         //Set up odometry
-        odometry = new CROdometry(this, expansionHub10, encoders, new double[] {0,0}, degreesConversion(), driveMotors);
+        odometry = new CROdometry(this, expansionHub10, globalPos, hardwareMap);
+        intake = new MecanumIntake(this, hardwareMap);
+        foundationMover = new FoundationMover(hardwareMap);
 
-        currentGoal = telemetry.addData("Current Odometry Goal", "Waiting For Start!");
+        odometry.init();
+        intake.init();
+        foundationMover.init();
 
+        currentPosGoal = telemetry.addData("Current Odometry Goal", "Waiting For Start!");
+        currentAngleGoal = telemetry.addData("Current Angle Goal", "Waiting For Start!");
+        currentPosGoal.setRetained(true);
+        currentAngleGoal.setRetained(true);
 
+        currentPos = telemetry.addData("Current Position", new Func<String>(){
+            @Override public String value() {
+                return "X: " + globalPos.getPos().getX() + " Y: " + globalPos.getPos().getY();
+            }
+        });
+
+        currentAngle = telemetry.addData("Current Heading", new Func<String>() {
+            @Override public String value(){
+                return "Θ: " + globalPos.getHeading();
+            }
+        });
+
+        telemetry.update();
 
 
 
@@ -186,7 +180,21 @@ public class RedOdometry extends LinearOpMode {
 
         sleep(2000);
 
-        //odometry.MoveOdomPosition(36, 48, degreesConversion());
+        /* Main body of code here
+
+            To do positional change:
+                - goToPos(<x>, <y>);
+                -^returns true if completed
+            To do rotational change:
+                - goToAngle(<angle>);
+                -^returns true if completed
+         */
+
+        sleep(2000);
+
+
+        //goToPos(36, 48);
+        //goToAngle(270);
 
         while (!isStopRequested()){
             telemetry.addLine("DONE!!!!!!!!!!");

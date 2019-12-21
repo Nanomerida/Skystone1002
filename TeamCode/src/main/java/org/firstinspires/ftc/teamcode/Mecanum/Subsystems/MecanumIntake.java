@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mecanum;
+package org.firstinspires.ftc.teamcode.Mecanum.Subsystems;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -14,27 +14,27 @@ import org.firstinspires.ftc.teamcode.hardware.Timer;
 /**Class for the current mecanum intake as of 12/19/19. This uses a servo arm, a servo class, and a two motor lift with
  * limit switches.
  *
- * TODO: Need to set arm positions
+ *
  *
  */
 
-public class MecanumIntake {
+public class MecanumIntake implements Subsystem {
 
     LinearOpMode opMode;
 
     Timer timer;
 
 
-    private DcMotorSimple lift_left;
-    private DcMotorSimple lift_right;
+    private DcMotorSimple lift_left = null;
+    private DcMotorSimple lift_right = null;
 
-    private Servo arm;
-    private Servo claw;
+    private Servo arm = null;
+    private Servo claw = null;
 
-    private DigitalChannel left_top_switch;
-    private DigitalChannel left_bottom_switch;
-    private DigitalChannel right_top_switch;
-    private DigitalChannel right_bottom_switch;
+    private DigitalChannel left_top_switch = null;
+    private DigitalChannel left_bottom_switch = null;
+    private DigitalChannel right_top_switch = null;
+    private DigitalChannel right_bottom_switch = null;
 
     private static double clawOpen = 0;
     private static double clawClosed = 0.4;
@@ -89,7 +89,8 @@ public class MecanumIntake {
         lift_right.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void initIntake(){
+    @Override
+    public void init(){
         armDown();
         openClaw();
 
@@ -97,12 +98,12 @@ public class MecanumIntake {
 
     /**Are the bottom limit switches triggered? */
     public boolean liftAtBottom(){
-        return (left_bottom_switch.getState() || right_bottom_switch.getState());
+        return (!left_bottom_switch.getState() || !right_bottom_switch.getState());
     }
 
     /**Are the top limit switches triggered? */
     public boolean liftAtTop(){
-        return (left_top_switch.getState() || right_top_switch.getState());
+        return (!left_top_switch.getState() || !right_top_switch.getState());
     }
 
     /**Opens the claw. */

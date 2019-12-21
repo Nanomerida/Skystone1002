@@ -11,7 +11,7 @@ import org.openftc.revextensions2.RevBulkData;
 
 import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.CROdometry;
 
-@TeleOp(name= "ff", group = "f")
+@TeleOp(name= "External Ecnoder Reading", group = "Testing")
 public class E4Ttester extends LinearOpMode {
 
 

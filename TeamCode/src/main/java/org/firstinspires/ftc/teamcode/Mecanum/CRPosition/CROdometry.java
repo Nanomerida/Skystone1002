@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Mecanum.CRPosition;
 
 
+import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.hardware.BulkDataManager;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 import org.openftc.revextensions2.ExpansionHubEx;
@@ -9,7 +11,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -18,108 +24,128 @@ import static java.lang.Math.abs;
 import java.util.List;
 
 
-public class CROdometry {
+public class CROdometry implements Subsystem {
 
 
-    private RobotPosition robotPosition;
     private RevBulkData bulkData;
-    private ExpansionHubEx expansionHubEx;
-    public Pose2d globalPos;
+
+    public BulkDataManager bulkDataManager;
+    private Pose2d globalPos;
 
     private ExternalEncoder left_y_encoder;
     private ExternalEncoder right_y_encoder;
     private ExternalEncoder x_encoder;
-    public DcMotor left_front_drive = null;
-    public DcMotor left_back_drive = null;
-    public DcMotor right_front_drive = null;
-    public DcMotor right_back_drive = null;
+    public ExpansionHubMotor left_front_drive = null;
+    public ExpansionHubMotor left_back_drive = null;
+    public ExpansionHubMotor right_front_drive = null;
+    public ExpansionHubMotor right_back_drive = null;
 
     private FTCLibOdometry odometry;
     private ElapsedTime update = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     private double previousAngle;
     private double currentAngle;
-    private double  ConvRate = 0.006184246955207152778;
 
     private LinearOpMode opMode;
 
-    /** All hardware must be initialized.
-     * Encoders should go in List in the order of left y, right y, x.
-     * Please remember to reverse the right y encoder.*/
-    public CROdometry(LinearOpMode opMode, ExpansionHubEx expansionHubEx, List<ExpansionHubMotor> encoders,
-                       double[] start, double heading, List<DcMotor> driveMotors) {
+    private static double trackWidth = 18;
+
+    /**
+     * The expansion hub with the odometers is needed. The passing of the opMode is necessary because
+     * the program will send true as if it is at the position if the opMode ends while inside the class/
+     */
+    public CROdometry(LinearOpMode opMode, ExpansionHubEx expansionHubEx, Pose2d globalPos, HardwareMap hardwareMap) {
+
+        left_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_front_drive");
+        left_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_back_drive");
+        right_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "right_front_drive");
+        right_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "right_back_drive");
 
         this.opMode = opMode;
-        this.odometry = new FTCLibOdometry(new Pose2d(start[0], start[1], heading), 18);
-        this.expansionHubEx = expansionHubEx;
-        this.left_y_encoder = new ExternalEncoder(encoders.get(0));
-        this.right_y_encoder = new ExternalEncoder(encoders.get(1));
-        this.x_encoder = new ExternalEncoder(encoders.get(2));
-        this.robotPosition = new RobotPosition(start[0], start[1], heading, "Degrees");
-        this.left_front_drive = driveMotors.get(0);
-        this.left_back_drive = driveMotors.get(1);
-        this.right_front_drive = driveMotors.get(2);
-        this.right_back_drive = driveMotors.get(3);
-        bulkData = this.expansionHubEx.getBulkInputData();
-        globalPos = odometry.robotPos;
+        this.odometry = new FTCLibOdometry(globalPos, trackWidth);
+
+        left_y_encoder = new ExternalEncoder((ExpansionHubMotor) hardwareMap.get(DcMotor.class, "left_y_encoder"), bulkData);
+        right_y_encoder = new ExternalEncoder((ExpansionHubMotor) hardwareMap.get(DcMotor.class, "right_y_encoder"), bulkData);
+        x_encoder = new ExternalEncoder((ExpansionHubMotor) hardwareMap.get(DcMotor.class, "x_encoder"), bulkData);
+
+        bulkDataManager = new BulkDataManager(expansionHubEx, bulkData);
+        bulkDataManager.refreshBulkData();
+
+        this.globalPos = globalPos;
+    }
+
+    @Override
+    public void init(){
+
+        //Set up the drive base
+        left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //reverse the opposite drive motors
+        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
+        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
+
+        //Hard reset all encoders
+        left_y_encoder.hardReset();
+        right_y_encoder.hardReset();
+        x_encoder.hardReset();
+
+        //Reverse right encoder
+        right_y_encoder.reverseEncoder();
+
     }
 
 
     public boolean MoveOdomPosition(double GoalX, double GoalY, double theta) {
 
-        if(update.milliseconds() <= 16.7  && opMode.opModeIsActive()) {
-            boolean goalReachedPos;
-            //Use odometry to move to a given position
-            bulkData = expansionHubEx.getBulkInputData();
+        boolean goalReachedPos;
+        //Use odometry to move to a given position
+        bulkDataManager.refreshBulkData();
 
-            odometry.update(AngleUnit.RADIANS.toRadians(theta), (x_encoder.getCounts(bulkData) * ConvRate), (left_y_encoder.getCounts(bulkData) * ConvRate),
-                    (right_y_encoder.getCounts(bulkData) * ConvRate)); //update pos
+        odometry.update(AngleUnit.RADIANS.toRadians(theta), x_encoder.getInches(), left_y_encoder.getInches(), right_y_encoder.getInches()); //update pos
 
 
-            goalReachedPos = GoalCheckPos(globalPos.getPos().getX(), GoalX, globalPos.getPos().getY(), GoalY); //check if we are at position
+        goalReachedPos = GoalCheckPos(globalPos.getPos().getX(), GoalX, globalPos.getPos().getY(), GoalY); //check if we are at position
 
-            if (!goalReachedPos)
-                setDrivePower(PositionChange(globalPos.getPos().getX(), GoalX, globalPos.getPos().getY(), GoalY)); //If we aren't, set power again
+        if (!goalReachedPos)
+            setDrivePower(PositionChange(globalPos.getPos().getX(), GoalX, globalPos.getPos().getY(), GoalY)); //If we aren't, set power again
+        else setDrivePower(new double[]{0, 0, 0, 0});
 
-            syncEncoders();
+        syncEncoders();
 
-            update.reset();
-            return goalReachedPos;
+        return goalReachedPos;
 
-        }
-        else {
-            return true;
-        }
 
     }
 
     public boolean MoveAngle(double thetaG, double[] theta) {
-        if(update.milliseconds() <= 16.7 && opMode.opModeIsActive() ) {
-            boolean goalReachedAngle;
-            previousAngle = theta[0];
-            currentAngle = theta[1];
-            //Use odometry to rotate
+        boolean goalReachedAngle;
+        previousAngle = theta[0];
+        currentAngle = theta[1];
+        //Use odometry to rotate
 
-            //NEED TO RECALL METHOD UNTIL DONE!!!!!!!
+        bulkDataManager.refreshBulkData();
 
-            odometry.update(AngleUnit.DEGREES.toRadians(currentAngle), ((x_encoder.getCounts(bulkData) * ConvRate) - ((AngleUnit.DEGREES.toRadians(currentAngle) - AngleUnit.DEGREES.toRadians(previousAngle)) * 1)),
-                    (left_y_encoder.getCounts(bulkData) * ConvRate), (right_y_encoder.getCounts(bulkData) * ConvRate));
+        //NEED TO RECALL METHOD UNTIL DONE!!!!!!!
 
-            goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
-            if (!goalReachedAngle && opMode.opModeIsActive())
-                setDrivePower(AngleChange(thetaG, currentAngle));
-            syncEncoders();
-            return goalReachedAngle;
-        }
-        else {
-            return true;
-        }
+        odometry.update(AngleUnit.DEGREES.toRadians(currentAngle), (x_encoder.getInches() - ((AngleUnit.DEGREES.toRadians(currentAngle) - AngleUnit.DEGREES.toRadians(previousAngle)) * 1)),
+                left_y_encoder.getInches(), right_y_encoder.getInches());
+
+        goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
+        if (!goalReachedAngle && opMode.opModeIsActive())
+            setDrivePower(AngleChange(thetaG, currentAngle));
+        else setDrivePower(new double[]{0, 0, 0, 0});
+
+        syncEncoders();
+
+        return goalReachedAngle;
 
     }
 
     /** LINEAR MOVEMENT PROCEDURES */
-    @Deprecated
-    public double[] AbsolutePosition(double theta) {
+    /*public double[] AbsolutePosition(double theta) {
         robotPosition.setHeading(theta);
         double[] PreviousPosition = robotPosition.getPosition();
         double[] CurrentPosition = new double[2];
@@ -144,7 +170,7 @@ public class CROdometry {
         syncEncoders();
         robotPosition.setPosition(CurrentPosition[0], CurrentPosition[1]);
         return CurrentPosition;
-    }
+    } */
 
     private double[] PositionChange(double Xg, double Xa, double Yg, double Ya) {
         float[] MoveYBasePower = {0.55f, 1.0f, 0.5f, 1.0f};                             //Base Motor Power for Y movement
@@ -167,17 +193,7 @@ public class CROdometry {
     private boolean GoalCheckPos(double Xa, double Xg, double Ya, double Yg) { /**/
 
         boolean reachedGoal;
-        if (abs(Xg - Xa) < 1) {
-            reachedGoal = true;
-            if (abs(Yg - Ya) < 1) {
-                reachedGoal = true;
-            }
-            else {
-                reachedGoal = false;
-            }
-        } else {
-            reachedGoal = false;
-        }
+        reachedGoal = (abs(Xg - Xa) < 1) && abs(Yg - Ya) < 1;
         return reachedGoal;
     }
 
@@ -186,8 +202,7 @@ public class CROdometry {
     /**
      * Note: wheelDelta - angleChange * wheelOffset
      */
-    @Deprecated
-    public double[] TurningPosition(double theta, double previous) {
+    /*public double[] TurningPosition(double theta, double previous) {
         robotPosition.setHeading(theta);
         double[] PreviousPosition = robotPosition.getPosition();
         double[] CurrentPosition = new double[2];
@@ -212,7 +227,7 @@ public class CROdometry {
         syncEncoders();
         robotPosition.setPosition(CurrentPosition[0], CurrentPosition[1]);
         return CurrentPosition;
-    }
+    } */
 
     private double[] AngleChange(double thetaG, double thetaA) { /**/
         float[] TurnBasePower = {0.65f, 1.0f, -0.65f, -1.0f};
@@ -226,8 +241,7 @@ public class CROdometry {
 
     private boolean GoalCheckAngle(double thetaG, double thetaA) { /**/
         boolean reachedGoal = false;
-        double thetaDif = (thetaG - thetaA);
-        if (abs(thetaDif) < 1) {
+        if (abs(thetaG - thetaA) < 1) {
             reachedGoal = true;
         }
         return reachedGoal;
@@ -242,9 +256,9 @@ public class CROdometry {
 
 
     public void syncEncoders() {
-        left_y_encoder.syncEncoders(bulkData);
-        right_y_encoder.syncEncoders(bulkData);
-        x_encoder.syncEncoders(bulkData);
+        left_y_encoder.syncEncoders();
+        right_y_encoder.syncEncoders();
+        x_encoder.syncEncoders();
     }
 
 }

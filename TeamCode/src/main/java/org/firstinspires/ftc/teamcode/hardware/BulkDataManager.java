@@ -23,7 +23,7 @@ public class BulkDataManager {
         bulkData = expansionHubEx.getBulkInputData();
     }
 
-    public RevBulkData getBulkDatas(){
+    public RevBulkData getBulkData(){
         return bulkData;
     }
 
