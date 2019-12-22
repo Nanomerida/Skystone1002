@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -14,13 +13,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
+import org.firstinspires.ftc.teamcode.CRVuforia.Vuforia;
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 
 @Autonomous(name="Auton Test", group = "Autonomous")
 public class CompRetest extends LinearOpMode {
 
-    VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
+    Vuforia blockPosBlue = new Vuforia(); //creates an instance of the vuforia blue side file
     GeneralMethods methods = new GeneralMethods();
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -61,7 +60,7 @@ public class CompRetest extends LinearOpMode {
 
         claw = hardwareMap.get(CRServo.class, "claw");
 
-        blockPosBlue.blueInit(webcam);
+        //blockPosBlue.blueInit(webcam);
 
 
         right_front_drive.setDirection(DcMotor.Direction.REVERSE);

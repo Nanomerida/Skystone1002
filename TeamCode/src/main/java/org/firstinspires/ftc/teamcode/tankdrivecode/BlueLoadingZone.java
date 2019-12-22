@@ -48,7 +48,7 @@ public class BlueLoadingZone extends LinearOpMode {
 
     /* Other Variables */
     public static final double degreesToRadians = 180.0 / Math.PI;
-    //private VuforiaBlue blockPosBlue = new VuforiaBlue();
+    //private Vuforia blockPosBlue = new Vuforia();
     private ElapsedTime runtime = new ElapsedTime();
     private Reference ref = new Reference();
     public static final double SERVODEGREES = 0.005;

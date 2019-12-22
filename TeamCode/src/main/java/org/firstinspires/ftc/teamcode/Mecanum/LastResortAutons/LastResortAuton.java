@@ -2,24 +2,17 @@ package org.firstinspires.ftc.teamcode.Mecanum.LastResortAutons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
+import org.firstinspires.ftc.teamcode.CRVuforia.Vuforia;
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 
 @Autonomous(name="Last Resort BlueLoadingZone", group = "Last Resort")
 public class LastResortAuton extends LinearOpMode {
 
-    VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
+    Vuforia blockPosBlue = new Vuforia(); //creates an instance of the vuforia blue side file
     GeneralMethods methods = new GeneralMethods();
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -45,7 +38,7 @@ public class LastResortAuton extends LinearOpMode {
         webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
         claw = hardwareMap.get(Servo.class, "claw");
 
-        blockPosBlue.blueInit(webcam);
+        //blockPosBlue.blueInit(webcam);
 
 
         left_front_drive.setDirection(DcMotor.Direction.REVERSE);

@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.abs;
+import static java.lang.Math.toDegrees;
 
 import java.util.List;
 
@@ -30,23 +31,22 @@ public class CROdometry implements Subsystem {
     private RevBulkData bulkData;
 
     public BulkDataManager bulkDataManager;
-    private Pose2d globalPos;
+    public Pose2d globalPos;
 
-    private ExternalEncoder left_y_encoder;
-    private ExternalEncoder right_y_encoder;
-    private ExternalEncoder x_encoder;
+    public ExternalEncoder left_y_encoder;
+    public ExternalEncoder right_y_encoder;
+    public ExternalEncoder x_encoder;
     public ExpansionHubMotor left_front_drive = null;
     public ExpansionHubMotor left_back_drive = null;
     public ExpansionHubMotor right_front_drive = null;
     public ExpansionHubMotor right_back_drive = null;
 
-    private FTCLibOdometry odometry;
+    public FTCLibOdometry odometry;
     private ElapsedTime update = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     private double previousAngle;
     private double currentAngle;
 
-    private LinearOpMode opMode;
 
     private static double trackWidth = 14.72071;
 
@@ -61,12 +61,12 @@ public class CROdometry implements Subsystem {
         right_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "right_front_drive");
         right_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "right_back_drive");
 
-        this.opMode = opMode;
         this.odometry = new FTCLibOdometry(globalPos, trackWidth);
 
         left_y_encoder = new ExternalEncoder((ExpansionHubMotor) hardwareMap.get(DcMotor.class, "left_y_encoder"), bulkData);
         right_y_encoder = new ExternalEncoder((ExpansionHubMotor) hardwareMap.get(DcMotor.class, "right_y_encoder"), bulkData);
-        x_encoder = new ExternalEncoder((ExpansionHubMotor) hardwareMap.get(DcMotor.class, "x_encoder"), bulkData);
+        //We actually have both the encoder and the left lift motor in the same port.
+        x_encoder = new ExternalEncoder((ExpansionHubMotor) hardwareMap.get(DcMotor.class, "lift_left"), bulkData);
 
         bulkDataManager = new BulkDataManager(expansionHubEx, bulkData);
         bulkDataManager.refreshBulkData();
@@ -134,13 +134,25 @@ public class CROdometry implements Subsystem {
                 left_y_encoder.getInches(), right_y_encoder.getInches());
 
         goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
-        if (!goalReachedAngle)
-            setDrivePower(AngleChange(thetaG, currentAngle));
+        if (!goalReachedAngle) {
+            if(thetaG > previousAngle) {
+                setDrivePower(AngleChange(thetaG, currentAngle));
+            }
+            else {
+                setDrivePower(negate(AngleChange(thetaG, currentAngle)));
+            }
+        }
         else setDrivePower(new double[]{0, 0, 0, 0});
 
         syncEncoders();
 
         return goalReachedAngle;
+
+    }
+
+    public void update(double theta){
+
+        odometry.update(AngleUnit.RADIANS.toRadians(theta), x_encoder.getInches(), left_y_encoder.getInches(), right_y_encoder.getInches()); //update pos
 
     }
 
@@ -259,6 +271,14 @@ public class CROdometry implements Subsystem {
         left_y_encoder.syncEncoders();
         right_y_encoder.syncEncoders();
         x_encoder.syncEncoders();
+    }
+
+     public static double[] negate(double[] pre){
+        double[] post = new double[pre.length];
+        for(int i = 0; i < pre.length; i++){
+            post[i] = -pre[i];
+        }
+        return post;
     }
 
 }

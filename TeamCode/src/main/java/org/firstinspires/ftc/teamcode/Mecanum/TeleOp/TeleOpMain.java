@@ -24,7 +24,6 @@ public class TeleOpMain extends OpMode {
     Driver driver;
     ElapsedTime ping = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
-    //MecanumIntake intake = new MecanumIntake(hardwareMap);
 
     public ExpansionHubMotor left_front_drive = null;
     public ExpansionHubMotor left_back_drive = null;
@@ -37,6 +36,7 @@ public class TeleOpMain extends OpMode {
     private ExpansionHubEx expansionHub1; //hub for motors
     private ExpansionHubEx expansionHub10;
     private RevBulkData revBulkData1;
+    private RevBulkData revBulkData10;
 
     private DigitalChannel left_top_switch = null;
     private DigitalChannel left_bottom_switch = null;
@@ -55,6 +55,8 @@ public class TeleOpMain extends OpMode {
 
 
     private Driver.DriveState driveState = Driver.DriveState.ULTRA_EPIC_FAST;
+
+    public static boolean opModeIsDone = false;
 
 
 
@@ -98,6 +100,9 @@ public class TeleOpMain extends OpMode {
         right_front_drive.setDirection(DcMotor.Direction.REVERSE);
         right_back_drive.setDirection(DcMotor.Direction.REVERSE);
 
+        lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
+        lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
+
         //Reverse the left side
         lift_right.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -106,7 +111,6 @@ public class TeleOpMain extends OpMode {
         right_top_switch.setMode(DigitalChannel.Mode.INPUT);
         right_bottom_switch.setMode(DigitalChannel.Mode.INPUT); */
 
-        //intake.init();
 
         driveMotors.add(left_front_drive);
         driveMotors.add(left_back_drive);
@@ -115,6 +119,8 @@ public class TeleOpMain extends OpMode {
 
 
         driver = new Driver(gamepad1, driveMotors);
+        //MecanumIntake intake = new MecanumIntake(hardwareMap, opModeIsDone);
+        //intake.init();
 
 
 
@@ -132,6 +138,7 @@ public class TeleOpMain extends OpMode {
     public void loop() {
         //Get the data for this iteration
         revBulkData1 = expansionHub1.getBulkInputData();
+        revBulkData10 = expansionHub10.getBulkInputData();
 
         //Reading the limit switches.
         /*limitSwitchStates.set(0, !revBulkData1.getDigitalInputState(left_bottom_switch));

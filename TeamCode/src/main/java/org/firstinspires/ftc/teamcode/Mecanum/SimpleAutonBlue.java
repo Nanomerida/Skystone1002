@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Methods.*;
 import org.firstinspires.ftc.teamcode.CRVuforia.*;
-import org.firstinspires.ftc.teamcode.Variables.*;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -28,7 +27,7 @@ import static java.lang.Math.round;
 @Autonomous(name="MecaunmAutonBlue", group = "Mecanum")
 public class SimpleAutonBlue extends LinearOpMode {
 
-    VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
+    Vuforia blockPosBlue = new Vuforia(); //creates an instance of the vuforia blue side file
     GeneralMethods methods = new GeneralMethods();
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 

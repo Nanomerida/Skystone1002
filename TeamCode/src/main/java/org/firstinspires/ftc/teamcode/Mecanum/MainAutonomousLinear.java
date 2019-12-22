@@ -6,11 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit; //IMU THINGS
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -21,7 +18,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Variables.*;
 import org.firstinspires.ftc.teamcode.Methods.*;
 import org.firstinspires.ftc.teamcode.CRVuforia.*;
-import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.*;
 
 import static java.lang.Math.cos; //Ryan's Math Stuff
 import static java.lang.Math.round;
@@ -44,7 +40,7 @@ import java.util.ArrayList;
 
 public class MainAutonomousLinear extends LinearOpMode {
 
-    VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
+    Vuforia blockPosBlue = new Vuforia(); //creates an instance of the vuforia blue side file
     Reference constants = new Reference();
     GeneralMethods methods = new GeneralMethods();
     MecMoveProcedureStorage procedures = new MecMoveProcedureStorage();
@@ -333,7 +329,7 @@ public class MainAutonomousLinear extends LinearOpMode {
         //Webcam
         webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
         //Initialize vuforia with webcam
-        blockPosBlue.blueInit(webcam);
+        //blockPosBlue.blueInit(webcam);
 
 
 

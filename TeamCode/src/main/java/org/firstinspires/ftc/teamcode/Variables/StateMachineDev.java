@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
+import org.firstinspires.ftc.teamcode.CRVuforia.Vuforia;
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class StateMachineDev extends OpMode{
 
   private GeneralMethods methods = new GeneralMethods();
   private ElapsedTime timer = new ElapsedTime(0);
-  private VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
+  private Vuforia blockPosBlue = new Vuforia(); //creates an instance of the vuforia blue side file
 
   public enum RobotStates {
     WAIT_FOR_TIME,

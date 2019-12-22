@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mecanum;
 
+import android.util.SparseArray;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -13,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.CRVuforia.VuforiaBlue;
+import org.firstinspires.ftc.teamcode.CRVuforia.Vuforia;
 import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.FoundationMover;
 import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.MecanumIntake;
 import org.openftc.revextensions2.ExpansionHubEx;
@@ -25,7 +27,7 @@ import java.util.ArrayList;
 @Autonomous(name = "RedOdometry", group = "Mecanum")
 public class RedOdometry extends LinearOpMode {
 
-    VuforiaBlue blockPosBlue = new VuforiaBlue(); //creates an instance of the vuforia blue side file
+    Vuforia blockPos = new Vuforia(); //creates an instance of the vuforia blue side file
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
@@ -39,10 +41,7 @@ public class RedOdometry extends LinearOpMode {
     public BNO055IMU imu;
     private Orientation angles;
 
-    private static int stonePos;
     private static final boolean redSide = true;
-    private ArrayList<DcMotor> driveMotors = new ArrayList<DcMotor>();
-    private ArrayList<ExpansionHubMotor> encoders = new ArrayList<>();
 
     //Our odometry instance
     private CROdometry odometry;
@@ -56,27 +55,28 @@ public class RedOdometry extends LinearOpMode {
     Telemetry.Item currentAngle;
 
     /**Define starting info here! */
-    public Pose2d globalPos = new Pose2d(0,0,180);
+    public Pose2d globalPos = new Pose2d(0,0,0);
+
+
+    private static final double[] left_stone_pos = {25,0};
+    private static final double[] right_stone_pos = {25,0};
+    private static final double[] unseen_stone_pos = {25,0};
+    private static final double[] sensing_pos = {0,0};
+
+    private Vuforia.SkystonePositon skystonePositon = Vuforia.SkystonePositon.UNKNOWN;
 
 
 
 
 
     public double degreesConversion(){
-        while(refreshTimer.milliseconds() < 3){sleep(1);}
-        refreshTimer.reset();
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double theta = this.angles.firstAngle;
-        if(redSide) {
-            if (theta < 0) theta += 270;
-            else theta -= 90;
-        }
-        theta = AngleUnit.normalizeDegrees(theta);
-        if(theta < 0) theta += 360;
+
+        double theta = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        theta = AngleUnit.normalizeDegrees(theta - 90);
         return theta;
     }
 
-    public boolean goToPos(double x, double y){
+    public boolean goToPos(double x, double y, long delay){
 
         currentPosGoal.setValue("%.3f, %.3f", x, y);
         try {
@@ -88,11 +88,13 @@ public class RedOdometry extends LinearOpMode {
             telemetry.update();
             return false;
         }
+
+        sleep(delay);
         return true;
 
     }
 
-    public boolean goToAngle(double angle){
+    public boolean goToAngle(double angle, long delay){
 
         currentAngleGoal.setValue(angle);
         double previousAngle = degreesConversion();
@@ -105,6 +107,7 @@ public class RedOdometry extends LinearOpMode {
             telemetry.update();
             return false;
         }
+        sleep(delay);
         return true;
     }
 
@@ -122,7 +125,6 @@ public class RedOdometry extends LinearOpMode {
         //Webcam
         webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
         //Initialize vuforia with webcam
-        blockPosBlue.blueInit(webcam);
 
 
         // MORE IMU STUFF
@@ -151,6 +153,7 @@ public class RedOdometry extends LinearOpMode {
         odometry.init();
         intake.init();
         foundationMover.init();
+        blockPos.blueInit(webcam, this);
 
         currentPosGoal = telemetry.addData("Current Odometry Goal", "Waiting For Start!");
         currentAngleGoal = telemetry.addData("Current Angle Goal", "Waiting For Start!");
@@ -181,18 +184,44 @@ public class RedOdometry extends LinearOpMode {
         /* Main body of code here
 
             To do positional change:
-                - goToPos(<x>, <y>);
+                - goToPos(<x>, <y>, <millis>);
                 -^returns true if completed
             To do rotational change:
-                - goToAngle(<angle>);
+                - goToAngle(<angle>, <millis>);
                 -^returns true if completed
+
+
+
+
+            IMPORTANT NOTE:
+            All the angles are in euler form (-180, 180). The 0 is firmly on the positive
+            y-axis (middle of field, parallel to alliance stations)
          */
 
-        sleep(2000);
 
 
-        //goToPos(36, 48);
-        //goToAngle(270);
+        //goToPos(36, 48, 1000);
+        //goToAngle(270, 5000);
+
+
+        //Go to a generic position to turn robot
+        goToPos(48, -48, 500);
+
+        goToAngle(90, 500);
+
+        goToPos(sensing_pos[0], sensing_pos[1], 200);
+
+        findSkystone();
+
+        switch (skystonePositon){
+            case LEFT: getSkystoneLeft(); break;
+            case RIGHT: getSkystoneRight(); break;
+            case UNSEEN: getSkystoneUnseen(); break;
+            case UNKNOWN: break;
+
+            default: //CRY IN AGONY!!!!!!!
+        }
+
 
         while (!isStopRequested()){
             telemetry.addLine("DONE!!!!!!!!!!");
@@ -200,6 +229,53 @@ public class RedOdometry extends LinearOpMode {
         }
 
 
+
+    }
+
+    public void findSkystone(){
+        try {
+            skystonePositon = blockPos.testVision();
+        }catch (NullPointerException e){
+            telemetry.addLine("VUFORIA ERROR!!!!!!");
+            telemetry.update();
+        }
+    }
+
+
+    public void getSkystoneLeft(){
+
+        goToPos(left_stone_pos[0], left_stone_pos[1], 1000);
+
+        intake.closeClaw();
+        sleep(500);
+
+        intake.armUp();
+        sleep(500);
+
+    }
+
+
+    public void getSkystoneRight(){
+
+        goToPos(right_stone_pos[0], right_stone_pos[1], 1000);
+
+        intake.closeClaw();
+        sleep(500);
+
+        intake.armUp();
+        sleep(500);
+
+    }
+
+    public void getSkystoneUnseen(){
+
+        goToPos(unseen_stone_pos[0], unseen_stone_pos[1], 1000);
+
+        intake.closeClaw();
+        sleep(500);
+
+        intake.armUp();
+        sleep(500);
 
     }
 }

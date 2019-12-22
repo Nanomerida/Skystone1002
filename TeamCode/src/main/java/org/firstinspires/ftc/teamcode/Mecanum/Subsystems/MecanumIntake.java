@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mecanum.Subsystems;
 
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,6 +19,7 @@ import org.firstinspires.ftc.teamcode.hardware.Timer;
 public class MecanumIntake implements Subsystem {
 
     LinearOpMode opMode;
+    boolean opModeIsDone = false;
 
     Timer timer;
 
@@ -66,7 +66,9 @@ public class MecanumIntake implements Subsystem {
 
         lift_right.setDirection(DcMotorSimple.Direction.REVERSE);
     }
-    public MecanumIntake(HardwareMap hardwareMap){
+    public MecanumIntake(HardwareMap hardwareMap, boolean opModeIsDone){
+        this.opModeIsDone = opModeIsDone;
+
         timer = new Timer();
 
         lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
@@ -132,7 +134,7 @@ public class MecanumIntake implements Subsystem {
     public void liftUpForTime(long millis){
         timer.setTimer(millis);
         timer.startTimer();
-        while(opMode.opModeIsActive() && !timer.timerDone() && liftAtTop()){
+        while(opMode.opModeIsActive()  && !opModeIsDone && !timer.timerDone() && liftAtTop()){
             moveLiftUp();
         }
     }
@@ -144,14 +146,14 @@ public class MecanumIntake implements Subsystem {
     public void liftDownForTime(long millis){
         timer.setTimer(millis);
         timer.startTimer();
-        while(opMode.opModeIsActive() && !timer.timerDone() && liftAtTop()){
+        while(opMode.opModeIsActive()  && !opModeIsDone && !timer.timerDone() && liftAtTop()){
             moveLiftDown();
         }
     }
 
     /**Move lift up */
     public void moveLiftUp(){
-        if(!liftAtTop()){
+        if(!liftAtTop() && opMode.opModeIsActive() && !opModeIsDone){
             lift_left.setPower(liftUpPower);
             lift_right.setPower(liftUpPower);
         }
@@ -159,7 +161,7 @@ public class MecanumIntake implements Subsystem {
 
     /** Move lift down */
     public void moveLiftDown(){
-        if(opMode.opModeIsActive() && !liftAtBottom()){
+        if(opMode.opModeIsActive()  && !opModeIsDone && !liftAtBottom()){
             lift_left.setPower(liftDownPower);
             lift_right.setPower(liftDownPower);
         }

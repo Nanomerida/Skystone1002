@@ -1,34 +1,7 @@
-/* Copyright (c) 2019 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 
 package org.firstinspires.ftc.teamcode.CRVuforia;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -42,7 +15,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 
-public class VuforiaBlue {
+public class Vuforia {
+
+    /**
+     * Enum to represent the position of the skystone
+     *
+     * TODO Replace usages of an int to represent the position with this.
+     */
+    public enum SkystonePositon {
+        LEFT,
+        RIGHT,
+        UNSEEN,
+        UNKNOWN
+    }
 
     private ElapsedTime searchTime = new ElapsedTime(0);
 
@@ -50,8 +35,6 @@ public class VuforiaBlue {
     private static final String VUFORIA_KEY =
             "AeCl8dv/////AAABmU0vhtooEkbCoy9D8hM/5Yh8AhufXZT4nSVVD16Vjh1o/rLFmVyKVPNW3S/lXY0UWmDBpSNPS5yMk6lZoMFhTMoq9BMbmXHJ9KU+uKvC+GVp5cuEo18HvMpLMPPNmIVoXgOv9CqDfnRCOLSCblZf5cRF+E/LNqkZU7dEnEe/rrDq76FjVXruSdMBmUefIhu853VEpgvJPJTNopNjE0yU5TJ3+Uprgldx7fdy//VPG8PfXcaxLj4EJOzEKwJuCNdPS43bio37xbTbnLTzbKmfTqCI6BJpPaK5fXCk7o5xdVewJJbZCA8DDuNX6KUTT//OJ1UEWnMSYw5H1BrWMkytK5Syws7gdsCpYUshsQX7VP51";
 
-    private static final int skystoneMid = -100; //X positions of skystone positions
-    private static final int skystoneCenter = 100;
 
     // Class Members
     private OpenGLMatrix skystonePositionCoords = null;
@@ -63,12 +46,22 @@ public class VuforiaBlue {
      */
 
 
-    private boolean targetVisible = false;
 
     private int skystonePosition = 4;
 
     private WebcamName webcamName = null;
 
+
+    /**
+     * This is the opMode using this.
+     */
+    private LinearOpMode opMode;
+
+
+    public SkystonePositon stonePosition = SkystonePositon.UNKNOWN;
+
+    public VuforiaTrackables targetsSkyStone = vuforia.loadTrackablesFromAsset("Skystone");
+    public VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
 
 
 
@@ -77,7 +70,7 @@ public class VuforiaBlue {
      *
      * @param awebcamName The webcam object
      * */
-    public void blueInit(WebcamName awebcamName) {
+    public void blueInit(WebcamName awebcamName, LinearOpMode opMode) {
 
         this.webcamName = awebcamName;
 
@@ -103,32 +96,70 @@ public class VuforiaBlue {
     }
 
 
-    public int visionTest() {
+    /**The method that looks for the Skystone for 5 seconds
+     *
+     * @return An enum value holding the results.
+     */
+    public SkystonePositon testVision() {
 
-        VuforiaTrackables targetsSkyStone = vuforia.loadTrackablesFromAsset("Skystone");
-        VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
         stoneTarget.setName("Skystone");
 
 
 
 
         targetsSkyStone.activate();
-        boolean noFoundSkystone = true;
         searchTime.reset();
-        while (searchTime.seconds() <= 5) {
+        while (searchTime.seconds() <= 5 && opMode.opModeIsActive()) {
 
             // check all the trackable targets to see which one (if any) is visible.
             if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
                 skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
                 VectorF skystoneCoords = skystonePositionCoords.getTranslation();
                 float closestX = Range.clip(skystoneCoords.get(0), -10f, 10f);
-                if (closestX == -10) skystonePosition = 1;
-                else skystonePosition = 2;
+                if (closestX == -10) stonePosition = SkystonePositon.LEFT;
+                else stonePosition = SkystonePositon.RIGHT;
                 break;
             }
         }
-        if(skystonePosition != 1 && skystonePosition != 2) skystonePosition = 0;
+        if(stonePosition != SkystonePositon.LEFT && stonePosition != SkystonePositon.RIGHT) stonePosition = SkystonePositon.UNSEEN;
        
+
+
+        // Disable Tracking when we are done;
+        targetsSkyStone.deactivate();
+        return stonePosition;
+
+    }
+
+    /**
+     * This is the old deprecated method, but it is here because it is used everywhere in earlier code.
+     * @return int with position
+     */
+    @Deprecated
+    public int visionTest() {
+
+
+        stoneTarget.setName("Skystone");
+
+
+
+
+        targetsSkyStone.activate();
+        searchTime.reset();
+        while (searchTime.seconds() <= 5 && opMode.opModeIsActive()) {
+
+            // check all the trackable targets to see which one (if any) is visible.
+            if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
+                skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
+                VectorF skystoneCoords = skystonePositionCoords.getTranslation();
+                float closestX = Range.clip(skystoneCoords.get(0), -10f, 10f);
+                if (closestX == -10) stonePosition = SkystonePositon.LEFT;
+                else stonePosition = SkystonePositon.RIGHT;
+                break;
+            }
+        }
+        if(stonePosition != SkystonePositon.LEFT && stonePosition != SkystonePositon.RIGHT) stonePosition = SkystonePositon.UNSEEN;
+
 
 
         // Disable Tracking when we are done;
