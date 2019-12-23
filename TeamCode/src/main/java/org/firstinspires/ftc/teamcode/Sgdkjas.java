@@ -1,93 +1,45 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
-import org.firstinspires.ftc.teamcode.CRVuforia.Vuforia;
-//import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
-
-@Autonomous(name = "Test", group = "OK4:")
-public class Sgdkjas extends LinearOpMode {
-
-    Vuforia blockPosBlue = new Vuforia(); //creates an instance of the vuforia blue side file
-//    GeneralMethods methods = new GeneralMethods();
-    private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-
-    DcMotor left_front_drive   = null;
-    DcMotor  left_back_drive  = null;
-    DcMotor  right_front_drive = null;
-    DcMotor  right_back_drive = null;
-
-   /* DcMotor arm = null;
-    CRServo claw = null;
-    public WebcamName webcam = null;
-
-    public BNO055IMU imu;
-    private Orientation angles;
-*/
-
-    @Override
-    public void runOpMode(){
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 
-        left_front_drive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        left_back_drive = hardwareMap.get(DcMotor.class, "left_back_drive");
-        right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
-
-        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
-        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
-
-      /*  arm = hardwareMap.get(DcMotor.class, "arm");
-
-        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        claw = hardwareMap.get(CRServo.class, "claw");
-
-        blockPosBlue.blueInit(webcam);*/
-
-        /*driveMotors.add(left_front_drive);
-        driveMotors.add(left_back_drive);
-        driveMotors.add(right_front_drive);
-        driveMotors.add(right_back_drive); */
-
-        // MORE IMU STUFF
-
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
- /*       BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+public class Sgdkjas {
 
 
+    public static void main(String[] args){
+        try{
+            Scanner user = new Scanner(System.in);
+            System.out.println("Enter file name:");
 
+            String filename = user.nextLine();
+            File file = new File(filename);
+            Scanner reader = new Scanner(file);
 
-*/
+            File myObj = new File(filename);
+            if (myObj.exists()) {
+                System.out.println("File name: " + myObj.getName());
+                System.out.println("Absolute path: " + myObj.getAbsolutePath());
+                System.out.println("Writeable: " + myObj.canWrite());
+                System.out.println("Readable " + myObj.canRead());
+                System.out.println("File size in bytes " + myObj.length());
+            } else {
+                System.out.println("The file does not exist.");
+            }
+            
 
-        waitForStart();
+            while(reader.hasNextLine()){
+                System.out.println(reader.nextLine());
+            }
 
+            reader.close();
+            user.close();
 
-        left_front_drive.setPower(1);
-        left_back_drive.setPower(1);
-        right_front_drive.setPower(1);
-        right_back_drive.setPower(1);
-        sleep(3000);
-
-
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
+        }catch(Exception e){
+            System.out.println("OOPOPOPOP");
+            e.printStackTrace();
+        }
 
 
     }

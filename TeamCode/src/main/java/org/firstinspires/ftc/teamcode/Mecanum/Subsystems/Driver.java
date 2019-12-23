@@ -30,32 +30,35 @@ public class Driver {
     private Gamepad driver;
     public DriveState driveState = DriveState.ULTRA_EPIC_FAST;
 
-    private boolean prevLeftBumper = false;
-    private boolean prevRightBumper = false;
+    public boolean prevLeftBumper;
+    public boolean prevRightBumper;
 
 
 
 
-    public Driver(Gamepad driver, ArrayList<ExpansionHubMotor> driveMotors){
+    public Driver(Gamepad driver, ArrayList<ExpansionHubMotor> driveMotors, boolean prevLeftBumper, boolean prevRightBumper){
         this.driver = driver;
 
         left_front_drive = driveMotors.get(0);
         left_back_drive = driveMotors.get(1);
         right_front_drive = driveMotors.get(2);
         right_back_drive = driveMotors.get(3);
+
+        this.prevLeftBumper = prevLeftBumper;
+        this.prevRightBumper = prevRightBumper;
     }
 
     public void drive(float[] outputs){
-        if(gamepad1.left_bumper && !prevLeftBumper){
+        if(driver.left_bumper && !prevLeftBumper){
             driveState = Driver.DriveState.FAST;
         }
-        else if(gamepad1.left_bumper && prevLeftBumper){
+        else if(driver.left_bumper && prevLeftBumper){
             driveState = Driver.DriveState.ULTRA_EPIC_FAST;
         }
-        else if(gamepad1.right_bumper && !prevRightBumper){
+        else if(driver.right_bumper && !prevRightBumper){
             driveState = Driver.DriveState.FAST_REVERSE;
         }
-        else if(gamepad1.right_bumper && prevRightBumper){
+        else if(driver.right_bumper && prevRightBumper){
             driveState = Driver.DriveState.ULTRA_EPIC_FAST;
         }
 

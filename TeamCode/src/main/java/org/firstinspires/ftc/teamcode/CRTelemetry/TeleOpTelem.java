@@ -94,7 +94,7 @@ public class TeleOpTelem {
         rightTopSwitch = telemetry.addData("Right Top Limit Switch", revBulkData1.getDigitalInputState(limitSwitches.get(3)));
 
         expansionHub1 = telemetry.addData("Expansion Hub 1 Over Temp", expansionHubEx1.isModuleOverTemp());
-        expansionHub10 = telemetry.addData("Expansion HUb 10 Over Temp", expansionHubEx10.isModuleOverTemp());
+        expansionHub10 = telemetry.addData("Expansion Hub 10 Over Temp", expansionHubEx10.isModuleOverTemp());
 
         leftFrontVelo.setRetained(true);
         leftBackVelo.setRetained(true);

@@ -54,7 +54,7 @@ public class CROdometry implements Subsystem {
      * The expansion hub with the odometers is needed. The passing of the opMode is necessary because
      * the program will send true as if it is at the position if the opMode ends while inside the class/
      */
-    public CROdometry(LinearOpMode opMode, ExpansionHubEx expansionHubEx, Pose2d globalPos, HardwareMap hardwareMap) {
+    public CROdometry( ExpansionHubEx expansionHubEx, Pose2d globalPos, HardwareMap hardwareMap) {
 
         left_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_front_drive");
         left_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_back_drive");
@@ -150,11 +150,17 @@ public class CROdometry implements Subsystem {
 
     }
 
+    /**There is no way to account for turning odometry here, we are going to hav to accept it will be off */
     public void update(double theta){
+
+        bulkDataManager.refreshBulkData();
 
         odometry.update(AngleUnit.RADIANS.toRadians(theta), x_encoder.getInches(), left_y_encoder.getInches(), right_y_encoder.getInches()); //update pos
 
+        syncEncoders();
+
     }
+
 
     /** LINEAR MOVEMENT PROCEDURES */
     /*public double[] AbsolutePosition(double theta) {
@@ -163,7 +169,7 @@ public class CROdometry implements Subsystem {
         double[] CurrentPosition = new double[2];
         double[] XEncoderPosition = new double[2];
         double[] YEncoderPosition = new double[2];
-        //double ConvRate = 0.006184246955207152778; // Change this
+        //double ConvRate = 0.006184246955207152778;
         double[] WeirdOrlandoMathsX = {sin(theta), cos(theta)};
         double[] WeirdOrlandoMathsY = {cos(theta), sin(theta)};
         //Get bulk data from hub
@@ -209,7 +215,6 @@ public class CROdometry implements Subsystem {
         return reachedGoal;
     }
 
-    /** TURNING PROCEDURES */
 
     /**
      * Note: wheelDelta - angleChange * wheelOffset

@@ -5,8 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.hardware.Timer;
+
+import org.firstinspires.ftc.teamcode.hardware.BulkDataManager;
+import org.openftc.revextensions2.RevBulkData;
+import org.openftc.revextensions2.ExpansionHubEx;
 
 
 /**Class for the current mecanum intake as of 12/19/19. This uses a servo arm, a servo class, and a two motor lift with
@@ -18,22 +20,20 @@ import org.firstinspires.ftc.teamcode.hardware.Timer;
 
 public class MecanumIntake implements Subsystem {
 
-    LinearOpMode opMode;
-    boolean opModeIsDone = false;
-
-    Timer timer;
+    public BulkDataManager bulkDataManager;
+    public RevBulkData bulkData10;
 
 
-    private DcMotorSimple lift_left = null;
-    private DcMotorSimple lift_right = null;
+    public DcMotorSimple lift_left = null;
+    public DcMotorSimple lift_right = null;
 
-    private Servo arm = null;
-    private Servo claw = null;
+    public Servo arm = null;
+    public Servo claw = null;
 
-    private DigitalChannel left_top_switch = null;
-    private DigitalChannel left_bottom_switch = null;
-    private DigitalChannel right_top_switch = null;
-    private DigitalChannel right_bottom_switch = null;
+    public DigitalChannel left_top_switch = null;
+    public DigitalChannel left_bottom_switch = null;
+    public DigitalChannel right_top_switch = null;
+    public DigitalChannel right_bottom_switch = null;
 
     private static double clawOpen = 0;
     private static double clawClosed = 0.4;
@@ -43,33 +43,11 @@ public class MecanumIntake implements Subsystem {
     private static double liftDownPower = -0.1;
     private static double liftHoldPower = 0.05;
 
-    public MecanumIntake(LinearOpMode opMode, HardwareMap hardwareMap){
+    public MecanumIntake(HardwareMap hardwareMap) {
 
-        this.opMode = opMode;
-        timer = new Timer();
 
-        lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
-        lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
+        bulkDataManager = new BulkDataManager(hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10"), bulkData10);
 
-        claw = hardwareMap.get(Servo.class, "claw");
-        arm = hardwareMap.get(Servo.class, "arm");
-
-        left_top_switch = hardwareMap.get(DigitalChannel.class, "left_top_switch");
-        left_bottom_switch = hardwareMap.get(DigitalChannel.class, "left_bottom_switch");
-        right_top_switch = hardwareMap.get(DigitalChannel.class, "right_top_switch");
-        right_bottom_switch = hardwareMap.get(DigitalChannel.class, "right_bottom_switch");
-
-        left_top_switch.setMode(DigitalChannel.Mode.INPUT);
-        left_bottom_switch.setMode(DigitalChannel.Mode.INPUT);
-        right_top_switch.setMode(DigitalChannel.Mode.INPUT);
-        right_bottom_switch.setMode(DigitalChannel.Mode.INPUT);
-
-        lift_right.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-    public MecanumIntake(HardwareMap hardwareMap, boolean opModeIsDone){
-        this.opModeIsDone = opModeIsDone;
-
-        timer = new Timer();
 
         lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
         lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
@@ -99,12 +77,14 @@ public class MecanumIntake implements Subsystem {
 
     /**Are the bottom limit switches triggered? */
     public boolean liftAtBottom(){
-        return (!left_bottom_switch.getState() || !right_bottom_switch.getState());
+        bulkDataManager.refreshBulkData();
+        return (!bulkData10.getDigitalInputState(left_bottom_switch) || !bulkData10.getDigitalInputState(right_bottom_switch));
     }
 
     /**Are the top limit switches triggered? */
     public boolean liftAtTop(){
-        return (!left_top_switch.getState() || !right_top_switch.getState());
+        bulkDataManager.refreshBulkData();
+        return (!bulkData10.getDigitalInputState(left_top_switch) || !bulkData10.getDigitalInputState(right_top_switch));
     }
 
     /**Opens the claw. */
@@ -127,33 +107,9 @@ public class MecanumIntake implements Subsystem {
         arm.setPosition(armDown);
     }
 
-    /** We don't have encoders, so this must be in time. It will
-     * go up until the time runs out or it reaches the top.
-     * @param millis time to go up for.
-     */
-    public void liftUpForTime(long millis){
-        timer.setTimer(millis);
-        timer.startTimer();
-        while(opMode.opModeIsActive()  && !opModeIsDone && !timer.timerDone() && liftAtTop()){
-            moveLiftUp();
-        }
-    }
-
-    /** We don't have encoders, so this must be in time. It will
-     * go down until the time runs out or it reaches the bottom.
-     * @param millis time to go down for.
-     */
-    public void liftDownForTime(long millis){
-        timer.setTimer(millis);
-        timer.startTimer();
-        while(opMode.opModeIsActive()  && !opModeIsDone && !timer.timerDone() && liftAtTop()){
-            moveLiftDown();
-        }
-    }
-
     /**Move lift up */
     public void moveLiftUp(){
-        if(!liftAtTop() && opMode.opModeIsActive() && !opModeIsDone){
+        if(!liftAtTop()){
             lift_left.setPower(liftUpPower);
             lift_right.setPower(liftUpPower);
         }
@@ -161,13 +117,13 @@ public class MecanumIntake implements Subsystem {
 
     /** Move lift down */
     public void moveLiftDown(){
-        if(opMode.opModeIsActive()  && !opModeIsDone && !liftAtBottom()){
+        if(!liftAtBottom()){
             lift_left.setPower(liftDownPower);
             lift_right.setPower(liftDownPower);
         }
     }
 
-    /** Hold the lift at the current position. */
+    /** Hold the lift at the current position. If it's at the bottom, then just stop */
     public void holdLift(){
         if(!liftAtBottom()){
             lift_left.setPower(liftHoldPower);

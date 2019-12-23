@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.Mecanum;
 
-import android.util.SparseArray;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -16,14 +13,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.CRVuforia.Vuforia;
-import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.FoundationMover;
-import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.MecanumIntake;
+import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.*;
 import org.openftc.revextensions2.ExpansionHubEx;
-import org.openftc.revextensions2.ExpansionHubMotor;
-import org.openftc.revextensions2.RevBulkData;
 import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.*;
 
-import java.util.ArrayList;
 @Autonomous(name = "RedOdometry", group = "Mecanum")
 public class RedOdometry extends LinearOpMode {
 
@@ -33,8 +26,6 @@ public class RedOdometry extends LinearOpMode {
 
     public WebcamName webcam = null;
     ExpansionHubEx expansionHub10;
-    RevBulkData bulkData;
-    ExpansionHubMotor left_y_encoder, right_y_encoder, x_encoder = null;
 
 
     //IMU STUFF
@@ -134,7 +125,6 @@ public class RedOdometry extends LinearOpMode {
         // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.mode = BNO055IMU.SensorMode.GYRONLY;
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
@@ -146,8 +136,8 @@ public class RedOdometry extends LinearOpMode {
 
 
         //Set up odometry
-        odometry = new CROdometry(this, expansionHub10, globalPos, hardwareMap);
-        intake = new MecanumIntake(this, hardwareMap);
+        odometry = new CROdometry( expansionHub10, globalPos, hardwareMap);
+        intake = new MecanumIntake( hardwareMap);
         foundationMover = new FoundationMover(hardwareMap);
 
         odometry.init();
@@ -221,6 +211,24 @@ public class RedOdometry extends LinearOpMode {
 
             default: //CRY IN AGONY!!!!!!!
         }
+
+        /*Go in front of bridge */
+        goToPos(0,0,500);
+
+        /* Turn towards bridge */
+        goToAngle(0, 200);
+
+        /*Go under bridge */
+        goToPos(0,0,500);
+
+        /*Release stone */
+        intake.openClaw();
+        sleep(1000);
+
+        /*Go to park */
+        goToPos(0,0,500);
+
+        //That's it for now
 
 
         while (!isStopRequested()){

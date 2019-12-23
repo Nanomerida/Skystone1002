@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.CRVuforia.Vuforia;
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 
+
 @Autonomous(name="Auton Test", group = "Autonomous")
 public class CompRetest extends LinearOpMode {
 

@@ -188,7 +188,7 @@ public class SimpleAutonRed extends LinearOpMode {
 
         claw = hardwareMap.get(CRServo.class, "claw");
 
-        blockPosBlue.blueInit(webcam);
+        //blockPosBlue.blueInit(webcam);
 
         driveMotors.add(left_front_drive);
         driveMotors.add(left_back_drive);

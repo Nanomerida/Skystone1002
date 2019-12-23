@@ -19,6 +19,7 @@ public class FoundationMover implements Subsystem {
     @Override
     public void init(){
         right.setDirection(CRServo.Direction.REVERSE);
+        byPower(0);
     }
 
 

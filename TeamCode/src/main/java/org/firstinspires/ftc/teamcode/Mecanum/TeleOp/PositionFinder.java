@@ -49,9 +49,6 @@ public class PositionFinder extends LinearOpMode {
     private boolean prevLeftBumper = false;
     private boolean prevRightBumper = false;
 
-    float[] inputs;
-    float[] outputs;
-
     private ArrayList<ExpansionHubMotor> driveMotors = new ArrayList<>();
 
     private Driver.DriveState driveState = Driver.DriveState.ULTRA_EPIC_FAST;
@@ -105,7 +102,6 @@ public class PositionFinder extends LinearOpMode {
         // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.mode = BNO055IMU.SensorMode.GYRONLY;
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
@@ -115,7 +111,7 @@ public class PositionFinder extends LinearOpMode {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         //Set up odometry
-        odometry = new CROdometry(this, expansionHub10, globalPos, hardwareMap);
+        odometry = new CROdometry( expansionHub10, globalPos, hardwareMap);
 
 
         odometry.init();
@@ -132,16 +128,25 @@ public class PositionFinder extends LinearOpMode {
             }
         });
 
+        driver = new Driver(gamepad1, driveMotors, prevLeftBumper, prevRightBumper);
+
         waitForStart();
+
 
         while (opModeIsActive()){
 
-            odometry.update(degreesConversion());
+                odometry.update(degreesConversion());
 
 
             driver.drive(m_v_mult(matrix, new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x}));
 
             telemetry.update();
+
+
+
+            //store current slow mode status
+            prevLeftBumper = gamepad1.left_bumper;
+            prevRightBumper = gamepad1.right_bumper;
 
         }
 

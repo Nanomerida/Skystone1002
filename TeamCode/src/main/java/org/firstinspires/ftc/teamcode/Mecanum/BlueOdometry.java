@@ -124,7 +124,6 @@ public class BlueOdometry extends LinearOpMode {
         // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.mode = BNO055IMU.SensorMode.GYRONLY;
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
@@ -136,8 +135,8 @@ public class BlueOdometry extends LinearOpMode {
 
 
         //Set up odometry
-        odometry = new CROdometry(this, expansionHub10, globalPos, hardwareMap);
-        intake = new MecanumIntake(this, hardwareMap);
+        odometry = new CROdometry( expansionHub10, globalPos, hardwareMap);
+        intake = new MecanumIntake( hardwareMap);
         foundationMover = new FoundationMover(hardwareMap);
 
         odometry.init();
@@ -196,6 +195,37 @@ public class BlueOdometry extends LinearOpMode {
 
         //Rotate to face skystone
         goToAngle(-90, 500);
+
+        goToPos(sensing_pos[0], sensing_pos[1], 200);
+
+        findSkystone();
+
+        switch (skystonePositon){
+            case LEFT: getSkystoneLeft(); break;
+            case RIGHT: getSkystoneRight(); break;
+            case UNSEEN: getSkystoneUnseen(); break;
+            case UNKNOWN: break;
+
+            default: //CRY IN AGONY!!!!!!!
+        }
+
+        /*Go in front of bridge */
+        goToPos(0,0,500);
+
+        /* Turn towards bridge */
+        goToAngle(0, 200);
+
+        /*Go under bridge */
+        goToPos(0,0,500);
+
+        /*Release stone */
+        intake.openClaw();
+        sleep(1000);
+
+        /*Go to park */
+        goToPos(0,0,500);
+
+        //That's it for now
 
 
 

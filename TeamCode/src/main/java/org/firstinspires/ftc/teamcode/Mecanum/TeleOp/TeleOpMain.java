@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.Methods.Refresher;
+import org.firstinspires.ftc.teamcode.Methods.Toggle;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
@@ -22,6 +25,8 @@ public class TeleOpMain extends OpMode {
 
     TeleOpFieldCentric fieldCentric;
     Driver driver;
+    FoundationMover foundationMover;
+    MecanumIntake intake;
     ElapsedTime ping = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
@@ -57,6 +62,43 @@ public class TeleOpMain extends OpMode {
     private Driver.DriveState driveState = Driver.DriveState.ULTRA_EPIC_FAST;
 
     public static boolean opModeIsDone = false;
+
+    /**Update the slow mode status
+     *
+     */
+    private Refresher slowModeUpdate = new Refresher() {
+        @Override
+        public void refresh() {
+            //store current slow mode status
+            prevLeftBumper = gamepad1.left_bumper;
+            prevRightBumper = gamepad1.right_bumper;
+        }
+    };
+
+    /**
+     * Toggle control the claw servo.
+     */
+    private Toggle clawToggle = new Toggle() {
+        @Override
+        public void update() {
+            //Control claw
+            if(gamepad2.right_bumper) claw.setPosition(0);
+            else if(gamepad2.left_bumper) claw.setPosition(0.4);
+        }
+    };
+
+    private Toggle armToggle = new Toggle() {
+        @Override
+        public void update() {
+            //Move arm
+            if(gamepad2.x) arm.setPosition(1);
+            else if(gamepad2.y) arm.setPosition(0.9);
+            /*
+            if(gamepad2.x) intake.armDown();
+            else if(gamepad2.y) intake.armUp();
+             */
+        }
+    };
 
 
 
@@ -118,8 +160,9 @@ public class TeleOpMain extends OpMode {
         driveMotors.add(right_back_drive);
 
 
-        driver = new Driver(gamepad1, driveMotors);
-        //MecanumIntake intake = new MecanumIntake(hardwareMap, opModeIsDone);
+        driver = new Driver(gamepad1, driveMotors, prevLeftBumper, prevRightBumper);
+        foundationMover = new FoundationMover(hardwareMap);
+        //intake = new MecanumIntake(hardwareMap);
         //intake.init();
 
 
@@ -134,17 +177,33 @@ public class TeleOpMain extends OpMode {
     public void start() {
     }
 
+
+    /**
+     * Current driver/manipulator controls
+     *
+     * Gamepad 1 = Driver(Parker)
+     * Gamepad 2 - Manipulator(Jonah)
+     *
+     *
+     * Gamepad 1 / left_stick = strafing
+     * Gamepad 1 / right_stick = turning
+     * Gamepad 1 / left_bumper = slow mode / normal toggle
+     * Gamepad 1 / right_bumper = reverse / normal toggle
+     * Gamepad 2 / dpad_up = lift up / lift hold toggle
+     * Gamepad 2 / dpad_down = lift down / lift hold toggle
+     * Gamepad 2 / left_bumper = claw open
+     * Gamepad 2 / right_bumper = claw closed
+     * Gamepad 2 / x = arm down
+     * Gamepad 2 / y = arm up (slightly)
+     * Gamepad 2 / right_stick = foundation movers
+     *
+     */
     @Override
     public void loop() {
         //Get the data for this iteration
         revBulkData1 = expansionHub1.getBulkInputData();
         revBulkData10 = expansionHub10.getBulkInputData();
 
-        //Reading the limit switches.
-        /*limitSwitchStates.set(0, !revBulkData1.getDigitalInputState(left_bottom_switch));
-        limitSwitchStates.set(1, !revBulkData1.getDigitalInputState(right_bottom_switch));
-        limitSwitchStates.set(2, !revBulkData1.getDigitalInputState(left_top_switch));
-        limitSwitchStates.set(3, !revBulkData1.getDigitalInputState(right_top_switch)); */
 
 
         //Move lift according to driver input
@@ -215,18 +274,31 @@ public class TeleOpMain extends OpMode {
         if(gamepad2.right_bumper) claw.setPosition(0);
         else if(gamepad2.left_bumper) claw.setPosition(0.4);
 
+        //Same as above
+        clawToggle.update();
+
 
 
         //Move arm
-        if(gamepad2.a) arm.setPosition(1);
-        else if(gamepad2.b) arm.setPosition(0.9);
+        if(gamepad2.x) arm.setPosition(1);
+        else if(gamepad2.y) arm.setPosition(0.9);
 
-        /*if(gamepad2.a) intake.armDown();
-        else if(gamepad2.b) intake.armUp(); */
+        //Same as above
+        armToggle.update();
+
+        //Control Foundation movers
+        foundationMover.byPower(-gamepad2.right_stick_y);
+
+        /*if(gamepad2.x) intake.armDown();
+        else if(gamepad2.y) intake.armUp(); */
 
         //store current slow mode status
         prevLeftBumper = gamepad1.left_bumper;
         prevRightBumper = gamepad1.right_bumper;
+
+
+        //Does the same as the above
+        slowModeUpdate.refresh();
 
 
 
@@ -237,6 +309,8 @@ public class TeleOpMain extends OpMode {
         telemetry.addData("Left Back:",  revBulkData1.getMotorVelocity(left_back_drive));
         telemetry.addData("Right Front:",  revBulkData1.getMotorVelocity(right_front_drive));
         telemetry.addData("Right Back:", revBulkData1.getMotorVelocity(right_back_drive));
+
+
 
         
         //update telemetry
@@ -258,4 +332,6 @@ public class TeleOpMain extends OpMode {
         lift_right.setPower(0);
         //intake.stopLift();
     }
+
+
 }
