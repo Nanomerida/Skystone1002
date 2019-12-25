@@ -10,12 +10,14 @@ import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 
 /** Contains the current configurations of the drive team. */
-@Disabled
+@TeleOp(name = "Driver Configuration", group = "Config")
+//@Disabled
 public class DriverConfig  extends LinearOpMode {
 
 
@@ -24,6 +26,10 @@ public class DriverConfig  extends LinearOpMode {
 
     Telemetry.Item currentQuery;
     Telemetry.Item currentDriver;
+
+    public static String driverFileName = "DriverControls.json";
+    public static String manipulatorFileName = "ManipulatorControls.json";
+
 
 
     Func<String> message = new Func<String>() {
@@ -38,36 +44,99 @@ public class DriverConfig  extends LinearOpMode {
         JONAH
     }
 
+    /**Enum to represent driver buttons and also the method to use them.
+     *
+     */
+    public enum Button {
+        A,
+        B,
+        X,
+        Y,
+        LEFT_BUMPER,
+        RIGHT_BUMPER,
+        DPAD_UP,
+        DPAD_DOWN,
+        DPAD_LEFT,
+        DPAD_RIGHT,
+        LEFT_STICK_BUTTON,
+        RIGHT_STICK_BUTTON;
+
+        public boolean isPresed(Gamepad gamepad){
+            switch (this){
+                case A: return gamepad.a;
+                case B: return gamepad.b;
+                case X: return gamepad.x;
+                case Y: return gamepad.y;
+                case LEFT_BUMPER: return gamepad.left_bumper;
+                case RIGHT_BUMPER: return gamepad.right_bumper;
+                case DPAD_UP: return gamepad.dpad_up;
+                case DPAD_DOWN: return gamepad.dpad_down;
+                case DPAD_LEFT: return gamepad.dpad_left;
+                case DPAD_RIGHT: return gamepad.dpad_right;
+                case LEFT_STICK_BUTTON: return gamepad.left_stick_button;
+                case RIGHT_STICK_BUTTON: return gamepad.right_stick_button;
+                default: return false;
+            }
+        }
+    }
+
+    public enum Trigger {
+        LEFT_STICK_Y,
+        LEFT_STICK_X,
+        RIGHT_STICK_Y,
+        RIGHT_STICK_X,
+        LEFT_TRIGGER,
+        RIGHT_TRIGGER;
+
+        public float getValue(Gamepad gamepad){
+            switch (this){
+                case LEFT_STICK_X: return gamepad.left_stick_x;
+                case LEFT_STICK_Y: return gamepad.left_stick_y;
+                case RIGHT_STICK_X: return gamepad.right_stick_x;
+                case RIGHT_STICK_Y: return gamepad.right_stick_y;
+                case LEFT_TRIGGER: return gamepad.left_trigger;
+                case RIGHT_TRIGGER: return gamepad.right_trigger;
+                default: return 0;
+            }
+        }
+    }
+
 
     private DriverName driverName = DriverName.PARKER;
     private int stepNumber = 0;
 
-     class DriverControls  {
+    /**
+     * Class to hold the driver controls
+     */
+     public class DriverControls  {
+         public DriverName name = DriverName.PARKER;
 
-        public boolean slow_mode_button;
-        public boolean reverse_mode_button;
+        public Button slow_mode_button = Button.LEFT_BUMPER;
+        public Button reverse_mode_button = Button.RIGHT_BUMPER;
 
     }
 
-    /**Change this to all functions to get around the references!!!!
-     *
+    /**
+     * Class to hold the manipulator controls
      */
-    class ManipulatorControls {
+    public class ManipulatorControls {
 
-        public boolean lift_up;
-        public boolean lift_down;
-        public boolean claw_open;
-        public boolean claw_closed;
-        public boolean arm_down;
-        public boolean arm_up;
+        public DriverName name = DriverName.JONAH;
+
+        public Button lift_up = Button.DPAD_UP;
+        public Button lift_down = Button.DPAD_DOWN;
+        public Button claw_open = Button.LEFT_BUMPER;
+        public Button claw_closed = Button.RIGHT_BUMPER;
+        public Button arm_down = Button.X;
+        public Button arm_up = Button.Y;
         /**
          * Make sure to reverse this!
          */
-        public float foundation_movers = gamepad2.right_stick_y;
+        public Trigger foundation_movers = Trigger.RIGHT_STICK_Y;
 
     }
 
-    @Override public void runOpMode(){
+    @Override public void runOpMode()throws InterruptedException {
 
          telemetry.log().add("Welcome to Driver Config!");
          telemetry.log().add("Please refer to the instructions below,");
@@ -79,6 +148,7 @@ public class DriverConfig  extends LinearOpMode {
          telemetry.log().add("AND PLEASE FOR THE LOVE OF GOD DO NOT PRESS MULTIPLE BUTTONS!!");
          telemetry.log().add("JUST BE PATIENT!!!");
          telemetry.log().add("Also: Please press buttons/move triggers until you see \"release\"");
+         telemetry.log().add("And obviously, don't press a button twice!");
 
 
          telemetry.log().add("Waiting for start...");
@@ -105,8 +175,7 @@ public class DriverConfig  extends LinearOpMode {
         driverControls = new DriverControls();
         manipulatorControls = new ManipulatorControls();
 
-        String driverFileName = "DriverControls.json";
-        String manipulatorFileName = "ManipulatorControls.json";
+
 
         File driverFile = AppUtil.getInstance().getSettingsFile(driverFileName);
         File manipulatorFile = AppUtil.getInstance().getSettingsFile(manipulatorFileName);
@@ -240,8 +309,8 @@ public class DriverConfig  extends LinearOpMode {
                 currentQuery.setValue(message);
             }
             if(stepNumber == 9 && (gamepad2.left_stick_y != 0.0 || gamepad2.right_stick_y != 0.0)){
-                if(gamepad2.left_stick_y != 0.0) manipulatorControls.foundation_movers = gamepad2.left_stick_y;
-                else if(gamepad2.right_stick_y != 0.0) manipulatorControls.foundation_movers = gamepad2.right_stick_y;
+                if(gamepad2.left_stick_y != 0.0) manipulatorControls.foundation_movers = Trigger.LEFT_STICK_Y;
+                else if(gamepad2.right_stick_y != 0.0) manipulatorControls.foundation_movers = Trigger.RIGHT_STICK_Y;
 
 
                 currentQuery.setValue("Release");
@@ -303,18 +372,25 @@ public class DriverConfig  extends LinearOpMode {
                 || gamepad2.right_stick_button);
     }
 
-    private void registerButton(Gamepad gamepad, boolean mapTo){
-         if(gamepad.a) mapTo = gamepad.a;
-         else if (gamepad.b) mapTo = gamepad.b;
-         else if(gamepad.x) mapTo = gamepad.x;
-         else if(gamepad.y) mapTo = gamepad.y;
-         else if(gamepad.left_bumper) mapTo = gamepad.left_bumper;
-         else if(gamepad.right_bumper) mapTo = gamepad.right_bumper;
-         else if(gamepad.left_stick_button) mapTo = gamepad.left_stick_button;
-         else if(gamepad.right_stick_button) mapTo = gamepad.right_stick_button;
+    private void registerButton(Gamepad gamepad, Button mapTo){
+         if(gamepad.a) mapTo = Button.A;
+         else if (gamepad.b) mapTo = Button.B;
+         else if(gamepad.x) mapTo = Button.X;
+         else if(gamepad.y) mapTo = Button.Y;
+         else if(gamepad.left_bumper) mapTo = Button.LEFT_BUMPER;
+         else if(gamepad.right_bumper) mapTo = Button.RIGHT_BUMPER;
+         else if(gamepad.left_stick_button) mapTo = Button.LEFT_STICK_BUTTON;
+         else if(gamepad.right_stick_button) mapTo = Button.RIGHT_STICK_BUTTON;
+         else if(gamepad.dpad_up) mapTo = Button.DPAD_UP;
+         else if(gamepad.dpad_down) mapTo = Button.DPAD_DOWN;
+         else if(gamepad.dpad_left) mapTo = Button.DPAD_LEFT;
+         else if(gamepad.dpad_right) mapTo = Button.DPAD_RIGHT;
     }
 
 
+    /**
+     * List with all the messages that appear.
+     */
     private static final String[] queries = new String[]{
             "We will now do the Driver Configurations, press any button to continue.",
             "Now, press the desired button for the slow-mode toggle",
@@ -325,16 +401,29 @@ public class DriverConfig  extends LinearOpMode {
             "Button for Claw Closed",
             "Button for Arm Down",
             "Button for Arm Up",
-            "Trigger for foundation movers",
+            "Stick for foundation movers. Must be a stick!",
             "Done! Please press \"a\" to continue and wait for it to save.",
             "File Saved!!"
     };
 
-    public static DriverControls deserializeDriver(String data){
+
+    /**
+     * Deserialize the json file for driver
+     */
+    public static DriverControls deserializeDriver(){
+
+        File driverFile = AppUtil.getInstance().getSettingsFile(driverFileName);
+        String data = ReadWriteFile.readFile(driverFile);
         return SimpleGson.getInstance().fromJson(data, DriverControls.class);
     }
 
-    public static ManipulatorControls deserializeManip(String data){
+    /**
+     * Deserialize the json file for manipulator
+     */
+    public static ManipulatorControls deserializeManip(){
+
+        File manipulatorFile = AppUtil.getInstance().getSettingsFile(manipulatorFileName);
+        String data = ReadWriteFile.readFile(manipulatorFile);
         return SimpleGson.getInstance().fromJson(data, ManipulatorControls.class);
     }
 }

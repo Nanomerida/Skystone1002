@@ -14,4 +14,6 @@ public final class DriveBaseVectors {
     public static final float[] turnCW = {0.75f, 1.0f, -0.75f, -1.0f};
 
     public static final float[] turnCCW = {-0.75f, -1.0f, 0.75f, 1.0f};
+
+    public static final float[][] arcadeDriveVectors = {forward, strafeR, turnCW};
 }

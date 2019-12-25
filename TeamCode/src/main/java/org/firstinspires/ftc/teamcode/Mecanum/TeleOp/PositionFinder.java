@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.CROdometry;
 import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.Pose2d;
 import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.Driver;
+import org.firstinspires.ftc.teamcode.hardware.DriveBaseVectors;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -51,7 +52,7 @@ public class PositionFinder extends LinearOpMode {
 
     private ArrayList<ExpansionHubMotor> driveMotors = new ArrayList<>();
 
-    private Driver.DriveState driveState = Driver.DriveState.ULTRA_EPIC_FAST;
+
 
 
     /**Define starting info here! */
@@ -62,7 +63,9 @@ public class PositionFinder extends LinearOpMode {
 
 
     //Array to hold movement instructions
-    private float[][] matrix = {{0.75f, 1.0f, 0.7f, 1.0f}, {0.8f, -0.95f, -0.85f, 0.95f}, {0.75f, 1.0f, -0.75f, -1.0f}};
+    //private float[][] matrix = {{0.75f, 1.0f, 0.7f, 1.0f}, {0.8f, -0.95f, -0.85f, 0.95f}, {0.75f, 1.0f, -0.75f, -1.0f}};
+
+    private float[][] matrix = DriveBaseVectors.arcadeDriveVectors;
 
 
     public double degreesConversion(){
@@ -73,7 +76,7 @@ public class PositionFinder extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         //Expansion Hub with encoders
         expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
@@ -130,12 +133,14 @@ public class PositionFinder extends LinearOpMode {
 
         driver = new Driver(gamepad1, driveMotors, prevLeftBumper, prevRightBumper);
 
+        telemetry.update();
+
         waitForStart();
 
 
         while (opModeIsActive()){
 
-                odometry.update(degreesConversion());
+            odometry.update(degreesConversion());
 
 
             driver.drive(m_v_mult(matrix, new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x}));

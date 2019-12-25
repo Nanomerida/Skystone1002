@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mecanum;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 
 
 @Autonomous(name="Auton Test", group = "Autonomous")
+@Disabled
 public class CompRetest extends LinearOpMode {
 
     Vuforia blockPosBlue = new Vuforia(); //creates an instance of the vuforia blue side file

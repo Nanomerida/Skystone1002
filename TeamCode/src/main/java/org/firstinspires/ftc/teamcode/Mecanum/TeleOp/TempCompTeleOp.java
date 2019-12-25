@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mecanum.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -10,6 +11,7 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 
 
 @TeleOp(name = "Pls work")
+@Disabled
 public class TempCompTeleOp extends LinearOpMode {
 
 

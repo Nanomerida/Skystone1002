@@ -8,8 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Mecanum.DriverConfig;
 import org.firstinspires.ftc.teamcode.Methods.Refresher;
 import org.firstinspires.ftc.teamcode.Methods.Toggle;
+import org.firstinspires.ftc.teamcode.hardware.DriveBaseVectors;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
@@ -28,6 +30,12 @@ public class TeleOpMain extends OpMode {
     FoundationMover foundationMover;
     MecanumIntake intake;
     ElapsedTime ping = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+
+    /**
+     * Deserialize the controls
+     */
+    //DriverConfig.DriverControls driverControls = DriverConfig.deserializeDriver();
+    //DriverConfig.ManipulatorControls manipulatorControls = DriverConfig.deserializeManip();
 
 
     public ExpansionHubMotor left_front_drive = null;
@@ -102,6 +110,7 @@ public class TeleOpMain extends OpMode {
 
 
 
+
     private static float[] m_v_mult(float[][] m, float[] v) {
         float[] out = new float[4];
         out[0] = v[0] * m[0][0] + v[1] * m[1][0] + v[2] * m[2][0];
@@ -114,7 +123,9 @@ public class TeleOpMain extends OpMode {
 
     
     //Array to hold movement instructions
-    private float[][] matrix = {{0.75f, 1.0f, 0.7f, 1.0f}, {0.8f, -0.95f, -0.85f, 0.95f}, {0.75f, 1.0f, -0.75f, -1.0f}};
+    //private float[][] matrix = {{0.75f, 1.0f, 0.7f, 1.0f}, {0.8f, -0.95f, -0.85f, 0.95f}, {0.75f, 1.0f, -0.75f, -1.0f}};
+
+    private float[][] matrix = DriveBaseVectors.arcadeDriveVectors;
 
     //Initializes with the hardwareMap
     @Override
@@ -196,6 +207,8 @@ public class TeleOpMain extends OpMode {
      * Gamepad 2 / x = arm down
      * Gamepad 2 / y = arm up (slightly)
      * Gamepad 2 / right_stick = foundation movers
+     *
+     * Controls to be changed with the Config OpMode in future.
      *
      */
     @Override

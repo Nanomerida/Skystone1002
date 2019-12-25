@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mecanum;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -26,6 +27,7 @@ import static java.lang.Math.round;
 
 
 @Autonomous(name="MecaunmAutonRed", group = "Mecanum")
+@Disabled
 public class SimpleAutonRed extends LinearOpMode {
 
     Vuforia blockPosBlue = new Vuforia(); //creates an instance of the vuforia blue side file

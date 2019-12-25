@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.OKIIIcode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -53,7 +54,7 @@ import org.firstinspires.ftc.teamcode.hardware.HardwarePushbot;
  */
 
 @TeleOp(name="Pushbot: Teleop Tank", group="TeleOp")
-//@Disabled
+@Disabled
 public class PushbotTeleopTank_Iterative extends OpMode{
 
     /* Declare OpMode members. */

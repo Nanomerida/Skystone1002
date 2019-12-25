@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.*;
 public class RedOdometry extends LinearOpMode {
 
     Vuforia blockPos = new Vuforia(); //creates an instance of the vuforia blue side file
-    private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
     public WebcamName webcam = null;
@@ -216,7 +215,7 @@ public class RedOdometry extends LinearOpMode {
         goToPos(0,0,500);
 
         /* Turn towards bridge */
-        goToAngle(0, 200);
+        goToAngle(0.1, 200);
 
         /*Go under bridge */
         goToPos(0,0,500);
@@ -240,7 +239,7 @@ public class RedOdometry extends LinearOpMode {
 
     }
 
-    public void findSkystone(){
+    private void findSkystone(){
         try {
             skystonePositon = blockPos.testVision();
         }catch (NullPointerException e){
@@ -250,7 +249,7 @@ public class RedOdometry extends LinearOpMode {
     }
 
 
-    public void getSkystoneLeft(){
+    private void getSkystoneLeft(){
 
         goToPos(left_stone_pos[0], left_stone_pos[1], 1000);
 
@@ -263,7 +262,7 @@ public class RedOdometry extends LinearOpMode {
     }
 
 
-    public void getSkystoneRight(){
+    private void getSkystoneRight(){
 
         goToPos(right_stone_pos[0], right_stone_pos[1], 1000);
 
@@ -275,7 +274,7 @@ public class RedOdometry extends LinearOpMode {
 
     }
 
-    public void getSkystoneUnseen(){
+    private void getSkystoneUnseen(){
 
         goToPos(unseen_stone_pos[0], unseen_stone_pos[1], 1000);
 

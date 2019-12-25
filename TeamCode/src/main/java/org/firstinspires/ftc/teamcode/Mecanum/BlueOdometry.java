@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.*;
 public class BlueOdometry extends LinearOpMode {
 
     Vuforia blockPos = new Vuforia(); //creates an instance of the vuforia blue side file
-    private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     public WebcamName webcam = null;
     ExpansionHubEx expansionHub10;
@@ -191,7 +190,7 @@ public class BlueOdometry extends LinearOpMode {
         //goToAngle(270);
 
         //Go to a generic position to turn robot
-        goToPos(-48, -348, 500);
+        goToPos(-48, -48, 500);
 
         //Rotate to face skystone
         goToAngle(-90, 500);
@@ -213,7 +212,7 @@ public class BlueOdometry extends LinearOpMode {
         goToPos(0,0,500);
 
         /* Turn towards bridge */
-        goToAngle(0, 200);
+        goToAngle(0.1, 200);
 
         /*Go under bridge */
         goToPos(0,0,500);
@@ -239,7 +238,7 @@ public class BlueOdometry extends LinearOpMode {
     }
 
 
-    public void findSkystone(){
+    private void findSkystone(){
         try {
             skystonePositon = blockPos.testVision();
         }catch (NullPointerException e){
@@ -249,7 +248,7 @@ public class BlueOdometry extends LinearOpMode {
     }
 
 
-    public void getSkystoneLeft(){
+    private void getSkystoneLeft(){
 
         goToPos(left_stone_pos[0], left_stone_pos[1], 1000);
 
@@ -261,7 +260,7 @@ public class BlueOdometry extends LinearOpMode {
 
     }
 
-    public void getSkystoneRight(){
+    private void getSkystoneRight(){
 
         goToPos(right_stone_pos[0], right_stone_pos[1], 1000);
 
@@ -273,7 +272,7 @@ public class BlueOdometry extends LinearOpMode {
 
     }
 
-    public void getSkystoneUnseen(){
+    private void getSkystoneUnseen(){
 
         goToPos(unseen_stone_pos[0], unseen_stone_pos[1], 1000);
 

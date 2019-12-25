@@ -7,7 +7,6 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 import org.openftc.revextensions2.ExpansionHubEx;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -42,7 +41,6 @@ public class CROdometry implements Subsystem {
     public ExpansionHubMotor right_back_drive = null;
 
     public FTCLibOdometry odometry;
-    private ElapsedTime update = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     private double previousAngle;
     private double currentAngle;
