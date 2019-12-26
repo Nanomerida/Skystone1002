@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mecanum;
+package org.firstinspires.ftc.teamcode.Mecanum.Config;
 
 
 import org.firstinspires.ftc.robotcore.external.Func;
@@ -105,36 +105,6 @@ public class DriverConfig  extends LinearOpMode {
     private DriverName driverName = DriverName.PARKER;
     private int stepNumber = 0;
 
-    /**
-     * Class to hold the driver controls
-     */
-     public class DriverControls  {
-         public DriverName name = DriverName.PARKER;
-
-        public Button slow_mode_button = Button.LEFT_BUMPER;
-        public Button reverse_mode_button = Button.RIGHT_BUMPER;
-
-    }
-
-    /**
-     * Class to hold the manipulator controls
-     */
-    public class ManipulatorControls {
-
-        public DriverName name = DriverName.JONAH;
-
-        public Button lift_up = Button.DPAD_UP;
-        public Button lift_down = Button.DPAD_DOWN;
-        public Button claw_open = Button.LEFT_BUMPER;
-        public Button claw_closed = Button.RIGHT_BUMPER;
-        public Button arm_down = Button.X;
-        public Button arm_up = Button.Y;
-        /**
-         * Make sure to reverse this!
-         */
-        public Trigger foundation_movers = Trigger.RIGHT_STICK_Y;
-
-    }
 
     @Override public void runOpMode()throws InterruptedException {
 

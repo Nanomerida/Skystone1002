@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Mecanum.CRPosition;
+package org.firstinspires.ftc.teamcode.Mecanum.Config;
 
 import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;

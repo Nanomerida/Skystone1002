@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Mecanum.DriverConfig;
 import org.firstinspires.ftc.teamcode.Methods.Refresher;
 import org.firstinspires.ftc.teamcode.Methods.Toggle;
 import org.firstinspires.ftc.teamcode.hardware.DriveBaseVectors;

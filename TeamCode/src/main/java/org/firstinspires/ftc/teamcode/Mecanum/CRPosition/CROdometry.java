@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.Mecanum.Config.RobotDimensions;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -47,6 +47,8 @@ public class CROdometry implements Subsystem {
 
 
     private static double trackWidth = 14.72071;
+    private static final double DISTANCE_TO_TOP_RIGHT_X = 8.267717;
+    private static final double DISTANCE_TO_TOP_RIGHT_Y = 8.724134;
 
     /**
      * The expansion hub with the odometers is needed. The passing of the opMode is necessary because
@@ -128,7 +130,8 @@ public class CROdometry implements Subsystem {
 
         //NEED TO RECALL METHOD UNTIL DONE!!!!!!!
 
-        odometry.update(AngleUnit.DEGREES.toRadians(currentAngle), (x_encoder.getInches() - ((AngleUnit.DEGREES.toRadians(currentAngle) - AngleUnit.DEGREES.toRadians(previousAngle)) * 1)),
+        odometry.update(AngleUnit.DEGREES.toRadians(currentAngle), (x_encoder.getInches() - ((AngleUnit.DEGREES.toRadians(currentAngle)
+                        - AngleUnit.DEGREES.toRadians(previousAngle)) * 0.686417)),
                 left_y_encoder.getInches(), right_y_encoder.getInches());
 
         goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
