@@ -131,12 +131,7 @@ public class DriverConfig  extends LinearOpMode {
 
          telemetry.log().add("...started...");
 
-         currentDriver = telemetry.addData("Current Driver", new Func<String>() {
-             @Override
-             public String value(){
-                 return driverName.toString();
-             }
-         });
+         currentDriver = telemetry.addData("Current Driver", () -> driverName.toString());
 
          currentQuery = telemetry.addData("Current Control To be set", message);
 

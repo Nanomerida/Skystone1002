@@ -30,6 +30,7 @@ public class TeleOpMain extends OpMode {
     MecanumIntake intake;
     ElapsedTime ping = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
+
     /**
      * Deserialize the controls
      */
@@ -73,30 +74,22 @@ public class TeleOpMain extends OpMode {
     /**Update the slow mode status
      *
      */
-    private Refresher slowModeUpdate = new Refresher() {
-        @Override
-        public void refresh() {
+    private Refresher slowModeUpdate = () -> {
             //store current slow mode status
             prevLeftBumper = gamepad1.left_bumper;
             prevRightBumper = gamepad1.right_bumper;
-        }
     };
 
     /**
      * Toggle control the claw servo.
      */
-    private Toggle clawToggle = new Toggle() {
-        @Override
-        public void update() {
+    private Toggle clawToggle = () -> {
             //Control claw
             if(gamepad2.right_bumper) claw.setPosition(0);
             else if(gamepad2.left_bumper) claw.setPosition(0.4);
-        }
     };
 
-    private Toggle armToggle = new Toggle() {
-        @Override
-        public void update() {
+    private Toggle armToggle = () -> {
             //Move arm
             if(gamepad2.x) arm.setPosition(1);
             else if(gamepad2.y) arm.setPosition(0.9);
@@ -104,7 +97,6 @@ public class TeleOpMain extends OpMode {
             if(gamepad2.x) intake.armDown();
             else if(gamepad2.y) intake.armUp();
              */
-        }
     };
 
 
