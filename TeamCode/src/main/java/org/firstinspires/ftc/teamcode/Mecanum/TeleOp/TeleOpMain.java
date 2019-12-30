@@ -26,7 +26,7 @@ public class TeleOpMain extends OpMode {
 
     TeleOpFieldCentric fieldCentric;
     Driver driver;
-    FoundationMover foundationMover;
+    //FoundationMover foundationMover;
     MecanumIntake intake;
     ElapsedTime ping = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -163,7 +163,7 @@ public class TeleOpMain extends OpMode {
 
 
         driver = new Driver(gamepad1, driveMotors, prevLeftBumper, prevRightBumper);
-        foundationMover = new FoundationMover(hardwareMap);
+        //foundationMover = new FoundationMover(hardwareMap);
         //intake = new MecanumIntake(hardwareMap);
         //intake.init();
 
@@ -223,8 +223,8 @@ public class TeleOpMain extends OpMode {
             }
             else {
                 //intake.holdLift();
-                lift_left.setPower(0.05);
-                lift_right.setPower(0.05);
+                lift_left.setPower(0.00);
+                lift_right.setPower(0.00);
             }
 
 
@@ -290,8 +290,8 @@ public class TeleOpMain extends OpMode {
         //Same as above
         armToggle.update();
 
-        //Control Foundation movers
-        foundationMover.byPower(-gamepad2.right_stick_y);
+      /*  //Control Foundation movers
+        foundationMover.byPower(-gamepad2.right_stick_y);*/
 
         /*if(gamepad2.x) intake.armDown();
         else if(gamepad2.y) intake.armUp(); */
