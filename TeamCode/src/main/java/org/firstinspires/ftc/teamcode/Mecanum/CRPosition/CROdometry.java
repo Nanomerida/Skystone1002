@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mecanum.CRPosition;
 
 
+import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.PIDControl.GyroController;
 import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.hardware.BulkDataManager;
 import org.openftc.revextensions2.ExpansionHubMotor;
@@ -21,7 +22,9 @@ import static java.lang.Math.sin;
 import static java.lang.Math.abs;
 import static java.lang.Math.toDegrees;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
 public class CROdometry implements Subsystem {
@@ -50,11 +53,16 @@ public class CROdometry implements Subsystem {
     private static final double DISTANCE_TO_TOP_RIGHT_X = 8.267717;
     private static final double DISTANCE_TO_TOP_RIGHT_Y = 8.724134;
 
+
+    private static final double GYRO_KP = 1;
+
+    public GyroController gyroController = new GyroController(GYRO_KP);
+
     /**
      * The expansion hub with the odometers is needed. The passing of the opMode is necessary because
      * the program will send true as if it is at the position if the opMode ends while inside the class/
      */
-    public CROdometry( ExpansionHubEx expansionHubEx, Pose2d globalPos, HardwareMap hardwareMap) {
+    public CROdometry(ExpansionHubEx expansionHubEx, Pose2d globalPos, HardwareMap hardwareMap) {
 
         left_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_front_drive");
         left_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_back_drive");
@@ -134,7 +142,17 @@ public class CROdometry implements Subsystem {
                         - AngleUnit.DEGREES.toRadians(previousAngle)) * 0.686417)),
                 left_y_encoder.getInches(), right_y_encoder.getInches());
 
-        goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
+
+        double[] power = gyroController.applyControl(thetaG, currentAngle);
+        if(Arrays.equals(power, new double[]{0, 0, 0, 0})){
+            return true;
+        }
+        else {
+            setDrivePower(power);
+            return false;
+        }
+
+        /*goalReachedAngle = GoalCheckAngle(thetaG, currentAngle); //check if we are at angle.
         if (!goalReachedAngle) {
             if(thetaG > previousAngle) {
                 setDrivePower(AngleChange(thetaG, currentAngle));
@@ -147,7 +165,7 @@ public class CROdometry implements Subsystem {
 
         syncEncoders();
 
-        return goalReachedAngle;
+        return goalReachedAngle; */
 
     }
 

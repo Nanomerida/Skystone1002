@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mecanum.Subsystems;
 
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -49,7 +50,7 @@ public class MecanumIntake implements Subsystem {
         bulkDataManager = new BulkDataManager(hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10"), bulkData10);
 
 
-        lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
+        lift_left = hardwareMap.get(DcMotor.class, "lift_left");
         lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
 
         claw = hardwareMap.get(Servo.class, "claw");
