@@ -1,18 +1,20 @@
 package org.firstinspires.ftc.teamcode.Mecanum.CRPosition.PIDControl;
 
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
+
 public interface PController {
 
     void setMax(double maxPower);
 
     void setMin(double minPower);
 
-    void setkP(double kP);
+    void setCoefficients(PIDCoefficients coefficients);
 
     double getMax();
 
     double getMin();
 
-    double getkP();
+    PIDCoefficients getCoefficients();
 
     double getOutput(double error);
 

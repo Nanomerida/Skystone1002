@@ -39,10 +39,10 @@ public class RedOdometry extends LinearOpMode {
     private FoundationMover foundationMover;
 
     //Telemetry items
-    Telemetry.Item currentPosGoal;
-    Telemetry.Item currentPos;
-    Telemetry.Item currentAngleGoal;
-    Telemetry.Item currentAngle;
+    private Telemetry.Item currentPosGoal;
+    private Telemetry.Item currentPos;
+    private Telemetry.Item currentAngleGoal;
+    private Telemetry.Item currentAngle;
 
     /**Define starting info here! */
     public Pose2d globalPos = new Pose2d(0,0,0);
@@ -59,14 +59,14 @@ public class RedOdometry extends LinearOpMode {
 
 
 
-    public double degreesConversion(){
+    private double degreesConversion(){
 
         double theta = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         theta = AngleUnit.normalizeDegrees(theta - 90);
         return theta;
     }
 
-    public boolean goToPos(double x, double y, long delay){
+    private boolean goToPos(double x, double y, long delay){
 
         currentPosGoal.setValue("%.3f, %.3f", x, y);
         try {
@@ -84,7 +84,7 @@ public class RedOdometry extends LinearOpMode {
 
     }
 
-    public boolean goToAngle(double angle, long delay){
+    private boolean goToAngle(double angle, long delay){
 
         currentAngleGoal.setValue(angle);
         double previousAngle = degreesConversion();
@@ -149,17 +149,9 @@ public class RedOdometry extends LinearOpMode {
         currentPosGoal.setRetained(true);
         currentAngleGoal.setRetained(true);
 
-        currentPos = telemetry.addData("Current Position", new Func<String>(){
-            @Override public String value() {
-                return "X: " + globalPos.getPos().getX() + " Y: " + globalPos.getPos().getY();
-            }
-        });
+        currentPos = telemetry.addData("Current Position", () -> "X: " + globalPos.getPos().getX() + " Y: " + globalPos.getPos().getY());
 
-        currentAngle = telemetry.addData("Current Heading", new Func<String>() {
-            @Override public String value(){
-                return "Θ: " + globalPos.getHeading();
-            }
-        });
+        currentAngle = telemetry.addData("Current Heading", () -> "Θ: " + globalPos.getHeading());
 
         telemetry.update();
 

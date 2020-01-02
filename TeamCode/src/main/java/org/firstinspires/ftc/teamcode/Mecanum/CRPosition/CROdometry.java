@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.Mecanum.CRPosition;
 
 
-import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.PIDControl.GyroController;
+import org.firstinspires.ftc.teamcode.Mecanum.CRPosition.PIDControl.*;
 import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.hardware.BulkDataManager;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 import org.openftc.revextensions2.ExpansionHubEx;
+
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -54,13 +56,14 @@ public class CROdometry implements Subsystem {
     private static final double DISTANCE_TO_TOP_RIGHT_Y = 8.724134;
 
 
-    private static final double GYRO_KP = 1;
+    private static final PIDCoefficients GYRO_COEFFICIENTS = new PIDCoefficients(1, 0, 0);
+    private static final PIDCoefficients DISTANCE_COEFFICIENTS = new PIDCoefficients(1, 0, 0);
 
-    public GyroController gyroController = new GyroController(GYRO_KP);
+    private GyroController gyroController = new GyroController(GYRO_COEFFICIENTS);
+    private DistanceController distanceController = new DistanceController(DISTANCE_COEFFICIENTS);
 
     /**
-     * The expansion hub with the odometers is needed. The passing of the opMode is necessary because
-     * the program will send true as if it is at the position if the opMode ends while inside the class/
+     * The expansion hub with the odometers is needed.
      */
     public CROdometry(ExpansionHubEx expansionHubEx, Pose2d globalPos, HardwareMap hardwareMap) {
 

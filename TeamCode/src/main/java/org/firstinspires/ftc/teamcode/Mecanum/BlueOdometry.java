@@ -57,14 +57,14 @@ public class BlueOdometry extends LinearOpMode {
 
 
 
-    public double degreesConversion(){
+    private double degreesConversion(){
         double theta = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         theta = AngleUnit.normalizeDegrees(theta - 90);
         return theta;
     }
 
 
-    public boolean goToPos(double x, double y, long delay){
+    private boolean goToPos(double x, double y, long delay){
 
         currentPosGoal.setValue("%.3f, %.3f", x, y);
         try {
@@ -81,7 +81,7 @@ public class BlueOdometry extends LinearOpMode {
 
     }
 
-    public boolean goToAngle(double angle, long delay){
+    private boolean goToAngle(double angle, long delay){
 
         double previousAngle = degreesConversion();
         try {
