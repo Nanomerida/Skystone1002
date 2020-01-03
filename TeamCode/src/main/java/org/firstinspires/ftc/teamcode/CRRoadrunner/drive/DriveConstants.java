@@ -57,7 +57,7 @@ public class DriveConstants {
     TODO: Measure this
      */
     public static double WHEEL_RADIUS = 1.5;
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 20; // output (wheel) speed / input (motor) speed
 
     /*
     TODO: Measure this
