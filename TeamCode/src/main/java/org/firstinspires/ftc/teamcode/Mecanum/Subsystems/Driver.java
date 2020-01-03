@@ -11,10 +11,10 @@ import java.util.ArrayList;
 
 public class Driver {
 
-    public DcMotorEx left_front_drive = null;
-    public DcMotorEx left_back_drive = null;
-    public DcMotorEx right_front_drive = null;
-    public DcMotorEx right_back_drive = null;
+    public ExpansionHubMotor left_front_drive = null;
+    public ExpansionHubMotor left_back_drive = null;
+    public ExpansionHubMotor right_front_drive = null;
+    public ExpansionHubMotor right_back_drive = null;
 
 
 
@@ -37,7 +37,7 @@ public class Driver {
 
 
 
-    public Driver(Gamepad driver, ArrayList<DcMotorEx> driveMotors, Boolean prevLeftBumper, Boolean prevRightBumper){
+    public Driver(Gamepad driver, ArrayList<ExpansionHubMotor> driveMotors, Boolean prevLeftBumper, Boolean prevRightBumper){
         this.driver = driver;
 
         left_front_drive = driveMotors.get(0);

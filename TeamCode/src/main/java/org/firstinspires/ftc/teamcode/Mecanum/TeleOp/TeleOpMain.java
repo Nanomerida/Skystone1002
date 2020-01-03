@@ -26,7 +26,7 @@ public class TeleOpMain extends OpMode {
 
     TeleOpFieldCentric fieldCentric;
     Driver driver;
-    //FoundationMover foundationMover;
+    FoundationMover foundationMover;
     MecanumIntake intake;
     ElapsedTime ping = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -38,10 +38,10 @@ public class TeleOpMain extends OpMode {
     //DriverConfig.ManipulatorControls manipulatorControls = DriverConfig.deserializeManip();
 
 
-    public DcMotorEx left_front_drive = null;
-    public DcMotorEx left_back_drive = null;
-    public DcMotorEx right_front_drive = null;
-    public DcMotorEx right_back_drive = null;
+    public ExpansionHubMotor left_front_drive = null;
+    public ExpansionHubMotor left_back_drive = null;
+    public ExpansionHubMotor right_front_drive = null;
+    public ExpansionHubMotor right_back_drive = null;
     private Servo claw = null;
     private Servo arm = null;
     private DcMotorSimple lift_left = null;
@@ -64,12 +64,10 @@ public class TeleOpMain extends OpMode {
     float[] inputs;
     float[] outputs;
 
-    private ArrayList<DcMotorEx> driveMotors = new ArrayList<>();
+    private ArrayList<ExpansionHubMotor> driveMotors = new ArrayList<>();
 
 
-    private Driver.DriveState driveState = Driver.DriveState.ULTRA_EPIC_FAST;
 
-    public static boolean opModeIsDone = false;
 
     /**Update the slow mode status
      *
@@ -122,10 +120,10 @@ public class TeleOpMain extends OpMode {
     @Override
     public void init() {
 
-        left_front_drive =  hardwareMap.get(DcMotorEx.class, "left_front_drive");
-        left_back_drive =  hardwareMap.get(DcMotorEx.class, "left_back_drive");
-        right_front_drive =  hardwareMap.get(DcMotorEx.class, "right_front_drive");
-        right_back_drive =  hardwareMap.get(DcMotorEx.class, "right_back_drive");
+        left_front_drive =  hardwareMap.get(ExpansionHubMotor.class, "left_front_drive");
+        left_back_drive =  hardwareMap.get(ExpansionHubMotor.class, "left_back_drive");
+        right_front_drive =  hardwareMap.get(ExpansionHubMotor.class, "right_front_drive");
+        right_back_drive =  hardwareMap.get(ExpansionHubMotor.class, "right_back_drive");
 
         expansionHub1 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
         expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
@@ -135,14 +133,14 @@ public class TeleOpMain extends OpMode {
         right_top_switch = hardwareMap.get(DigitalChannel.class, "right_top_switch");
         right_bottom_switch = hardwareMap.get(DigitalChannel.class, "right_bottom_switch"); */
 
-        left_front_drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        left_back_drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        right_front_drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        right_back_drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        left_front_drive.setMode(ExpansionHubMotor.RunMode.RUN_USING_ENCODER);
+        left_back_drive.setMode(ExpansionHubMotor.RunMode.RUN_USING_ENCODER);
+        right_front_drive.setMode(ExpansionHubMotor.RunMode.RUN_USING_ENCODER);
+        right_back_drive.setMode(ExpansionHubMotor.RunMode.RUN_USING_ENCODER);
 
 
-        right_front_drive.setDirection(DcMotorEx.Direction.REVERSE);
-        right_back_drive.setDirection(DcMotorEx.Direction.REVERSE);
+        right_front_drive.setDirection(ExpansionHubMotor.Direction.REVERSE);
+        right_back_drive.setDirection(ExpansionHubMotor.Direction.REVERSE);
 
         lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
         lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
@@ -163,7 +161,8 @@ public class TeleOpMain extends OpMode {
 
 
         driver = new Driver(gamepad1, driveMotors, prevLeftBumper, prevRightBumper);
-        //foundationMover = new FoundationMover(hardwareMap);
+        foundationMover = new FoundationMover(hardwareMap);
+        foundationMover.init();
         //intake = new MecanumIntake(hardwareMap);
         //intake.init();
 
@@ -237,7 +236,6 @@ public class TeleOpMain extends OpMode {
         //inputs = new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
 
 
-
         //Calculate power for drive
         //outputs = m_v_mult(matrix, inputs);
 
@@ -290,8 +288,8 @@ public class TeleOpMain extends OpMode {
         //Same as above
         armToggle.update();
 
-      /*  //Control Foundation movers
-        foundationMover.byPower(-gamepad2.right_stick_y);*/
+        //Control Foundation movers
+        foundationMover.byPower(-gamepad2.right_stick_y);
 
         /*if(gamepad2.x) intake.armDown();
         else if(gamepad2.y) intake.armUp(); */

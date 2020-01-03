@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Mecanum.Config;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -8,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.Driver;
 import org.firstinspires.ftc.teamcode.Methods.Refresher;
 import org.firstinspires.ftc.teamcode.hardware.DriveBaseVectors;
+import org.openftc.revextensions2.ExpansionHubMotor;
 
 import java.util.ArrayList;
 
@@ -18,13 +18,13 @@ public class BaseVectorConfig extends OpMode{
 
     Driver driver;
 
-    public DcMotorEx left_front_drive = null;
-    public DcMotorEx left_back_drive = null;
-    public DcMotorEx right_front_drive = null;
-    public DcMotorEx right_back_drive = null;
+    public ExpansionHubMotor left_front_drive = null;
+    public ExpansionHubMotor left_back_drive = null;
+    public ExpansionHubMotor right_front_drive = null;
+    public ExpansionHubMotor right_back_drive = null;
 
 
-    private ArrayList<DcMotorEx> driveMotors = new ArrayList<>();
+    private ArrayList<ExpansionHubMotor> driveMotors = new ArrayList<>();
 
     private Boolean prevLeftBumper = false;
     private Boolean prevRightBumper = false;
@@ -51,10 +51,10 @@ public class BaseVectorConfig extends OpMode{
     @Override
     public void init(){
 
-        left_front_drive =  hardwareMap.get(DcMotorEx.class, "left_front_drive");
-        left_back_drive =  hardwareMap.get(DcMotorEx.class, "left_back_drive");
-        right_front_drive =  hardwareMap.get(DcMotorEx.class, "right_front_drive");
-        right_back_drive =  hardwareMap.get(DcMotorEx.class, "right_back_drive");
+        left_front_drive =  hardwareMap.get(ExpansionHubMotor.class, "left_front_drive");
+        left_back_drive =  hardwareMap.get(ExpansionHubMotor.class, "left_back_drive");
+        right_front_drive =  hardwareMap.get(ExpansionHubMotor.class, "right_front_drive");
+        right_back_drive =  hardwareMap.get(ExpansionHubMotor.class, "right_back_drive");
 
 
 
