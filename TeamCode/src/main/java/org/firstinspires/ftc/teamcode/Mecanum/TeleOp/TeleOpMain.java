@@ -59,8 +59,8 @@ public class TeleOpMain extends OpMode {
     private DigitalChannel right_bottom_switch = null;
 
 
-    private boolean prevLeftBumper = false;
-    private boolean prevRightBumper = false;
+    private Boolean prevLeftBumper = false;
+    private Boolean prevRightBumper = false;
 
 
     float[] inputs;
@@ -71,7 +71,6 @@ public class TeleOpMain extends OpMode {
 
     private Driver.DriveState driveState = Driver.DriveState.ULTRA_EPIC_FAST;
 
-    public static boolean opModeIsDone = false;
 
     /**Update the slow mode status
      *
@@ -94,6 +93,8 @@ public class TeleOpMain extends OpMode {
 
     private Toggle armToggle = () -> {
 
+        if(gamepad2.x) arm.setPower(0.2);
+        else if(gamepad2.y) arm.setPower(-0.2);
             //Move arm
             //if(gamepad2.x) arm.setPosition(1);
             //else if(gamepad2.y) arm.setPosition(0.9);
