@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mecanum.Subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -10,10 +11,10 @@ import java.util.ArrayList;
 
 public class Driver {
 
-    public ExpansionHubMotor left_front_drive = null;
-    public ExpansionHubMotor left_back_drive = null;
-    public ExpansionHubMotor right_front_drive = null;
-    public ExpansionHubMotor right_back_drive = null;
+    public DcMotorEx left_front_drive = null;
+    public DcMotorEx left_back_drive = null;
+    public DcMotorEx right_front_drive = null;
+    public DcMotorEx right_back_drive = null;
 
 
 
@@ -30,13 +31,13 @@ public class Driver {
     private Gamepad driver;
     public DriveState driveState = DriveState.ULTRA_EPIC_FAST;
 
-    public boolean prevLeftBumper;
-    public boolean prevRightBumper;
+    public Boolean prevLeftBumper;
+    public Boolean prevRightBumper;
 
 
 
 
-    public Driver(Gamepad driver, ArrayList<ExpansionHubMotor> driveMotors, boolean prevLeftBumper, boolean prevRightBumper){
+    public Driver(Gamepad driver, ArrayList<DcMotorEx> driveMotors, Boolean prevLeftBumper, Boolean prevRightBumper){
         this.driver = driver;
 
         left_front_drive = driveMotors.get(0);

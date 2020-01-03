@@ -38,10 +38,10 @@ public class TeleOpMain extends OpMode {
     //DriverConfig.ManipulatorControls manipulatorControls = DriverConfig.deserializeManip();
 
 
-    public ExpansionHubMotor left_front_drive = null;
-    public ExpansionHubMotor left_back_drive = null;
-    public ExpansionHubMotor right_front_drive = null;
-    public ExpansionHubMotor right_back_drive = null;
+    public DcMotorEx left_front_drive = null;
+    public DcMotorEx left_back_drive = null;
+    public DcMotorEx right_front_drive = null;
+    public DcMotorEx right_back_drive = null;
     private Servo claw = null;
     private Servo arm = null;
     private DcMotorSimple lift_left = null;
@@ -57,14 +57,14 @@ public class TeleOpMain extends OpMode {
     private DigitalChannel right_bottom_switch = null;
 
 
-    private boolean prevLeftBumper = false;
-    private boolean prevRightBumper = false;
+    private Boolean prevLeftBumper = false;
+    private Boolean prevRightBumper = false;
 
 
     float[] inputs;
     float[] outputs;
 
-    private ArrayList<ExpansionHubMotor> driveMotors = new ArrayList<>();
+    private ArrayList<DcMotorEx> driveMotors = new ArrayList<>();
 
 
     private Driver.DriveState driveState = Driver.DriveState.ULTRA_EPIC_FAST;
@@ -122,10 +122,10 @@ public class TeleOpMain extends OpMode {
     @Override
     public void init() {
 
-        left_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_front_drive");
-        left_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_back_drive");
-        right_front_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "right_front_drive");
-        right_back_drive = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "right_back_drive");
+        left_front_drive =  hardwareMap.get(DcMotorEx.class, "left_front_drive");
+        left_back_drive =  hardwareMap.get(DcMotorEx.class, "left_back_drive");
+        right_front_drive =  hardwareMap.get(DcMotorEx.class, "right_front_drive");
+        right_back_drive =  hardwareMap.get(DcMotorEx.class, "right_back_drive");
 
         expansionHub1 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
         expansionHub10 = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 10");
@@ -135,14 +135,14 @@ public class TeleOpMain extends OpMode {
         right_top_switch = hardwareMap.get(DigitalChannel.class, "right_top_switch");
         right_bottom_switch = hardwareMap.get(DigitalChannel.class, "right_bottom_switch"); */
 
-        left_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_front_drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        left_back_drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        right_front_drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        right_back_drive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
 
-        right_front_drive.setDirection(DcMotor.Direction.REVERSE);
-        right_back_drive.setDirection(DcMotor.Direction.REVERSE);
+        right_front_drive.setDirection(DcMotorEx.Direction.REVERSE);
+        right_back_drive.setDirection(DcMotorEx.Direction.REVERSE);
 
         lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
         lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
