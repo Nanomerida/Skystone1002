@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mecanum.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -43,7 +44,8 @@ public class TeleOpMain extends OpMode {
     public ExpansionHubMotor right_front_drive = null;
     public ExpansionHubMotor right_back_drive = null;
     private Servo claw = null;
-    private Servo arm = null;
+    //private Servo arm = null;
+    private CRServo arm = null;
     private DcMotorSimple lift_left = null;
     private DcMotorSimple lift_right = null;
     private ExpansionHubEx expansionHub1; //hub for motors
@@ -89,15 +91,19 @@ public class TeleOpMain extends OpMode {
             else if(gamepad2.left_bumper) claw.setPosition(0.4);
     };
 
+
     private Toggle armToggle = () -> {
+
             //Move arm
-            if(gamepad2.x) arm.setPosition(1);
-            else if(gamepad2.y) arm.setPosition(0.9);
+            //if(gamepad2.x) arm.setPosition(1);
+            //else if(gamepad2.y) arm.setPosition(0.9);
             /*
             if(gamepad2.x) intake.armDown();
             else if(gamepad2.y) intake.armUp();
              */
     };
+
+
 
 
 
@@ -146,6 +152,9 @@ public class TeleOpMain extends OpMode {
 
         lift_left = hardwareMap.get(DcMotorSimple.class, "lift_left");
         lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
+
+        claw = hardwareMap.get(Servo.class, "claw");
+        arm = hardwareMap.get(CRServo.class, "arm");
 
         //Reverse the left side
         lift_right.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -284,11 +293,13 @@ public class TeleOpMain extends OpMode {
 
 
         //Move arm
-        if(gamepad2.x) arm.setPosition(1);
-        else if(gamepad2.y) arm.setPosition(0.9);
+        //if(gamepad2.x) arm.setPosition(1);
+        //else if(gamepad2.y) arm.setPosition(0.9);
 
         //Same as above
-        armToggle.update();
+        //armToggle.update();
+
+        arm.setPower(-gamepad2.right_stick_y);
 
       /*  //Control Foundation movers
         foundationMover.byPower(-gamepad2.right_stick_y);*/

@@ -17,21 +17,22 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveBase;
-import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
+import org.firstinspires.ftc.teamcode.CRRoadrunner.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.CRRoadrunner.drive.mecanum.SampleMecanumDriveBase;
+import org.firstinspires.ftc.teamcode.CRRoadrunner.drive.mecanum.SampleMecanumDriveREV;
+import org.firstinspires.ftc.teamcode.CRRoadrunner.drive.mecanum.SampleMecanumDriveREVOptimized;
 
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.CRRoadrunner.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.CRRoadrunner.drive.DriveConstants.kV;
 
 /*
  * This routine is designed to tune the PID coefficients used by the REV Expansion Hubs for closed-
  * loop velocity control. Although it may seem unnecessary, tuning these coefficients is just as
  * important as the positional parameters. Like the other manual tuning routines, this op mode
  * relies heavily upon the dashboard. To access the dashboard, connect your computer to the RC's
- * WiFi network and navigate to https://192.168.49.1:8080/dash in your browser. Once you've
+ * WiFi network and navigate to http://192.168.49.1:8080/dash in your browser. Once you've
  * successfully connected, start the program, and your robot will begin moving forward and backward
  * according to a motion profile. Your job is to graph the velocity errors over time and adjust the
  * PID coefficients. Once you've found a satisfactory set of gains, add them to your drive class
@@ -39,8 +40,11 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 @Autonomous(group = "drive")
+/**
+ * p = 7
+ */
 public class DriveVelocityPIDTuner extends LinearOpMode {
-    public static double DISTANCE = 72;
+    public static double DISTANCE = 36;
 
     private static final String PID_VAR_NAME = "VELO_PID";
 
@@ -133,7 +137,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        drive = new SampleMecanumDriveREV(hardwareMap);
+        drive = new SampleMecanumDriveREVOptimized(hardwareMap);
 
         addPidVariable();
 

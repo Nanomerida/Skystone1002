@@ -56,19 +56,22 @@ public class DriveConstants {
     /*
     TODO: Measure this
      */
-    public static double WHEEL_RADIUS = 2;
+    public static double WHEEL_RADIUS = 1.5;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
 
     /*
     TODO: Measure this
      */
-    public static double TRACK_WIDTH = 1;
+    public static double TRACK_WIDTH = 14.2750394;
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
      * the built-in velocity PID, *these values are fine as is*. However, if you do not have drive
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
+     */
+    /**
+     * Don't need, using built in
      */
     public static double kV = 1.0 / rpmToVelocity(getMaxRpm());
     public static double kA = 0;
@@ -83,7 +86,7 @@ public class DriveConstants {
      * forces acceleration-limited profiling).
      */
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            30.0, 30.0, 0.0,
+            20.0, 20.0, 0.0,
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );
 

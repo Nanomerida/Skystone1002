@@ -59,7 +59,7 @@ public class BlueOdometry extends LinearOpMode {
 
     public double degreesConversion(){
         double theta = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        theta = AngleUnit.normalizeDegrees(theta - 90);
+        theta = AngleUnit.normalizeDegrees(theta + 90);
         return theta;
     }
 

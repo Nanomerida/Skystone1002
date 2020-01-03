@@ -60,8 +60,8 @@ public class Vuforia {
 
     public SkystonePositon stonePosition = SkystonePositon.UNKNOWN;
 
-    public VuforiaTrackables targetsSkyStone = vuforia.loadTrackablesFromAsset("Skystone");
-    public VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
+    public VuforiaTrackables targetsSkyStone;// = vuforia.loadTrackablesFromAsset("Skystone");
+    public VuforiaTrackable stoneTarget;// = targetsSkyStone.get(0);
 
 
 
@@ -92,6 +92,9 @@ public class Vuforia {
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        targetsSkyStone = vuforia.loadTrackablesFromAsset("Skystone");
+        stoneTarget = targetsSkyStone.get(0);
 
     }
 
