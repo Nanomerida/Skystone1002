@@ -69,7 +69,7 @@ public class BaseVectorConfig extends OpMode{
         driveMotors.add(right_back_drive);
 
 
-        driver = new Driver(gamepad1, driveMotors, prevLeftBumper, prevRightBumper);
+        driver = new Driver(gamepad1, hardwareMap);
 
     }
 

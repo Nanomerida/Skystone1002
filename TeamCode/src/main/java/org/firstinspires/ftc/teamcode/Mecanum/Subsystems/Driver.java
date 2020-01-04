@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.Mecanum.Subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.openftc.revextensions2.ExpansionHubEx;
+import org.firstinspires.ftc.teamcode.Mecanum.TeleOp.TeleOpMain;
+import org.firstinspires.ftc.teamcode.hardware.DriveBaseVectors;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
 import java.util.ArrayList;
@@ -28,40 +28,59 @@ public class Driver {
     }
 
 
+
     private Gamepad driver;
-    public DriveState driveState = DriveState.ULTRA_EPIC_FAST;
+    private DriveState driveState = DriveState.ULTRA_EPIC_FAST;
 
-    public Boolean prevLeftBumper;
-    public Boolean prevRightBumper;
+    TeleOpMain.ArcadeInput arcadeInput;
+
+    private float[] inputs;
 
 
 
 
-    public Driver(Gamepad driver, ArrayList<ExpansionHubMotor> driveMotors, Boolean prevLeftBumper, Boolean prevRightBumper){
+
+    public Driver(Gamepad driver, HardwareMap hardwareMap){
         this.driver = driver;
 
-        left_front_drive = driveMotors.get(0);
-        left_back_drive = driveMotors.get(1);
-        right_front_drive = driveMotors.get(2);
-        right_back_drive = driveMotors.get(3);
+        left_front_drive =  hardwareMap.get(ExpansionHubMotor.class, "left_front_drive");
+        left_back_drive =  hardwareMap.get(ExpansionHubMotor.class, "left_back_drive");
+        right_front_drive =  hardwareMap.get(ExpansionHubMotor.class, "right_front_drive");
+        right_back_drive =  hardwareMap.get(ExpansionHubMotor.class, "right_back_drive");
 
-        this.prevLeftBumper = prevLeftBumper;
-        this.prevRightBumper = prevRightBumper;
+        arcadeInput = () -> new float[] {this.driver.left_stick_y, this.driver.left_stick_x, -this.driver.right_stick_x};
+
+
+    }
+
+    public void update(){
+        inputs = arcadeInput.inputs();
+
+        if(driver.left_bumper){
+            driveState = DriveState.FAST;
+        }
+        else if(driver.right_bumper){
+            driveState = DriveState.FAST_REVERSE;
+        }
+        else{
+            driveState = DriveState.ULTRA_EPIC_FAST;
+        }
     }
 
     public void drive(float[] outputs){
-        if(driver.left_bumper && !prevLeftBumper){
-            driveState = Driver.DriveState.FAST;
+
+
+        if(driver.left_bumper){
+            driveState = DriveState.FAST;
         }
-        else if(driver.left_bumper && prevLeftBumper){
-            driveState = Driver.DriveState.ULTRA_EPIC_FAST;
+        else if(driver.right_bumper){
+            driveState = DriveState.FAST_REVERSE;
         }
-        else if(driver.right_bumper && !prevRightBumper){
-            driveState = Driver.DriveState.FAST_REVERSE;
+        else{
+            driveState = DriveState.ULTRA_EPIC_FAST;
         }
-        else if(driver.right_bumper && prevRightBumper){
-            driveState = Driver.DriveState.ULTRA_EPIC_FAST;
-        }
+
+
 
         switch(driveState){
             case ULTRA_EPIC_FAST:
@@ -73,27 +92,55 @@ public class Driver {
                 break;
 
             case FAST:
-                left_front_drive.setPower(outputs[0] * 0.5f);
-                left_back_drive.setPower(outputs[1] * 0.5f);
-                right_front_drive.setPower(outputs[2] * 0.5f);
-                right_back_drive.setPower(outputs[3] * 0.5f);
+                left_front_drive.setPower(outputs[0] * 0.75f);
+                left_back_drive.setPower(outputs[1] * 0.75f);
+                right_front_drive.setPower(outputs[2] * 0.75f);
+                right_back_drive.setPower(outputs[3] * 0.75f);
 
                 break;
             case FAST_REVERSE:
-                left_front_drive.setPower(outputs[0] * -0.5f);
-                left_back_drive.setPower(outputs[1] * -0.5f);
-                right_front_drive.setPower(outputs[2] * -0.5f);
-                right_back_drive.setPower(outputs[3] * -0.5f);
+                left_front_drive.setPower(outputs[0] * -0.75f);
+                left_back_drive.setPower(outputs[1] * -0.75f);
+                right_front_drive.setPower(outputs[2] * -0.75f);
+                right_back_drive.setPower(outputs[3] * -0.75f);
         }
 
-        left_front_drive.setPower(outputs[0]);
-        left_back_drive.setPower(outputs[1]);
-        right_front_drive.setPower(outputs[2]);
-        right_back_drive.setPower(outputs[3]);
+    }
+    public void drive(){
+        float[] outputs = m_v_mult(DriveBaseVectors.arcadeDriveVectors, inputs);
 
-        //store current slow mode status
-        prevLeftBumper = driver.left_bumper;
-        prevRightBumper = driver.right_bumper;
+        switch(driveState){
+            case ULTRA_EPIC_FAST:
+                left_front_drive.setPower(outputs[0]);
+                left_back_drive.setPower(outputs[1]);
+                right_front_drive.setPower(outputs[2]);
+                right_back_drive.setPower(outputs[3]);
+
+                break;
+
+            case FAST:
+                left_front_drive.setPower(outputs[0] * 0.75f);
+                left_back_drive.setPower(outputs[1] * 0.75f);
+                right_front_drive.setPower(outputs[2] * 0.75f);
+                right_back_drive.setPower(outputs[3] * 0.75f);
+
+                break;
+            case FAST_REVERSE:
+                left_front_drive.setPower(outputs[0] * -0.75f);
+                left_back_drive.setPower(outputs[1] * -0.75f);
+                right_front_drive.setPower(outputs[2] * -0.75f);
+                right_back_drive.setPower(outputs[3] * -0.75f);
+        }
+    }
+
+
+    private static float[] m_v_mult(float[][] m, float[] v) {
+        float[] out = new float[4];
+        out[0] = v[0] * m[0][0] + v[1] * m[1][0] + v[2] * m[2][0];
+        out[1] = v[0] * m[0][1] + v[1] * m[1][1] + v[2] * m[2][1];
+        out[2] = v[0] * m[0][2] + v[1] * m[1][2] + v[2] * m[2][2];
+        out[3] = v[0] * m[0][3] + v[1] * m[1][3] + v[2] * m[2][3];
+        return out;
     }
 
 

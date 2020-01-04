@@ -6,6 +6,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
+import java.io.FileReader;
+
 import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -30,14 +32,9 @@ public class DriverConfig  extends LinearOpMode {
     public static String driverFileName = "DriverControls.json";
     public static String manipulatorFileName = "ManipulatorControls.json";
 
+    private int stepNumber = 0;
 
-
-    Func<String> message = new Func<String>() {
-        @Override
-        public String value(){
-            return queries[stepNumber];
-        }
-    };
+    Func<String> message = () -> queries[stepNumber];
 
     public enum DriverName {
         PARKER,
@@ -103,11 +100,12 @@ public class DriverConfig  extends LinearOpMode {
 
 
     private DriverName driverName = DriverName.PARKER;
-    private int stepNumber = 0;
+
 
 
     @Override public void runOpMode()throws InterruptedException {
 
+         telemetry.log().add("         ");
          telemetry.log().add("Welcome to Driver Config!");
          telemetry.log().add("Please refer to the instructions below,");
          telemetry.log().add("once start is pressed, this will begin.");
@@ -122,6 +120,10 @@ public class DriverConfig  extends LinearOpMode {
 
 
          telemetry.log().add("Waiting for start...");
+
+         telemetry.setItemSeparator("_________ ");
+
+         telemetry.setCaptionValueSeparator("  >>");
 
          // Wait until we're told to go
          while (!isStarted()) {
@@ -376,6 +378,7 @@ public class DriverConfig  extends LinearOpMode {
      * Deserialize the json file for driver
      */
     public static DriverControls deserializeDriver(){
+
 
         File driverFile = AppUtil.getInstance().getSettingsFile(driverFileName);
         String data = ReadWriteFile.readFile(driverFile);

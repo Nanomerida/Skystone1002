@@ -131,7 +131,7 @@ public class PositionFinder extends LinearOpMode {
             }
         });
 
-        driver = new Driver(gamepad1, driveMotors, prevLeftBumper, prevRightBumper);
+        driver = new Driver(gamepad1, hardwareMap);
 
         telemetry.update();
 

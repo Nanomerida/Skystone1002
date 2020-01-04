@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.Mecanum.TeleOp;
 
+import android.nfc.NfcAdapter;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -43,7 +46,7 @@ public class TeleOpMain extends OpMode {
     public ExpansionHubMotor right_front_drive = null;
     public ExpansionHubMotor right_back_drive = null;
     private Servo claw = null;
-    private Servo arm = null;
+    private CRServo arm = null;
     private DcMotorSimple lift_left = null;
     private DcMotorSimple lift_right = null;
     private ExpansionHubEx expansionHub1; //hub for motors
@@ -61,10 +64,6 @@ public class TeleOpMain extends OpMode {
     private Boolean prevRightBumper = false;
 
 
-    float[] inputs;
-    float[] outputs;
-
-    private ArrayList<ExpansionHubMotor> driveMotors = new ArrayList<>();
 
 
 
@@ -78,6 +77,7 @@ public class TeleOpMain extends OpMode {
             prevRightBumper = gamepad1.right_bumper;
     };
 
+
     /**
      * Toggle control the claw servo.
      */
@@ -88,9 +88,17 @@ public class TeleOpMain extends OpMode {
     };
 
     private Toggle armToggle = () -> {
+
+
             //Move arm
-            if(gamepad2.x) arm.setPosition(1);
-            else if(gamepad2.y) arm.setPosition(0.9);
+
+            if(gamepad2.x) arm.setPower(0.2);
+
+            else if(gamepad2.y) arm.setPower(-0.2);
+
+            else arm.setPower(0);
+            /*if(gamepad2.x) arm.setPosition(1);
+            else if(gamepad2.y) arm.setPosition(0.9);*/
             /*
             if(gamepad2.x) intake.armDown();
             else if(gamepad2.y) intake.armUp();
@@ -108,6 +116,7 @@ public class TeleOpMain extends OpMode {
         out[3] = v[0] * m[0][3] + v[1] * m[1][3] + v[2] * m[2][3];
         return out;
     }
+
 
 
     
@@ -146,7 +155,12 @@ public class TeleOpMain extends OpMode {
         lift_right = hardwareMap.get(DcMotorSimple.class, "lift_right");
 
         //Reverse the left side
-        lift_right.setDirection(DcMotorSimple.Direction.REVERSE);
+        lift_left.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        arm = hardwareMap.get(CRServo.class, "arm");
+        claw = hardwareMap.get(Servo.class, "claw");
+
+
 
         /*left_top_switch.setMode(DigitalChannel.Mode.INPUT);
         left_bottom_switch.setMode(DigitalChannel.Mode.INPUT);
@@ -154,13 +168,9 @@ public class TeleOpMain extends OpMode {
         right_bottom_switch.setMode(DigitalChannel.Mode.INPUT); */
 
 
-        driveMotors.add(left_front_drive);
-        driveMotors.add(left_back_drive);
-        driveMotors.add(right_front_drive);
-        driveMotors.add(right_back_drive);
 
 
-        driver = new Driver(gamepad1, driveMotors, prevLeftBumper, prevRightBumper);
+        driver = new Driver(gamepad1, hardwareMap);
         foundationMover = new FoundationMover(hardwareMap);
         foundationMover.init();
         //intake = new MecanumIntake(hardwareMap);
@@ -188,8 +198,8 @@ public class TeleOpMain extends OpMode {
      *
      * Gamepad 1 / left_stick = strafing
      * Gamepad 1 / right_stick = turning
-     * Gamepad 1 / left_bumper = slow mode / normal toggle
-     * Gamepad 1 / right_bumper = reverse / normal toggle
+     * Gamepad 1 / left_bumper = slow mode / normal activate
+     * Gamepad 1 / right_bumper = reverse / normal activate
      * Gamepad 2 / dpad_up = lift up / lift hold toggle
      * Gamepad 2 / dpad_down = lift down / lift hold toggle
      * Gamepad 2 / left_bumper = claw open
@@ -222,8 +232,8 @@ public class TeleOpMain extends OpMode {
             }
             else {
                 //intake.holdLift();
-                lift_left.setPower(0.00);
-                lift_right.setPower(0.00);
+                lift_left.setPower(0.05);
+                lift_right.setPower(0.05);
             }
 
 
@@ -239,7 +249,10 @@ public class TeleOpMain extends OpMode {
         //Calculate power for drive
         //outputs = m_v_mult(matrix, inputs);
 
-        driver.drive(m_v_mult(matrix, new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x}));
+
+        //Doesn't need to pass any parameters
+        driver.update();
+        driver.drive();
 
 
 
@@ -282,8 +295,8 @@ public class TeleOpMain extends OpMode {
 
 
         //Move arm
-        if(gamepad2.x) arm.setPosition(1);
-        else if(gamepad2.y) arm.setPosition(0.9);
+        /*if(gamepad2.x) arm.setPosition(1);
+        else if(gamepad2.y) arm.setPosition(0.9); */
 
         //Same as above
         armToggle.update();
@@ -335,6 +348,10 @@ public class TeleOpMain extends OpMode {
         lift_left.setPower(0);
         lift_right.setPower(0);
         //intake.stopLift();
+    }
+
+    public interface ArcadeInput {
+        float[] inputs();
     }
 
 
