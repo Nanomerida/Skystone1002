@@ -22,7 +22,7 @@ public class Vuforia {
      *
      * TODO Replace usages of an int to represent the position with this.
      */
-    public enum SkystonePositon {
+    public enum SkystonePosition {
         LEFT,
         RIGHT,
         UNSEEN,
@@ -58,7 +58,7 @@ public class Vuforia {
     private LinearOpMode opMode;
 
 
-    public SkystonePositon stonePosition = SkystonePositon.UNKNOWN;
+    public SkystonePosition stonePosition = SkystonePosition.UNKNOWN;
 
     public VuforiaTrackables targetsSkyStone;// = vuforia.loadTrackablesFromAsset("Skystone");
     public VuforiaTrackable stoneTarget;// = targetsSkyStone.get(0);
@@ -103,7 +103,7 @@ public class Vuforia {
      *
      * @return An enum value holding the results.
      */
-    public SkystonePositon testVision() {
+    public SkystonePosition testVision() {
 
         stoneTarget.setName("Skystone");
 
@@ -119,12 +119,12 @@ public class Vuforia {
                 skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
                 VectorF skystoneCoords = skystonePositionCoords.getTranslation();
                 float closestX = Range.clip(skystoneCoords.get(0), -10f, 10f);
-                if (closestX == -10) stonePosition = SkystonePositon.LEFT;
-                else stonePosition = SkystonePositon.RIGHT;
+                if (closestX == -10) stonePosition = SkystonePosition.LEFT;
+                else stonePosition = SkystonePosition.RIGHT;
                 break;
             }
         }
-        if(stonePosition != SkystonePositon.LEFT && stonePosition != SkystonePositon.RIGHT) stonePosition = SkystonePositon.UNSEEN;
+        if(stonePosition != SkystonePosition.LEFT && stonePosition != SkystonePosition.RIGHT) stonePosition = SkystonePosition.UNSEEN;
        
 
 
@@ -156,12 +156,12 @@ public class Vuforia {
                 skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
                 VectorF skystoneCoords = skystonePositionCoords.getTranslation();
                 float closestX = Range.clip(skystoneCoords.get(0), -10f, 10f);
-                if (closestX == -10) stonePosition = SkystonePositon.LEFT;
-                else stonePosition = SkystonePositon.RIGHT;
+                if (closestX == -10) stonePosition = SkystonePosition.LEFT;
+                else stonePosition = SkystonePosition.RIGHT;
                 break;
             }
         }
-        if(stonePosition != SkystonePositon.LEFT && stonePosition != SkystonePositon.RIGHT) stonePosition = SkystonePositon.UNSEEN;
+        if(stonePosition != SkystonePosition.LEFT && stonePosition != SkystonePosition.RIGHT) stonePosition = SkystonePosition.UNSEEN;
 
 
 

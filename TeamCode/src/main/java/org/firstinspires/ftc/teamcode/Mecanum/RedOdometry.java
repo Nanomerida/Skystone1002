@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Mecanum;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -53,7 +52,7 @@ public class RedOdometry extends LinearOpMode {
     private static final double[] unseen_stone_pos = {25,0};
     private static final double[] sensing_pos = {0,0};
 
-    private Vuforia.SkystonePositon skystonePositon = Vuforia.SkystonePositon.UNKNOWN;
+    private Vuforia.SkystonePosition skystonePosition = Vuforia.SkystonePosition.UNKNOWN;
 
 
 
@@ -202,7 +201,7 @@ public class RedOdometry extends LinearOpMode {
 
         findSkystone();
 
-        switch (skystonePositon){
+        switch (skystonePosition){
             case LEFT: getSkystoneLeft(); break;
             case RIGHT: getSkystoneRight(); break;
             case UNSEEN: getSkystoneUnseen(); break;
@@ -241,7 +240,7 @@ public class RedOdometry extends LinearOpMode {
 
     private void findSkystone(){
         try {
-            skystonePositon = blockPos.testVision();
+            skystonePosition = blockPos.testVision();
         }catch (NullPointerException e){
             telemetry.addLine("VUFORIA ERROR!!!!!!");
             telemetry.update();
