@@ -23,9 +23,10 @@ public class BaseVectorTuning extends OpMode {
     static class BaseVectors {
 
 
-        public static float forward_LeftFront, forward_LeftBack, forward_RightFront, forward_RightBack;
-        public static float strafeR_LeftFront, strafeR_LeftBack, strafeR_RightFront, strafeR_RightBack;
-        public static float turnCW_LeftFront, turnCW_LeftBack, turnCW_RightFront, turnCW_RightBack;
+        public static float strafeR_LeftFront = 0.85f;
+        public static float strafeR_LeftBack = -0.75f;
+        public static float strafeR_RightFront = -0.85f;
+        public static float strafeR_RightBack = 0.75f;
 
 
 
@@ -105,18 +106,11 @@ public class BaseVectorTuning extends OpMode {
     @Override
     public void loop(){
 
-        matrix[0][0] = BaseVectors.forward_LeftFront;
-        matrix[0][1] = BaseVectors.forward_LeftBack;
-        matrix[0][2] = BaseVectors.forward_RightFront;
-        matrix[0][3] = BaseVectors.forward_RightBack;
+
         matrix[1][0] = BaseVectors.strafeR_LeftFront;
         matrix[1][1] = BaseVectors.strafeR_LeftBack;
         matrix[1][2] = BaseVectors.strafeR_RightFront;
         matrix[1][3] = BaseVectors.strafeR_RightBack;
-        matrix[2][0] = BaseVectors.turnCW_LeftFront;
-        matrix[2][1] = BaseVectors.turnCW_LeftBack;
-        matrix[2][2] = BaseVectors.turnCW_RightFront;
-        matrix[2][3] = BaseVectors.turnCW_RightBack;
 
         driver.drive(m_v_mult(matrix, new float[] {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x}));
 
