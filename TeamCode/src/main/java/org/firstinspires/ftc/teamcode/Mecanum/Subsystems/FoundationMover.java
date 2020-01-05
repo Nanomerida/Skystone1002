@@ -4,6 +4,9 @@ package org.firstinspires.ftc.teamcode.Mecanum.Subsystems;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+
 public class FoundationMover implements Subsystem {
 
 
@@ -40,4 +43,19 @@ public class FoundationMover implements Subsystem {
         left.setPower(power);
         right.setPower(power);
     }
+
+    public Function0<Unit> getDown(){
+        return () -> {
+            down();
+            return Unit.INSTANCE;
+        };
+    }
+
+    public Function0<Unit> getUp(){
+        return () -> {
+            up();
+            return Unit.INSTANCE;
+        };
+    }
+
 }

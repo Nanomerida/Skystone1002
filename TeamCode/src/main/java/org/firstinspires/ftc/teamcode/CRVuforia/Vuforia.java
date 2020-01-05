@@ -14,6 +14,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+
 
 public class Vuforia {
 
@@ -28,6 +31,8 @@ public class Vuforia {
         UNSEEN,
         UNKNOWN
     }
+
+    private static boolean runVision;
 
     private ElapsedTime searchTime = new ElapsedTime(0);
 
@@ -58,7 +63,7 @@ public class Vuforia {
     private LinearOpMode opMode;
 
 
-    public SkystonePosition stonePosition = SkystonePosition.UNKNOWN;
+    public static SkystonePosition stonePosition = SkystonePosition.UNKNOWN;
 
     public VuforiaTrackables targetsSkyStone;// = vuforia.loadTrackablesFromAsset("Skystone");
     public VuforiaTrackable stoneTarget;// = targetsSkyStone.get(0);
@@ -133,6 +138,74 @@ public class Vuforia {
         return stonePosition;
 
     }
+
+    /**
+     * This simply starts the stream and record the position as it finds it.
+     * Must be stopped externally.
+     * @return
+     */
+    public void startVision() {
+
+        stoneTarget.setName("Skystone");
+
+
+
+
+        targetsSkyStone.activate();
+        stonePosition = SkystonePosition.UNSEEN;
+
+        runVision = true;
+
+
+
+    }
+
+    public void updateVision() {
+
+
+
+            // check all the trackable targets to see which one (if any) is visible.
+            if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
+                skystonePositionCoords = ((VuforiaTrackableDefaultListener) stoneTarget.getListener()).getVuforiaCameraFromTarget(); //give pose of trackable, returns null if not visible
+                VectorF skystoneCoords = skystonePositionCoords.getTranslation();
+                float closestX = Range.clip(skystoneCoords.get(0), -10f, 10f);
+                if (closestX == -10) stonePosition = SkystonePosition.LEFT;
+                else stonePosition = SkystonePosition.RIGHT;
+            }
+    }
+
+    public void stopVision(){
+
+        targetsSkyStone.deactivate();
+    }
+
+    public Function0<Unit> getVisionStart(){
+        return () -> {
+            startVision();
+            return Unit.INSTANCE;
+        };
+    }
+
+    public Function0<Unit> getVisionStop(){
+        return () -> {
+            stopVision();
+            return Unit.INSTANCE;
+        };
+    }
+
+
+
+    /**
+     * This is here so you can still access the result after the program has already finished
+     */
+    public static SkystonePosition skystoneResult(){
+        return stonePosition;
+    }
+
+
+
+
+
 
     /**
      * This is the old deprecated method, but it is here because it is used everywhere in earlier code.

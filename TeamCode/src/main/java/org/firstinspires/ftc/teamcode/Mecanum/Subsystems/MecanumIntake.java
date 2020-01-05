@@ -10,6 +10,9 @@ import org.firstinspires.ftc.teamcode.hardware.BulkDataManager;
 import org.openftc.revextensions2.RevBulkData;
 import org.openftc.revextensions2.ExpansionHubEx;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+
 
 /**Class for the current mecanum intake as of 12/19/19. This uses a servo arm, a servo class, and a two motor lift with
  * limit switches.
@@ -139,6 +142,21 @@ public class MecanumIntake implements Subsystem {
         lift_left.setPower(0);
         lift_right.setPower(0);
     }
+
+    public Function0<Unit> getClawClose(){
+        return () -> {
+            closeClaw();
+            return Unit.INSTANCE;
+        };
+    }
+
+    public Function0<Unit> getClawOpen(){
+        return () -> {
+            openClaw();
+            return Unit.INSTANCE;
+        };
+    }
+
 
 
 }

@@ -20,7 +20,10 @@ public class RedStoneAuto extends LinearOpMode {
 
     private SampleMecanumDriveBase drive;
 
-    Trajectory toSensingPos;
+
+
+
+
 
     Trajectory toSkystoneLeft;
 
