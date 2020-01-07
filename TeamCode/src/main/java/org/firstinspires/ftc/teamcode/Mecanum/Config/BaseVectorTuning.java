@@ -27,6 +27,83 @@ public class BaseVectorTuning extends OpMode {
 
 
     }
+    
+    private static final String PID_VAR_NAME = "STRAFE VECTOR";
+
+    private String catName;
+    private CustomVariable catVar;
+
+    private SampleMecanumDriveBase drive;
+
+    private void addPidVariable() {
+        catName = BaseVectors.getClass().getSimpleName();
+        catVar = (CustomVariable) dashboard.getConfigRoot().getVariable(catName);
+        if (catVar == null) {
+            // this should never happen...
+            catVar = new CustomVariable();
+            dashboard.getConfigRoot().putVariable(catName, catVar);
+
+            RobotLog.w("Unable to find top-level category %s", catName);
+        }
+
+        CustomVariable vectorVar = new CustomVariable();
+        pidVar.putVariable("Forward Left", new BasicVariable<>(new ValueProvider<Double>() {
+            @Override
+            public Double get() {
+                return (double) BaseVectors.strafeR_LeftFront;
+            }
+
+            @Override
+            public void set(Double value) {
+                BaseVectors.strafeR_LeftFront = (float) value;
+            }
+        }));
+        pidVar.putVariable("Back Left", new BasicVariable<>(new ValueProvider<Double>() {
+            @Override
+            public Double get() {
+                return (double) BaseVector.strafeR_LeftBack;
+            }
+
+            @Override
+            public void set(Double value) {
+                BaseVectors.strafR_RightFront = (float) value;
+            }
+        }));
+        pidVar.putVariable("Forward Right", new BasicVariable<>(new ValueProvider<Double>() {
+            @Override
+            public Double get() {
+                return (double) BaseVectors.strafeR_RightFront;
+            }
+
+            @Override
+            public void set(Double value) {
+                BaseVectors.strafeR_RightFront
+            }
+        }));
+        pidVar.putVariable("Back Right", new BasicVariable<>(new ValueProvider<Double>() {
+            @Override
+            public Double get() {
+                return (double) BaseVectors.strafeR_RightFront;
+            }
+
+            @Override
+            public void set(Double value) {
+                BaseVectors.strafeR_RightBack = (float) value;
+            }
+        }));
+
+        catVar.putVariable(PID_VAR_NAME, pidVar);
+        dashboard.updateConfig();
+    }
+
+    private void removePidVariable() {
+        if (catVar.size() > 1) {
+            catVar.removeVariable(PID_VAR_NAME);
+        } else {
+            dashboard.getConfigRoot().removeVariable(catName);
+        }
+        dashboard.updateConfig();
+    }
 
     Driver driver;
 
@@ -98,6 +175,7 @@ public class BaseVectorTuning extends OpMode {
         slowModeUpdate.refresh();
 
     }
+    
 
     @Override
     public void loop(){
