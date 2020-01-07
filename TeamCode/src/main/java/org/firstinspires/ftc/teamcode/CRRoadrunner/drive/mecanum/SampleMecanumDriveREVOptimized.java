@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.CRRoadrunner.drive.mecanum;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.teamcode.CRRoadrunner.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.CRRoadrunner.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.CRRoadrunner.drive.DriveConstants.encoderTicksToInches;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.CRRoadrunner.drive.localizer.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.CRRoadrunner.util.LynxModuleUtil;
 import org.openftc.revextensions2.ExpansionHubEx;
@@ -133,6 +135,7 @@ public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
+        double angle =  AngleUnit.RADIANS.normalize(imu.getAngularOrientation().firstAngle + Math.toRadians(90));
+        return angle;
     }
 }

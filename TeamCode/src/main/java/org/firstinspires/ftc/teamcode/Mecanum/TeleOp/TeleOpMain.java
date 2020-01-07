@@ -233,8 +233,8 @@ public class TeleOpMain extends OpMode {
             }
             else {
                 //intake.holdLift();
-                lift_left.setPower(0.00);
-                lift_right.setPower(0.00);
+                lift_left.setPower(0.05);
+                lift_right.setPower(0.05);
             }
 
 

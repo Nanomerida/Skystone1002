@@ -2,6 +2,7 @@
 package org.firstinspires.ftc.teamcode.CRVuforia;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -78,6 +79,37 @@ public class Vuforia {
     public void blueInit(WebcamName awebcamName, LinearOpMode opMode) {
 
         this.webcamName = awebcamName;
+
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
+         * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
+         */
+
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+
+
+        /*
+         * We also indicate which camera on the RC we wish to use.
+         */
+        parameters.cameraName = webcamName;
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        targetsSkyStone = vuforia.loadTrackablesFromAsset("Skystone");
+        stoneTarget = targetsSkyStone.get(0);
+
+    }
+    /** This method initiates vuforia. Make sure to pass a webcam object
+     *
+     * @param hardwareMap the hardware map
+     * */
+    public void blueInit(HardwareMap hardwareMap, LinearOpMode opMode) {
+
+        this.webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
