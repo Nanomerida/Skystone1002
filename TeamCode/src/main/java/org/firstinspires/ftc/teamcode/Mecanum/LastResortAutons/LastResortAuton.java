@@ -16,6 +16,7 @@ public class LastResortAuton extends LinearOpMode {
     GeneralMethods methods = new GeneralMethods();
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
+
     DcMotor left_front_drive = null;
     DcMotor left_back_drive = null;
     DcMotor right_front_drive = null;
@@ -28,6 +29,8 @@ public class LastResortAuton extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
+        blockPosBlue.startVision();
 
 
         left_front_drive = hardwareMap.get(DcMotor.class, "left_front_drive");
@@ -61,6 +64,10 @@ to strafe (right):
         left_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_front_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         right_back_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        TimeBasedRunner runner = new TimeBasedRunner(0, this);
+
 
 
 
@@ -209,10 +216,15 @@ to strafe (right):
         right_back_drive.setPower(0);
 
 
-        int skystonePos = blockPosBlue.visionTest();
+        while(opModeIsActive() && new ElapsedTime().milliseconds() >= 5){
+            telemetry.update();
+        }
+        blockPosBlue.stopVision();
 
-        switch(skystonePos){
-            case 0://left
+        Vuforia.SkystonePosition pose = blockPosBlue.getResults();
+
+        switch(pose){
+            case LEFT://left
                 left_front_drive.setPower(0.6);
                 left_back_drive.setPower(-0.9);
                 right_front_drive.setPower(-0.6);
@@ -227,12 +239,13 @@ to strafe (right):
 
                 sleep(500);
 
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
+                            left_front_drive.setPower(0.3);
+                            left_back_drive.setPower(0.3);
+                            right_front_drive.setPower(0.3);
+                            right_back_drive.setPower(0.3);
 
-                sleep(1000);
+                            sleep(1000);
+
 
                 left_front_drive.setPower(0);
                 left_back_drive.setPower(0);
@@ -323,7 +336,7 @@ to strafe (right):
                 sleep(500);
                 break;
 
-            case 1://middle
+            case RIGHT://middle
                 left_front_drive.setPower(0.3);
                 left_back_drive.setPower(0.3);
                 right_front_drive.setPower(0.3);
@@ -407,7 +420,7 @@ to strafe (right):
 
                 break;
 
-            case 2://right
+            case UNSEEN://right
                 left_front_drive.setPower(-0.6);
                 left_back_drive.setPower(0.9);
                 right_front_drive.setPower(0.6);

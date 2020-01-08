@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.Mecanum.LastResortAutons;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.ArrayListMultimap;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class TimeBasedRunner {
@@ -12,7 +13,7 @@ public class TimeBasedRunner {
   private static HashMap<Action, Long> actionDelays = new HashMap<>();
   private long startTime;
   private static ElapsedTime timer;
-  private static long actionNum;
+  private static int actionNum;
   private LinearOpMode opMode;
   
   public TimeBasedRunner(long startTime, LinearOpMode opMode){
@@ -33,8 +34,9 @@ public class TimeBasedRunner {
       Action currentAction = actionList.get(actionNum);
       long delay = actionDelays.get(currentAction);
       while(opMode.opModeIsActive()){
-        if(!(timer.milliseconds() => delay)){
+        if(!(timer.milliseconds() >= delay)){
           currentAction.invoke();
+          actionNum++;
         }
       }
   }

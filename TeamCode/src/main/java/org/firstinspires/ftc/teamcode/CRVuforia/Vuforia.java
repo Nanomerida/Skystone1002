@@ -206,6 +206,10 @@ public class Vuforia {
             }
     }
 
+    public SkystonePosition getResults(){
+        return stonePosition;
+    }
+
     public void stopVision(){
 
         targetsSkyStone.deactivate();
