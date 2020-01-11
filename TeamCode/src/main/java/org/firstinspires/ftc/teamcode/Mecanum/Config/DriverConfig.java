@@ -61,7 +61,7 @@ public class DriverConfig  extends LinearOpMode {
         LEFT_STICK_BUTTON,
         RIGHT_STICK_BUTTON;
 
-        public boolean isPresed(Gamepad gamepad){
+        public boolean isPressed(Gamepad gamepad){
             switch (this){
                 case A: return gamepad.a;
                 case B: return gamepad.b;

@@ -44,12 +44,7 @@ public class FoundationMover implements Subsystem {
         right.setPosition(0.2);
     }
     
-    
 
-    public void byPower(double power){
-        left.setPower(power);
-        right.setPower(power);
-    }
 
     public Function0<Unit> getDown(){
         return () -> {

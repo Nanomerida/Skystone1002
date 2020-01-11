@@ -107,7 +107,7 @@ public class Driver {
 
     }
     public void drive(){
-        float[] outputs = m_v_mult(DriveBaseVectors.arcadeDriveVectors, inputs);
+        float[] outputs = m_v_mult(DriveBaseVectors.arcadeDriveVectors, new float[] {this.driver.left_stick_y, this.driver.left_stick_x, -this.driver.right_stick_x});
 
         switch(driveState){
             case ULTRA_EPIC_FAST:
