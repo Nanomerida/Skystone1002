@@ -34,7 +34,6 @@ public class TeleOpMain extends OpMode {
     TeleOpFieldCentric fieldCentric;
     Driver driver;
     FoundationMover foundationMover;
-    MecanumIntake intake;
     ElapsedTime ping = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
@@ -50,7 +49,7 @@ public class TeleOpMain extends OpMode {
     public ExpansionHubMotor right_front_drive = null;
     public ExpansionHubMotor right_back_drive = null;
     private Servo claw = null;
-    private CRServo arm = null;
+    private Servo arm = null;
     private DcMotorSimple lift_left = null;
     private DcMotorSimple lift_right = null;
     private ExpansionHubEx expansionHub1; //hub for motors
@@ -110,23 +109,6 @@ public class TeleOpMain extends OpMode {
 
     };
 
-    private Toggle armToggle = () -> {
-
-        //Move arm
-
-        if(gamepad2.x){
-            arm.setPower(0.2);
-        }
-
-        else if(gamepad2.y){
-            arm.setPower(-0.2);
-        }
-
-        else {
-            arm.setPower(0);
-        }
-    };
-
     private Toggle foundationToggle = () -> {
 
         if(gamepad2.a){
@@ -145,6 +127,15 @@ public class TeleOpMain extends OpMode {
                 case DOWN_FOR_SIZING:
                     foundationMoverState = FoundationState.FULLY_UP;
             }
+        }
+    };
+
+    private Toggle armToggle = () -> {
+        if(gamepad2.a){
+            arm.setPosition(0);
+        }
+        else if(gamepad2.b){
+            arm.setPosition(0.25);
         }
     };
 
@@ -198,7 +189,7 @@ public class TeleOpMain extends OpMode {
         //Reverse the left side
         lift_left.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        arm = hardwareMap.get(CRServo.class, "arm");
+        arm = hardwareMap.get(Servo.class, "arm");
         claw = hardwareMap.get(Servo.class, "claw");
 
 
@@ -212,6 +203,9 @@ public class TeleOpMain extends OpMode {
         driver = new Driver(gamepad1, hardwareMap);
         foundationMover = new FoundationMover(hardwareMap);
         foundationMover.init();
+
+
+        foundationMover.down();
 
 
 
@@ -331,15 +325,14 @@ public class TeleOpMain extends OpMode {
         driver.drive();
 
 
-
+        //Controls arm
+        armToggle.update();
 
 
         //Same as above
         clawToggle.update();
 
 
-        //Same as above
-        armToggle.update();
 
 
 
@@ -369,7 +362,7 @@ public class TeleOpMain extends OpMode {
         right_front_drive.setPower(0);
         right_back_drive.setPower(0);
         lift_left.setPower(0);
-        arm.setPower(0);
+        lift_right.setPower(0);
     }
 
     public interface ArcadeInput {

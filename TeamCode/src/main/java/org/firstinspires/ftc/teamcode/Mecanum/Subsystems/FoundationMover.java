@@ -16,8 +16,8 @@ public class FoundationMover implements Subsystem {
 
 
     public FoundationMover(HardwareMap hardwareMap){
-        left = hardwareMap.get(Servo.class, "left_foundation_mover");
-        right = hardwareMap.get(Servo.class, "right_foundation_mover");
+        left = hardwareMap.get(Servo.class, "left_mover");
+        right = hardwareMap.get(Servo.class, "right_mover");
     }
 
     @Override
