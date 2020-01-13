@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Mecanum.LastResortAutons;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,8 +21,13 @@ public class LastResortAuton extends LinearOpMode {
     DcMotor left_back_drive = null;
     DcMotor right_front_drive = null;
     DcMotor right_back_drive = null;
+    DcMotor lift_left;
+    DcMotor lift_right;
     Servo claw = null;
+    CRServo arm = null;
     public WebcamName webcam = null;
+
+
 
     //public BNO055IMU imu;
     //private Orientation angles;
@@ -67,6 +73,7 @@ to strafe (right):
 //---------------------------------------------------------------------------------------------------------------------------
         /**This picks up a random stone and drops it off. Puts it on foundation, then parks*/
 /*
+//forward
         left_front_drive.setPower(0.3);
         left_back_drive.setPower(0.3);
         right_front_drive.setPower(0.3);
@@ -79,13 +86,13 @@ to strafe (right):
         right_front_drive.setPower(0);
         right_back_drive.setPower(0);
 
-
+//grab stone
         claw.setPower(-0.3);
         sleep(3000);
         claw.setPower(-0.1);
 
         sleep(500);
-
+//reverse
         left_front_drive.setPower(-0.3);
         left_back_drive.setPower(-0.3);
         right_front_drive.setPower(-0.3);
@@ -99,7 +106,7 @@ to strafe (right):
         right_back_drive.setPower(0);
 
         sleep(500);
-
+//strafes left
         left_front_drive.setPower(1);
         left_back_drive.setPower(-1);
         right_front_drive.setPower(-1);
@@ -113,7 +120,7 @@ to strafe (right):
         right_back_drive.setPower(0);
 
         sleep(500);
-
+//forward
         left_front_drive.setPower(0.3);
         left_back_drive.setPower(0.3);
         right_front_drive.setPower(0.3);
@@ -128,7 +135,7 @@ to strafe (right):
 
         sleep(500);
 
-
+//rotates to adjust position
         left_front_drive.setPower(-1);
         left_back_drive.setPower(-1);
         right_front_drive.setPower(1);
@@ -142,7 +149,7 @@ to strafe (right):
         right_back_drive.setPower(0);
 
         sleep(500);
-
+//sets arm and releases claw
         arm.setPower(-0.69420);
         sleep(2000);
         claw.setPower(0);
@@ -160,7 +167,7 @@ to strafe (right):
         claw.setPower(0);
 
         sleep(500);
-
+//adjust position
         left_front_drive.setPower(-1);
         left_back_drive.setPower(-1);
         right_front_drive.setPower(1);
@@ -175,6 +182,7 @@ to strafe (right):
 
         sleep(500);
 
+//strafe right to park
         left_front_drive.setPower(-0.55);
         left_back_drive.setPower(1);
         right_front_drive.setPower(0.65);
@@ -195,7 +203,7 @@ to strafe (right):
 // ---------------------------------------------------------------------------------------------------------------------------
 /**This code finds the skystone, scores it, and then parks*/
 
-
+//Goes forward to look for stone
         left_front_drive.setPower(0.3);
         left_back_drive.setPower(0.3);
         right_front_drive.setPower(0.3);
@@ -208,11 +216,12 @@ to strafe (right):
         right_front_drive.setPower(0);
         right_back_drive.setPower(0);
 
-
+/**Joke of The Day: VUFORIA*/
         int skystonePos = blockPosBlue.visionTest();
 
         switch(skystonePos){
             case 0://left
+
                 left_front_drive.setPower(0.6);
                 left_back_drive.setPower(-0.9);
                 right_front_drive.setPower(-0.6);
