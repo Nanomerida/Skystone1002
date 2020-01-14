@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.Mecanum.LastResortAutons;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 
 @Autonomous(name="Last Resort BlueFoundationZone", group = "Last Resort")
@@ -22,8 +27,13 @@ public class LastResortAutonFoundation extends LinearOpMode {
     CRServo claw = null;
     public WebcamName webcam = null;
 
-    //public BNO055IMU imu;
-    //private Orientation angles;
+    public BNO055IMU imu;
+
+    private double degreesConversion(){
+        double theta = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        theta = AngleUnit.normalizeDegrees(theta + 90);
+        return theta;
+    }
 
     @Override
     public void runOpMode() {
