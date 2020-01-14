@@ -15,4 +15,6 @@ dependencies {
 
     implementation 'com.acmerobotics.dashboard:dashboard:0.3.6'
 
+    implementation 'com.github.dogecv:dogecommander:v1.0.0'
+
 }
