@@ -21,7 +21,7 @@ import kotlin.jvm.functions.Function0;
  *
  */
 
-public class MecanumIntake implements Subsystem {
+public class MecanumIntake implements SubsystemCR {
 
     public BulkDataManager bulkDataManager;
     public RevBulkData bulkData10;

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Mecanum.CRPosition;
 
 
-import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Mecanum.Subsystems.SubsystemCR;
 import org.firstinspires.ftc.teamcode.hardware.BulkDataManager;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
@@ -12,19 +12,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.teamcode.Mecanum.Config.RobotDimensions;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.lang.Math.abs;
-import static java.lang.Math.toDegrees;
-
-import java.util.List;
 
 
-public class CROdometry implements Subsystem {
+public class CROdometry implements SubsystemCR {
 
 
     private RevBulkData bulkData;

@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.Mecanum.Subsystems;
 
 
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
-public class FoundationMover implements Subsystem {
+public class FoundationMover implements SubsystemCR {
 
     
     private Servo left = null;
