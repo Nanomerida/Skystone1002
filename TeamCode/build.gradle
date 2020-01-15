@@ -10,11 +10,20 @@
 
 
 // Custom definitions may go here
-
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+
+
 dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation 'com.github.dogecv:dogecommander:v1.0.0'
+
     implementation 'org.openftc:rev-extensions-2:1.2'
     implementation 'org.jdom:jdom2:2.0.6'
     implementation 'org.openftc:easyopencv:1.3.2'

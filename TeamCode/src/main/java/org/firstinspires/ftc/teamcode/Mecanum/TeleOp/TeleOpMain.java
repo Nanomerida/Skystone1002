@@ -96,7 +96,7 @@ public class TeleOpMain extends OpMode {
      */
     private Toggle clawToggle = () -> {
 
-        if(gamepad2.left_bumper) {
+        /*if(gamepad2.left_bumper) {
             if (clawState == ClawState.OPEN) {
                 claw.setPosition(0);
                 clawState = ClawState.CLOSED;
@@ -104,6 +104,13 @@ public class TeleOpMain extends OpMode {
                 claw.setPosition(0.4);
                 clawState = ClawState.OPEN;
             }
+        } */
+
+        if(gamepad2.left_bumper){
+            claw.setPosition(0);
+        }
+        else if(gamepad2.right_bumper){
+            claw.setPosition(0.4);
         }
 
     };
@@ -131,15 +138,12 @@ public class TeleOpMain extends OpMode {
         }
     };
 
-    private Toggle limitSwitches = () -> {
-        if(!revBulkData1.getDigitalInputState(left_bottom_switch)){
-            liftState = LiftState.AT_BOTTOM;
-        }
-        else if(!revBulkData10.getDigitalInputState(right_bottom_switch)){
-            liftState = LiftState.AT_BOTTOM;
+    private Func<Boolean> limitSwitches = () -> {
+        if(!revBulkData1.getDigitalInputState(left_bottom_switch) || !revBulkData10.getDigitalInputState(right_bottom_switch)){
+           return true;
         }
         else {
-            liftState = LiftState.MOVING;
+            return false;
         }
     };
 
@@ -262,7 +266,6 @@ public class TeleOpMain extends OpMode {
         /*
         Read from the limit switches and see if they are triggered
          */
-        limitSwitches.update();
 
         //Move up
         if(gamepad2.dpad_up){
@@ -272,17 +275,22 @@ public class TeleOpMain extends OpMode {
         }
 
 
+
         //Move down
         //The enum value is set by the limit switches
-        else if(gamepad2.dpad_down && liftState != LiftState.AT_BOTTOM){
-            lift_left.setPower(-0.1);
-            lift_right.setPower(-0.1);
+        else if(gamepad2.dpad_down && !limitSwitches.value()){
+            lift_left.setPower(-0.08);
+            lift_right.setPower(-0.08);
         }
 
         //Hold position
-        if(!gamepad2.dpad_up && !gamepad2.dpad_down && liftState != LiftState.AT_BOTTOM) {
+        else if(!limitSwitches.value()) {
             lift_left.setPower(0.09);
             lift_right.setPower(0.09);
+        }
+        else {
+            lift_left.setPower(0);
+            lift_right.setPower(0);
         }
 
 

@@ -22,10 +22,10 @@ import java.util.ArrayList;
 public class BaseVectorTuning extends OpMode {
 
 
-    public static double strafeR_LeftFront = 0.85f;
-    public static double strafeR_LeftBack = -0.75f;
-    public static double strafeR_RightFront = -0.85f;
-    public static double strafeR_RightBack = 0.75f;
+    public static double strafeR_LeftFront = 0.72f;
+    public static double strafeR_LeftBack = -0.60;
+    public static double strafeR_RightFront = -0.60f;
+    public static double strafeR_RightBack = 0.72f;
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -60,7 +60,7 @@ public class BaseVectorTuning extends OpMode {
     //Array to hold movement instructions
     //private float[][] matrix = {{0.75f, 1.0f, 0.7f, 1.0f}, {0.8f, -0.95f, -0.85f, 0.95f}, {0.75f, 1.0f, -0.75f, -1.0f}};
 
-    public static float[][] matrix = {{0.75f, 1.0f, 0.7f, 1.0f}, {0.85f, -0.75f, -0.85f, 0.75f}, {0.75f, 1.0f, -0.75f, -1.0f}};
+    public static float[][] matrix = {{1.0f, 1.0f, 1.0f, 1.0f}, {0.72f, -0.60f, -0.60f, 0.72f}, {0.75f, 1.0f, -0.75f, -1.0f}};
 
 
     /**Update the slow mode status
