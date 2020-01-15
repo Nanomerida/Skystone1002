@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Methods.Refresher;
 import org.firstinspires.ftc.teamcode.Methods.Toggle;
@@ -81,7 +82,7 @@ public class TeleOpMain extends OpMode {
 
 
 
-    private FoundationState foundationMoverState = FoundationState.DOWN_FOR_SIZING;
+    private FoundationState foundationMoverState = FoundationState.LOCKED_ON_FOUNDATION;
     private ClawState clawState = ClawState.OPEN;
     private LiftState liftState = LiftState.AT_BOTTOM;
 
@@ -95,15 +96,13 @@ public class TeleOpMain extends OpMode {
      */
     private Toggle clawToggle = () -> {
 
-        if(gamepad2.left_bumper){
-            switch (clawState){
-                case OPEN:
-                    claw.setPosition(0);
-                    clawState = ClawState.CLOSED;
-                    break;
-                case CLOSED:
-                    claw.setPosition(0.4);
-                    clawState = ClawState.OPEN;
+        if(gamepad2.left_bumper) {
+            if (clawState == ClawState.OPEN) {
+                claw.setPosition(0);
+                clawState = ClawState.CLOSED;
+            } else if (clawState == ClawState.CLOSED) {
+                claw.setPosition(0.4);
+                clawState = ClawState.OPEN;
             }
         }
 
@@ -111,21 +110,14 @@ public class TeleOpMain extends OpMode {
 
     private Toggle foundationToggle = () -> {
 
-        if(gamepad2.a){
-            switch (foundationMoverState){
-                case FULLY_UP:
-                    foundationMover.down();
-                    foundationMoverState = FoundationState.LOCKED_ON_FOUNDATION;
-
-                    break;
-                case LOCKED_ON_FOUNDATION:
-                    foundationMover.up();
-                    foundationMoverState = FoundationState.FULLY_UP;
-
-                    break;
-                    //This only happens once in teleOp. Starting position
-                case DOWN_FOR_SIZING:
-                    foundationMoverState = FoundationState.FULLY_UP;
+        if(gamepad2.x){
+            if(foundationMoverState == FoundationState.FULLY_UP) {
+                foundationMover.close();
+                foundationMoverState = FoundationState.LOCKED_ON_FOUNDATION;
+            }
+            else if(foundationMoverState == FoundationState.LOCKED_ON_FOUNDATION){
+                foundationMover.up();
+                foundationMoverState = FoundationState.FULLY_UP;
             }
         }
     };
@@ -136,6 +128,18 @@ public class TeleOpMain extends OpMode {
         }
         else if(gamepad2.b){
             arm.setPosition(0.25);
+        }
+    };
+
+    private Toggle limitSwitches = () -> {
+        if(!revBulkData1.getDigitalInputState(left_bottom_switch)){
+            liftState = LiftState.AT_BOTTOM;
+        }
+        else if(!revBulkData10.getDigitalInputState(right_bottom_switch)){
+            liftState = LiftState.AT_BOTTOM;
+        }
+        else {
+            liftState = LiftState.MOVING;
         }
     };
 
@@ -246,19 +250,6 @@ public class TeleOpMain extends OpMode {
     @Override
     public void loop() {
 
-        switch(new Random().nextInt(10)){
-            case 0: expansionHub1.setLedColor(R.color.tomato);  break;
-            case 1: expansionHub1.setLedColor(R.color.active_button_green); break;
-            case 2: expansionHub1.setLedColor(R.color.darkorange); break;
-            case 3: expansionHub1.setLedColor(R.color.aquamarine); break;
-            case 4: expansionHub1.setLedColor(R.color.mintcream); break;
-            case 5: expansionHub1.setLedColor(R.color.firebrick); break;
-            case 6: expansionHub1.setLedColor(R.color.steelblue); break;
-            case 7: expansionHub1.setLedColor(R.color.thistle); break;
-            case 8: expansionHub1.setLedColor(R.color.turquoise); break;
-            case 9: expansionHub1.setLedColor(R.color.lime); break;
-
-        }
 
 
         //Get the data for this iteration
@@ -271,44 +262,27 @@ public class TeleOpMain extends OpMode {
         /*
         Read from the limit switches and see if they are triggered
          */
-        if(!revBulkData10.getDigitalInputState(right_bottom_switch) || !revBulkData1.getDigitalInputState(left_bottom_switch)){
-            liftState = LiftState.AT_BOTTOM;
-        }
-
-        else {
-            liftState = LiftState.MOVING;
-        }
+        limitSwitches.update();
 
         //Move up
         if(gamepad2.dpad_up){
             lift_left.setPower(0.5);
             lift_right.setPower(0.5);
 
-            liftState = LiftState.MOVING;
         }
+
 
         //Move down
         //The enum value is set by the limit switches
-        else if(gamepad2.dpad_down){
-            switch (liftState){
-                case MOVING:
-                    lift_left.setPower(-0.1);
-                    lift_right.setPower(-0.1);
-
-                    break;
-
-                case AT_BOTTOM:
-                    lift_left.setPower(0);
-                    lift_right.setPower(0);
-
-                    break;
-            }
+        else if(gamepad2.dpad_down && liftState != LiftState.AT_BOTTOM){
+            lift_left.setPower(-0.1);
+            lift_right.setPower(-0.1);
         }
 
         //Hold position
-        else {
-            lift_left.setPower(0.07);
-            lift_right.setPower(0.07);
+        if(!gamepad2.dpad_up && !gamepad2.dpad_down && liftState != LiftState.AT_BOTTOM) {
+            lift_left.setPower(0.09);
+            lift_right.setPower(0.09);
         }
 
 
@@ -336,12 +310,7 @@ public class TeleOpMain extends OpMode {
 
 
 
-
-
-
-
-
-
+        foundationToggle.update();
 
 
 
