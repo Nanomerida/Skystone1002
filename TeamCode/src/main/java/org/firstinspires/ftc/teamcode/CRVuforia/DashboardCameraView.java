@@ -32,6 +32,7 @@ public class DashboardCameraView extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(vuforia, 0);
 
+
         waitForStart();
 
         while (opModeIsActive());

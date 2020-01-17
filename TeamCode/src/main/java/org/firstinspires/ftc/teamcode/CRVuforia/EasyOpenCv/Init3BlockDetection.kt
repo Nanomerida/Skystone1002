@@ -8,6 +8,8 @@ abstract class Init3BlockDetection : OpenCvPipeline() {
     var detectedSkystonePosition = -1
 
 
+
+
     val width = 640
     val height = 480
 
