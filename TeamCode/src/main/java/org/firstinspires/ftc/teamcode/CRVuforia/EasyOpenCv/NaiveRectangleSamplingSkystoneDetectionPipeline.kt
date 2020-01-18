@@ -22,6 +22,9 @@ class NaiveRectangleSamplingSkystoneDetectionPipeline : Init3BlockDetection() {
     private val sampleSectionDivThickness = 4
     private val sectionDivHalfLenght = sampleSectionDivLength / 2
 
+    private val logoColor = Scalar(0.0, 255.0, 190.0)
+    private val LOGO = Point((640 / 2 - 150).toDouble(), 90.0)
+
     private val samplePointPercentages = arrayOf(
             arrayOf(.18, .59), arrayOf(.5, .59), arrayOf(.82, .59)
     )
@@ -113,6 +116,7 @@ class NaiveRectangleSamplingSkystoneDetectionPipeline : Init3BlockDetection() {
                 sampleSectionDivThickness
         )
 
+
         Imgproc.line(
                 input,
                 Point(
@@ -125,6 +129,18 @@ class NaiveRectangleSamplingSkystoneDetectionPipeline : Init3BlockDetection() {
                 ),
                 sampleSectionDivColor,
                 sampleSectionDivThickness
+        )
+
+        //Add text for marketing
+        Imgproc.putText(
+                input,
+                "CR Green CV",
+                LOGO,
+                Imgproc.FONT_HERSHEY_PLAIN,
+                1.75,
+                logoColor,
+                5
+
         )
 
 
