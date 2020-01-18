@@ -3,6 +3,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.CRVuforia.EasyOpenCv.SubsystemVision;
 import org.firstinspires.ftc.teamcode.CRVuforia.Vuforia;
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 import org.firstinspires.ftc.teamcode.hardware.DriveBaseVectors;
@@ -19,8 +21,57 @@ import org.firstinspires.ftc.teamcode.hardware.DriveBaseVectors;
 @Autonomous(name="Last Resort BlueLoadingZone", group = "Last Resort")
 public class LastResortAuton extends LinearOpMode {
 
-    Vuforia blockPosBlue = new Vuforia(); //creates an instance of the vuforia blue side file
-    GeneralMethods methods = new GeneralMethods();
+    class TimeBasedMover {
+
+        private DcMotor left_front_drive = null;
+        private DcMotor left_back_drive = null;
+        private DcMotor right_front_drive = null;
+        private DcMotor right_back_drive = null;
+
+        TimeBasedMover(DcMotor[] drive){
+            left_front_drive = drive[0];
+            left_back_drive = drive[1];
+            right_front_drive = drive[2];
+            right_back_drive = drive[3];
+        }
+
+        public void goForward(double speed){
+            left_front_drive.setPower(DriveBaseVectors.forward[0] * speed);
+            left_back_drive.setPower(DriveBaseVectors.forward[1] * speed);
+            right_front_drive.setPower(DriveBaseVectors.forward[2] * speed);
+            right_back_drive.setPower(DriveBaseVectors.forward[3] * speed);
+        }
+
+        public void goBackward(double speed){
+            left_front_drive.setPower(DriveBaseVectors.backward[0] * speed);
+            left_back_drive.setPower(DriveBaseVectors.backward[1] * speed);
+            right_front_drive.setPower(DriveBaseVectors.backward[2] * speed);
+            right_back_drive.setPower(DriveBaseVectors.backward[3] * speed);
+        }
+
+        public void strafeL(double speed){
+            left_front_drive.setPower(-DriveBaseVectors.strafeR[0] * speed);
+            left_back_drive.setPower(-DriveBaseVectors.strafeR[1] * speed);
+            right_front_drive.setPower(-DriveBaseVectors.strafeR[2] * speed);
+            right_back_drive.setPower(-DriveBaseVectors.strafeR[3] * speed);
+        }
+
+        public void strafeR(double speed){
+            left_front_drive.setPower(DriveBaseVectors.strafeR[0] * speed);
+            left_back_drive.setPower(DriveBaseVectors.strafeR[1] * speed);
+            right_front_drive.setPower(DriveBaseVectors.strafeR[2] * speed);
+            right_back_drive.setPower(DriveBaseVectors.strafeR[3] * speed);
+        }
+
+        public void stopDrive(){
+            left_front_drive.setPower(0);
+            left_back_drive.setPower(0);
+            right_front_drive.setPower(0);
+            right_back_drive.setPower(0);
+        }
+
+    }
+
     private ElapsedTime refreshTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
 
@@ -29,23 +80,19 @@ public class LastResortAuton extends LinearOpMode {
     DcMotor right_front_drive = null;
     DcMotor right_back_drive = null;
     Servo claw = null;
-    public WebcamName webcam = null;
+    Servo arm = null;
 
     private BNO055IMU imu;
     private Orientation angles;
 
 
     private static final double TURNING_ANGLE_P = 2;
-    private static final double HOLDING_ANGLE_P = 2.5;
     private static final double TURNING_ANGLE_THRESHOLD = 1;
 
+    private static int skystonePosition;
 
-    private void stopDrive(){
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
-    }
+    private TimeBasedMover drive;
+
 
 
     /*So distance between the current angle and target angle is normalized to the range of -180 to 180, and then that value is passed to a p controller. */
@@ -68,71 +115,14 @@ public class LastResortAuton extends LinearOpMode {
                 right_front_drive.setPower(DriveBaseVectors.turnCW[2] * output * speed);
                 right_back_drive.setPower(DriveBaseVectors.turnCW[3] * output * speed);
             }
+
+
+            left_front_drive.setPower(0);
+            left_back_drive.setPower(0);
+            right_front_drive.setPower(0);
+            right_back_drive.setPower(0);
         }
 
-    }
-
-    /**
-     * Controls power to stay at a designated heading (must be a 90 degree increment) and
-     * also will stop if the opMode ends or the time runs out.
-     *
-     * Need to set the power before calling this
-     *
-     *
-     *
-     * Angle options:
-     *
-     * Straight Forward = 0
-     * Strafe Left = negative 90
-     * Strafe Right = positive 90
-     * Backwards (may be very unstable, use cautiously) = somewhere from -175 to 175
-     *
-     * @param speed the overall speed of the movement
-     * @param angle The angle to hold
-     * @param timeInMillis The time to run for
-     * @param relativeLeftMotors Which two motors control the left side of the robot
-     * @param relativeRightMotors Which two motors control the right side of the robot
-     */
-    private void holdAngle(double speed, double timeInMillis, double angle,
-                                  DcMotor[] relativeLeftMotors, DcMotor[] relativeRightMotors){
-
-        if(opModeIsActive()) {
-            // keep looping while we are still active, and BOTH motors are running.
-
-            ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-
-            while (opModeIsActive() && (timer.milliseconds() <= timeInMillis)) {
-
-                // adjust relative speed based on heading error.
-                double error = getError(angle);
-                double steer = getPOutput(error, HOLDING_ANGLE_P);
-                double leftSpeed;
-                double rightSpeed;
-
-
-                leftSpeed = speed - steer;
-                rightSpeed = speed + steer;
-
-
-                // Normalize speeds if either one exceeds +/- 1.0;
-                double max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0) {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-
-                for (DcMotor motor : relativeLeftMotors) {
-                    motor.setPower(motor.getPower() * leftSpeed);
-                }
-
-                for (DcMotor motor : relativeRightMotors) {
-                    motor.setPower(motor.getPower() * rightSpeed);
-                }
-
-            }
-        }
-
-        stopDrive();
     }
     /**
      * Returns the relative error between the current angle and the target angle
@@ -162,32 +152,6 @@ public class LastResortAuton extends LinearOpMode {
     /**
      * Nelitha here is a sample usage of the above controls
      *
-     * <br>
-     *     <br>
-     *
-     *
-     * Say I want to strafe directly left from my current heading for 900 milliseconds
-     *
-     * Set the default power:
-     *
-     * <br>
-     * {@code
-     * left_front_drive.setPower(0.6);
-     * left_back_drive.setPower(-0.9);
-     * right_front_drive.setPower(-0.6);
-     * right_back_drive.setPower(0.9);
-     * }
-     *
-     * <br>
-     *     <br>
-     * Then hand over control to the controller with a speed of 0.9, a time of 900, an
-     * angle of 90 degrees, and the back two motors as the "left" and the front two as the "right".
-     * <br>
-     *     <br>
-     *
-     * {@code holdAngle(0.9, 900, 90, new DcMotor[] {left_back_drive, right_back_drive},
-     * new DcMotor[] {left_front_drive, right_front_drive}); }
-     *
      *
      * <br>
      *     <br>
@@ -203,6 +167,11 @@ public class LastResortAuton extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        //This must be in the init because it needs the hardware map
+        SubsystemVision vision = new SubsystemVision(hardwareMap, this);
+
+        vision.initHardware();
+
 
 
         left_front_drive = hardwareMap.get(DcMotor.class, "left_front_drive");
@@ -210,14 +179,20 @@ public class LastResortAuton extends LinearOpMode {
         right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
         right_back_drive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
-        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
         claw = hardwareMap.get(Servo.class, "claw");
-
-        blockPosBlue.blueInit(webcam, this);
+        arm = hardwareMap.get(Servo.class, "arm");
 
 
         left_front_drive.setDirection(DcMotor.Direction.REVERSE);
         left_back_drive.setDirection(DcMotor.Direction.REVERSE);
+
+        left_front_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        left_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_front_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Initialize a simple drive base
+        drive = new TimeBasedMover(new DcMotor[] {left_front_drive, left_back_drive, right_front_drive, right_back_drive});
 
 
         // MORE IMU STUFF
@@ -235,23 +210,40 @@ public class LastResortAuton extends LinearOpMode {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
+        telemetry.log().add("Moving arm to init pos");
+        telemetry.update();
+        arm.setPosition(0);
 
-/*
-to strafe (right):
-        left_front_drive.setPower(-0.55);
-        left_back_drive.setPower(1);
-        right_front_drive.setPower(0.43);
-        right_back_drive.setPower(-1);
+        sleep(300);
 
-*/
-
-        waitForStart();
+        telemetry.log().add("Moving claw to init pos");
+        telemetry.update();
+        claw.setPosition(0.4);
 
 
-        left_front_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        left_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_front_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        right_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.log().add("Vision Started!");
+        vision.startVision();
+        //Run vision in init
+        while (!isStarted()){
+
+            vision.streamLoop();
+            telemetry.update();
+
+        }
+
+        //Clear all the vision telemetry
+        telemetry.clearAll();
+
+
+        //Retrieve the last known results
+        skystonePosition = vision.pipeline.getDetectedSkystonePosition();
+
+        telemetry.log().add("Skystone Position is " + skystonePosition);
+
+
+
+
+
 
 
 
@@ -389,333 +381,200 @@ to strafe (right):
 /**This code finds the skystone, scores it, and then parks*/
 
 
-        left_front_drive.setPower(0.3);
-        left_back_drive.setPower(0.3);
-        right_front_drive.setPower(0.3);
-        right_back_drive.setPower(0.3);
+        drive.goForward(0.75);
 
         sleep(750);
 
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
+        drive.stopDrive();
+
+        sleep(100);
 
 
-        while(opModeIsActive() && new ElapsedTime().milliseconds() >= 5){
-            telemetry.update();
-            blockPosBlue.updateVision();
-        }
-        blockPosBlue.stopVision();
 
-        Vuforia.SkystonePosition pose = blockPosBlue.getResults();
 
-        switch(pose) {
-            case LEFT://left
-                left_front_drive.setPower(0.6);
-                left_back_drive.setPower(-0.9);
-                right_front_drive.setPower(-0.6);
-                right_back_drive.setPower(0.9);
+        switch(skystonePosition) {
+            case 0://left
 
-                sleep(210);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
+                //Go up.
+                drive.goForward(0.5);
 
                 sleep(1000);
 
 
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
+                //Close claw
+                claw.setPosition(0);
+                sleep(700);
 
+                //Raise arm slightly to reduce the drag of the stone
+                arm.setPosition(0.1);
 
-                claw.setPosition(0.2);
-                sleep(3000);
-                claw.setPosition(.7);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.3);
-                left_back_drive.setPower(-0.3);
-                right_front_drive.setPower(-0.3);
-                right_back_drive.setPower(-0.3);
+                //Back up
+                drive.goBackward(0.5);
 
                 sleep(600);
 
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
+                drive.stopDrive();
 
-                sleep(500);
 
-                left_front_drive.setPower(1);
-                left_back_drive.setPower(1);
-                right_front_drive.setPower(-1);
-                right_back_drive.setPower(-1);
+                sleep(100);
+
+                //Turn to face bridge
+                turnTo(-90, 0.7);
 
                 sleep(200);
 
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
+                //Go under bridge
+                drive.goForward(0.8);
 
-                sleep(500);
+                sleep(1400);
 
-                left_front_drive.setPower(1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(-1);
-                right_back_drive.setPower(1);
-
-                sleep(1100);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                claw.setPosition(0.2);
-                sleep(3000);
-                claw.setPosition(.7);
-
-                sleep(500);
-
-                left_front_drive.setPower(-1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(1);
-                right_back_drive.setPower(1);
-
-                sleep(300);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.55);
-                left_back_drive.setPower(1);
-                right_front_drive.setPower(0.65);
-                right_back_drive.setPower(-1);
-
-                sleep(600);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-                break;
-
-            case RIGHT://middle
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
-
-                sleep(1000);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-
-                claw.setPosition(0.2);
-                sleep(3000);
-                claw.setPosition(.7);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.3);
-                left_back_drive.setPower(-0.3);
-                right_front_drive.setPower(-0.3);
-                right_back_drive.setPower(-0.3);
-
-                sleep(475);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(-1);
-                right_back_drive.setPower(1);
-
-                sleep(1200);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                claw.setPosition(0.2);
-                sleep(3000);
-                claw.setPosition(.7);
-
-                sleep(500);
-
-                left_front_drive.setPower(-1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(1);
-                right_back_drive.setPower(1);
-
-                sleep(300);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.55);
-                left_back_drive.setPower(1);
-                right_front_drive.setPower(0.65);
-                right_back_drive.setPower(-1);
-
-                sleep(600);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                break;
-
-            case UNSEEN://right
-                left_front_drive.setPower(-0.6);
-                left_back_drive.setPower(0.9);
-                right_front_drive.setPower(0.6);
-                right_back_drive.setPower(-0.9);
-
-                sleep(140);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
-
-                sleep(1000);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-
-                claw.setPosition(0.2);
-                sleep(3000);
-                claw.setPosition(.7);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.3);
-                left_back_drive.setPower(-0.3);
-                right_front_drive.setPower(-0.3);
-                right_back_drive.setPower(-0.3);
-
-                sleep(475);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(-1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(1);
-                right_back_drive.setPower(1);
+                //Stop and put down arm
+                drive.stopDrive();
+                arm.setPosition(0);
 
                 sleep(200);
 
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
+                //release stone
+                claw.setPosition(0.4);
 
                 sleep(500);
 
-                left_front_drive.setPower(1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(-1);
-                right_back_drive.setPower(1);
-
-                sleep(1300);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                claw.setPosition(0.2);
-                sleep(3000);
-                claw.setPosition(.7);
-
-                sleep(500);
-
-                left_front_drive.setPower(-1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(1);
-                right_back_drive.setPower(1);
+                //Go backward
+                drive.goBackward(0.5);
 
                 sleep(300);
 
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
+                //Ending positions
+                claw.setPosition(0);
 
-                sleep(500);
+                //Stop and park under bridge
+                drive.stopDrive();
 
-                left_front_drive.setPower(-0.55);
-                left_back_drive.setPower(1);
-                right_front_drive.setPower(0.65);
-                right_back_drive.setPower(-1);
+                break;
+
+            case 1://middle
+
+                //Align
+                drive.strafeR(0.3);
+                sleep(100);
+                drive.stopDrive();
+                sleep(100);
+
+                //Move up
+                drive.goForward(0.5);
 
                 sleep(700);
 
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
+                drive.stopDrive();
+
+
+                //Grab stone
+                claw.setPosition(0);
 
                 sleep(500);
+
+                //Raise arm slightly to reduce the drag of the stone
+                arm.setPosition(0.1);
+
+                //Back up
+                drive.goBackward(0.5);
+
+                sleep(600);
+
+                drive.stopDrive();
+
+                sleep(200);
+
+                //Turn toward bridge
+                turnTo(-90, 0.7);
+
+                sleep(500);
+
+                //Go under bridge
+                drive.goForward(0.8);
+
+                sleep(1500);
+
+                //Stop and put down arm
+                drive.stopDrive();
+                arm.setPosition(0);
+
+                sleep(300);
+
+                //Release stone
+                claw.setPosition(0.4);
+
+                sleep(500);
+                //Go backward
+                drive.goBackward(0.5);
+
+                sleep(300);
+
+                //Ending positions
+                claw.setPosition(0);
+
+                //Stop and park under bridge
+                drive.stopDrive();
+
+                break;
+
+            case 2://right
+                drive.strafeR(0.8);
+
+                sleep(140);
+
+                drive.stopDrive();
+
+                sleep(500);
+
+                drive.goForward(0.5);
+
+                sleep(1000);
+
+                drive.stopDrive();
+
+
+                claw.setPosition(0);
+
+                sleep(500);
+                arm.setPosition(0.1);
+
+                drive.goBackward(0.5);
+
+                sleep(475);
+
+                drive.stopDrive();
+
+                sleep(500);
+
+                turnTo(-90, 0.7);
+
+                sleep(200);
+
+                drive.goForward(0.8);
+
+                sleep(1300);
+
+                drive.stopDrive();
+                arm.setPosition(0);
+
+                sleep(500);
+
+                claw.setPosition(0.4);
+
+                sleep(500);
+
+                drive.goBackward(0.5);
+
+                sleep(200);
+
+                drive.stopDrive();
+
+                sleep(500);
+
+                claw.setPosition(0);
+
+                sleep(700);
                 break;
         }
 //--------------------------------------------------------------------------------------------------------------------------------------------------------

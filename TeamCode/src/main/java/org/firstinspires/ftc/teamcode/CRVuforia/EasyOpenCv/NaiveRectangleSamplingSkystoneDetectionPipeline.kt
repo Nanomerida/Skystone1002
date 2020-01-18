@@ -17,18 +17,23 @@ class NaiveRectangleSamplingSkystoneDetectionPipeline : Init3BlockDetection() {
     private val samplingCircleColor = Scalar(225.0, 52.0, 235.0)
     private val samplingCircleThickness = -1
 
+    private val markingRectWidth = 160
+    private val markingRectHeight = 80
+    private val markingRectColor = Scalar(255.0, 55.0, 0.0)
+
     private val sampleSectionDivLength = 60
     private val sampleSectionDivColor = Scalar(00.0, 255.0, 40.0)
     private val sampleSectionDivThickness = 4
-    private val sectionDivHalfLenght = sampleSectionDivLength / 2
 
     private val logoColor = Scalar(0.0, 255.0, 190.0)
-    private val LOGO = Point((640 / 2 - 150).toDouble(), 90.0)
+    private val LOGO = Point((640 / 2 - 90).toDouble(), 90.0)
 
+    //Define the relative locations of the sampling spaces
     private val samplePointPercentages = arrayOf(
             arrayOf(.18, .59), arrayOf(.5, .59), arrayOf(.82, .59)
     )
 
+    //Construct the sampling space points
     private val samplePoints = samplePointPercentages.map {
         arrayOf(
                 Point(
@@ -39,6 +44,21 @@ class NaiveRectangleSamplingSkystoneDetectionPipeline : Init3BlockDetection() {
                         it[0] * width + samplingRectWidth / 2,
                         it[1] * height + samplingRectHeight / 2
                 )
+        )
+    }
+    //Make the rectangles for marking
+    private val markingRectangles = samplePointPercentages.map {
+        arrayOf(
+
+                    Point(
+                            it[0] * width - markingRectWidth / 2,
+                            it[1] * height - markingRectHeight / 2
+                    ),
+                    Point(
+                            it[0] * width + markingRectWidth / 2,
+                            it[1] * height + markingRectHeight / 2
+                    )
+
         )
     }
 
@@ -90,7 +110,7 @@ class NaiveRectangleSamplingSkystoneDetectionPipeline : Init3BlockDetection() {
                 input,
                 "FOUND!",
                 Point(
-                        ((detectedPoint[0].x + detectedPoint[1].x) / 2) - 50,
+                        ((detectedPoint[0].x + detectedPoint[1].x) / 2) - 40,
                         ((detectedPoint[0].y + detectedPoint[1].y) / 2) - 40
                 ),
                 Imgproc.FONT_HERSHEY_PLAIN,
@@ -139,8 +159,16 @@ class NaiveRectangleSamplingSkystoneDetectionPipeline : Init3BlockDetection() {
                 Imgproc.FONT_HERSHEY_PLAIN,
                 1.75,
                 logoColor,
-                5
+                4
 
+        )
+
+        Imgproc.rectangle(
+                input,
+                markingRectangles[detectedSkystonePosition][0],
+                markingRectangles[detectedSkystonePosition][1],
+                markingRectColor,
+                4
         )
 
 
