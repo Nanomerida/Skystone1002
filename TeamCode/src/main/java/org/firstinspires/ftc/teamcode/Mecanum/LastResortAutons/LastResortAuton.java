@@ -68,6 +68,7 @@ public class LastResortAuton extends LinearOpMode {
             left_back_drive.setPower(0);
             right_front_drive.setPower(0);
             right_back_drive.setPower(0);
+            sleep(100);
         }
 
     }
@@ -381,25 +382,30 @@ public class LastResortAuton extends LinearOpMode {
 /**This code finds the skystone, scores it, and then parks*/
 
 
-        drive.goForward(0.75);
-
+        drive.goForward(0.3);
         sleep(750);
 
         drive.stopDrive();
 
-        sleep(100);
-
-
-
+        //Set arm position
+        arm.setPosition(0.1);
 
         switch(skystonePosition) {
             case 0://left
+/*
+                //strafes left
+                drive.strafeL(1f);
+                sleep(160);
+
+                drive.stopDrive();*/
 
                 //Go up.
-                drive.goForward(0.5);
-
+                drive.goForward(0.3);
                 sleep(1000);
 
+                drive.stopDrive();
+
+                arm.setPosition(0);
 
                 //Close claw
                 claw.setPosition(0);
@@ -409,15 +415,13 @@ public class LastResortAuton extends LinearOpMode {
                 arm.setPosition(0.1);
 
                 //Back up
-                drive.goBackward(0.5);
-
+                drive.goBackward(0.3);
                 sleep(600);
+                /**haha funny number*/
 
                 drive.stopDrive();
 
-
-                sleep(100);
-
+/* Commented out because we're going to strafe. If that doesnt work then we can turn and go forward
                 //Turn to face bridge
                 turnTo(-90, 0.7);
 
@@ -427,11 +431,13 @@ public class LastResortAuton extends LinearOpMode {
                 drive.goForward(0.8);
 
                 sleep(1400);
+*/
+                drive.strafeL(1f);
+                sleep(1400);
 
                 //Stop and put down arm
                 drive.stopDrive();
                 arm.setPosition(0);
-
                 sleep(200);
 
                 //release stone
@@ -439,10 +445,12 @@ public class LastResortAuton extends LinearOpMode {
 
                 sleep(500);
 
-                //Go backward
+ /*               //Go backward
                 drive.goBackward(0.5);
+                sleep(300);*/
 
-                sleep(300);
+                drive.strafeR(1f);
+                sleep(600);
 
                 //Ending positions
                 claw.setPosition(0);
@@ -458,11 +466,9 @@ public class LastResortAuton extends LinearOpMode {
                 drive.strafeR(0.3);
                 sleep(100);
                 drive.stopDrive();
-                sleep(100);
 
                 //Move up
                 drive.goForward(0.5);
-
                 sleep(700);
 
                 drive.stopDrive();
@@ -470,7 +476,6 @@ public class LastResortAuton extends LinearOpMode {
 
                 //Grab stone
                 claw.setPosition(0);
-
                 sleep(500);
 
                 //Raise arm slightly to reduce the drag of the stone
@@ -478,13 +483,10 @@ public class LastResortAuton extends LinearOpMode {
 
                 //Back up
                 drive.goBackward(0.5);
-
                 sleep(600);
 
                 drive.stopDrive();
-
-                sleep(200);
-
+/*
                 //Turn toward bridge
                 turnTo(-90, 0.7);
 
@@ -493,22 +495,28 @@ public class LastResortAuton extends LinearOpMode {
                 //Go under bridge
                 drive.goForward(0.8);
 
-                sleep(1500);
+                sleep(1500);*/
+
+                drive.strafeL(1f);
+                sleep(1200);
 
                 //Stop and put down arm
                 drive.stopDrive();
-                arm.setPosition(0);
 
+                arm.setPosition(0);
                 sleep(300);
 
                 //Release stone
                 claw.setPosition(0.4);
-
                 sleep(500);
-                //Go backward
+
+/*                //Go backward
                 drive.goBackward(0.5);
 
-                sleep(300);
+                sleep(300);*/
+
+                drive.strafeR(1f);
+                sleep(600);
 
                 //Ending positions
                 claw.setPosition(0);
@@ -520,60 +528,51 @@ public class LastResortAuton extends LinearOpMode {
 
             case 2://right
                 drive.strafeR(0.8);
-
                 sleep(140);
 
                 drive.stopDrive();
 
-                sleep(500);
-
-                drive.goForward(0.5);
-
+                drive.goForward(0.3);
                 sleep(1000);
 
                 drive.stopDrive();
 
 
                 claw.setPosition(0);
-
                 sleep(500);
                 arm.setPosition(0.1);
 
                 drive.goBackward(0.5);
-
                 sleep(475);
 
                 drive.stopDrive();
 
-                sleep(500);
-
-                turnTo(-90, 0.7);
+/*                turnTo(-90, 0.7);
 
                 sleep(200);
 
                 drive.goForward(0.8);
 
-                sleep(1300);
+                sleep(1300);*/
 
-                drive.stopDrive();
+                drive.strafeL(1f);
+                sleep(1400);
+
                 arm.setPosition(0);
-
                 sleep(500);
 
                 claw.setPosition(0.4);
-
                 sleep(500);
 
                 drive.goBackward(0.5);
-
                 sleep(200);
 
                 drive.stopDrive();
 
-                sleep(500);
+                drive.strafeR(1f);
+                sleep(700);
 
                 claw.setPosition(0);
-
                 sleep(700);
                 break;
         }
