@@ -190,29 +190,38 @@ public class SimpleLogger {
     public void saveAs(LogType fileType) {
         try {
             //Use correct filename for requested file type
+            logName += "." + fileType.extension;
             File f = getLogFile(logName);
-            String out = "";
+            StringBuilder out = new StringBuilder();
             switch (fileType) {
                 case JSON:
                     Type logDataList = new TypeToken<List<LogEntry>>() {}.getType();
                     Gson g = SimpleGson.getInstance();
-                    out = g.toJson(logEntries, logDataList);
+                    out.append( g.toJson(logEntries, logDataList));
                     break;
                 case CSV:
-                    out = "time,tag,data\n";
+                    out.append( "time,tag,data\n");
                     for (LogEntry l : logEntries) {
-                        out += "\"" + l.time + "\"," + "\"" + l.title + "\"," + "\"" + l.data + "\"\n";
+                        out.append("\"").append(l.time).append("\",").append("\"").append(l.title).append("\",").append("\"").append(l.data).append("\"\n");
                     }
                     break;
                 case TEXT:
                     for (LogEntry l : logEntries) {
-                        out += l.time + ":[" + l.title + "]" + l.data + "\n";
+                        out.append(l.time).append(":[").append(l.title).append("]").append(l.data).append("\n");
                     }
                     break;
+                case XML:
+                    out.append( "<?xml version=" + "\"" + "1.0" + "\"" + "encoding=" + "\"" + "UTF-8" + "\"" + "?>"+ "\n");
+                    out.append("<Logs NumOfEntries=" + "\"").append(logEntries.size()).append("\"").append(">").append("\n");
+                    for(LogEntry l : logEntries){
+                        out.append("    " + "<entry" + " time=" + "\"").append(l.time).append("\"").append(" title=").append("\"").append(l.title).append("\"")
+                                .append(">").append(l.data).append("</entry>").append("\n");
+                    }
+                    out.append( "</Logs>");
             }
             FileWriter fw = new FileWriter(f.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(out);
+            bw.write(out.toString());
             bw.close();
         } catch (IOException e) {
             e.printStackTrace();
