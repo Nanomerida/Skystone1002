@@ -9,7 +9,7 @@ public final class DriveBaseVectors {
 
     public static final float[] strafeL = {-0.8f, 0.95f, 0.85f, -0.95f};
 
-    public static final float[] strafeR = {0.72f, -0.60f, -0.60f, 0.72f};
+    public static final float[] strafeR = {0.53f, -0.73f, -0.53f, 0.71f};
 /**Nelitha's edit:*/
     //public static final float[] strafeR = {0.8f, -0.95f, -0.95f, 0.95f};
 

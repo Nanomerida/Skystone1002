@@ -50,17 +50,17 @@ public class LastResortAuton extends LinearOpMode {
         }
 
         public void strafeL(double speed){
-            left_front_drive.setPower(-DriveBaseVectors.strafeR[0] * speed);
-            left_back_drive.setPower(-DriveBaseVectors.strafeR[1] * speed);
-            right_front_drive.setPower(-DriveBaseVectors.strafeR[2] * speed);
-            right_back_drive.setPower(-DriveBaseVectors.strafeR[3] * speed);
-        }
-
-        public void strafeR(double speed){
             left_front_drive.setPower(DriveBaseVectors.strafeR[0] * speed);
             left_back_drive.setPower(DriveBaseVectors.strafeR[1] * speed);
             right_front_drive.setPower(DriveBaseVectors.strafeR[2] * speed);
             right_back_drive.setPower(DriveBaseVectors.strafeR[3] * speed);
+        }
+
+        public void strafeR(double speed){
+            left_front_drive.setPower(-DriveBaseVectors.strafeR[0] * speed);
+            left_back_drive.setPower(-DriveBaseVectors.strafeR[1] * speed);
+            right_front_drive.setPower(-DriveBaseVectors.strafeR[2] * speed);
+            right_back_drive.setPower(-DriveBaseVectors.strafeR[3] * speed);
         }
 
         public void stopDrive(){
@@ -87,7 +87,7 @@ public class LastResortAuton extends LinearOpMode {
     private Orientation angles;
 
 
-    private static final double TURNING_ANGLE_P = 2;
+    private static final double TURNING_ANGLE_P = 4;
     private static final double TURNING_ANGLE_THRESHOLD = 1;
 
     private static int skystonePosition;
@@ -166,7 +166,7 @@ public class LastResortAuton extends LinearOpMode {
      *
      */
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         //This must be in the init because it needs the hardware map
         SubsystemVision vision = new SubsystemVision(hardwareMap, this);
@@ -227,7 +227,6 @@ public class LastResortAuton extends LinearOpMode {
         //Run vision in init
         while (!isStarted()){
 
-            vision.streamLoop();
             telemetry.update();
 
         }
@@ -415,24 +414,15 @@ public class LastResortAuton extends LinearOpMode {
                 arm.setPosition(0.1);
 
                 //Back up
-                drive.goBackward(0.3);
+                drive.goBackward(0.7);
                 sleep(600);
                 /**haha funny number*/
 
                 drive.stopDrive();
 
-/* Commented out because we're going to strafe. If that doesnt work then we can turn and go forward
-                //Turn to face bridge
-                turnTo(-90, 0.7);
 
-                sleep(200);
 
-                //Go under bridge
-                drive.goForward(0.8);
-
-                sleep(1400);
-*/
-                drive.strafeL(1f);
+                drive.strafeL(0.8f);
                 sleep(1400);
 
                 //Stop and put down arm
@@ -445,12 +435,12 @@ public class LastResortAuton extends LinearOpMode {
 
                 sleep(500);
 
- /*               //Go backward
+                //Go backward
                 drive.goBackward(0.5);
-                sleep(300);*/
+                sleep(300);
 
-                drive.strafeR(1f);
-                sleep(600);
+                //drive.strafeR(1f);
+                //sleep(600);
 
                 //Ending positions
                 claw.setPosition(0);
@@ -463,8 +453,8 @@ public class LastResortAuton extends LinearOpMode {
             case 1://middle
 
                 //Align
-                drive.strafeR(0.3);
-                sleep(100);
+                drive.strafeR(0.7);
+                sleep(900);
                 drive.stopDrive();
 
                 //Move up
@@ -482,22 +472,13 @@ public class LastResortAuton extends LinearOpMode {
                 arm.setPosition(0.1);
 
                 //Back up
-                drive.goBackward(0.5);
+                drive.goBackward(0.7);
                 sleep(600);
 
                 drive.stopDrive();
-/*
-                //Turn toward bridge
-                turnTo(-90, 0.7);
 
-                sleep(500);
 
-                //Go under bridge
-                drive.goForward(0.8);
-
-                sleep(1500);*/
-
-                drive.strafeL(1f);
+                drive.strafeL(0.8f);
                 sleep(1200);
 
                 //Stop and put down arm
@@ -510,13 +491,13 @@ public class LastResortAuton extends LinearOpMode {
                 claw.setPosition(0.4);
                 sleep(500);
 
-/*                //Go backward
+                //Go backward
                 drive.goBackward(0.5);
 
-                sleep(300);*/
+                sleep(300);
 
-                drive.strafeR(1f);
-                sleep(600);
+                //drive.strafeR(1f);
+                //sleep(600);
 
                 //Ending positions
                 claw.setPosition(0);
@@ -528,7 +509,7 @@ public class LastResortAuton extends LinearOpMode {
 
             case 2://right
                 drive.strafeR(0.8);
-                sleep(140);
+                sleep(1100);
 
                 drive.stopDrive();
 
@@ -542,21 +523,21 @@ public class LastResortAuton extends LinearOpMode {
                 sleep(500);
                 arm.setPosition(0.1);
 
-                drive.goBackward(0.5);
-                sleep(475);
+                drive.goBackward(0.7);
+                sleep(600);
 
                 drive.stopDrive();
 
-/*                turnTo(-90, 0.7);
+                turnTo(-90, 0.7);
 
                 sleep(200);
 
                 drive.goForward(0.8);
 
-                sleep(1300);*/
+                sleep(1300);
 
-                drive.strafeL(1f);
-                sleep(1400);
+                //drive.strafeL(1f);
+                //sleep(1400);
 
                 arm.setPosition(0);
                 sleep(500);
@@ -569,8 +550,8 @@ public class LastResortAuton extends LinearOpMode {
 
                 drive.stopDrive();
 
-                drive.strafeR(1f);
-                sleep(700);
+                //drive.strafeR(1f);
+                //sleep(700);
 
                 claw.setPosition(0);
                 sleep(700);

@@ -107,7 +107,7 @@ public class TeleOpMain extends OpMode {
         } */
 
         if(gamepad2.left_bumper){
-            claw.setPosition(0);
+            claw.setPosition(0.05);
         }
         else if(gamepad2.right_bumper){
             claw.setPosition(0.4);
@@ -131,7 +131,7 @@ public class TeleOpMain extends OpMode {
 
     private Toggle armToggle = () -> {
         if(gamepad2.a){
-            arm.setPosition(0);
+            arm.setPosition(0.04);
         }
         else if(gamepad2.b){
             arm.setPosition(0.25);
@@ -302,9 +302,11 @@ public class TeleOpMain extends OpMode {
         //Calculate power for drive
         //outputs = m_v_mult(matrix, inputs);
 
+        float[] input = {gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x};
+        float[] output = m_v_mult(matrix, input);
 
-        //Doesn't need to pass any parameters
-        driver.drive();
+        driver.drive(output);
+
 
 
         //Controls arm
