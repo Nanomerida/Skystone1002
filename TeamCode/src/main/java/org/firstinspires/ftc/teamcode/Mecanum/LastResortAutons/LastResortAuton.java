@@ -63,6 +63,13 @@ public class LastResortAuton extends LinearOpMode {
             right_back_drive.setPower(-DriveBaseVectors.strafeR[3] * speed);
         }
 
+        public void turnCW(double speed){
+            left_front_drive.setPower(DriveBaseVectors.turnCW[0]  * speed);
+            left_back_drive.setPower(DriveBaseVectors.turnCW[1]  * speed);
+            right_front_drive.setPower(DriveBaseVectors.turnCW[2]  * speed);
+            right_back_drive.setPower(DriveBaseVectors.turnCW[3]  * speed);
+        }
+
         public void stopDrive(){
             left_front_drive.setPower(0);
             left_back_drive.setPower(0);
@@ -211,15 +218,7 @@ public class LastResortAuton extends LinearOpMode {
         imu.initialize(parameters);
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        telemetry.log().add("Moving arm to init pos");
-        telemetry.update();
-        arm.setPosition(0);
 
-        sleep(300);
-
-        telemetry.log().add("Moving claw to init pos");
-        telemetry.update();
-        claw.setPosition(0.4);
 
 
         telemetry.log().add("Vision Started!");
@@ -380,70 +379,67 @@ public class LastResortAuton extends LinearOpMode {
 // ---------------------------------------------------------------------------------------------------------------------------
 /**This code finds the skystone, scores it, and then parks*/
 
+        arm.setPosition(1);
+        claw.setPosition(0.4);
 
         drive.goForward(0.3);
         sleep(750);
 
         drive.stopDrive();
 
-        //Set arm position
-        arm.setPosition(0.1);
 
         switch(skystonePosition) {
             case 0://left
-/*
-                //strafes left
-                drive.strafeL(1f);
-                sleep(160);
-
-                drive.stopDrive();*/
 
                 //Go up.
-                drive.goForward(0.3);
-                sleep(1000);
+                drive.goForward(0.5);
+                sleep(400);
 
                 drive.stopDrive();
 
-                arm.setPosition(0);
 
                 //Close claw
-                claw.setPosition(0);
+                claw.setPosition(0.05);
                 sleep(700);
 
-                //Raise arm slightly to reduce the drag of the stone
-                arm.setPosition(0.1);
 
                 //Back up
                 drive.goBackward(0.7);
-                sleep(600);
+                sleep(700);
                 /**haha funny number*/
 
                 drive.stopDrive();
 
 
 
-                drive.strafeL(0.8f);
-                sleep(1400);
+                drive.strafeR(1f);
+                sleep(700);
 
-                //Stop and put down arm
                 drive.stopDrive();
-                arm.setPosition(0);
+
+                drive.turnCW(1);
+                sleep(1200);
+
+                drive.stopDrive();
+
+
+                drive.goForward(1f);
+                sleep(700);
+                drive.stopDrive();
                 sleep(200);
+
 
                 //release stone
                 claw.setPosition(0.4);
 
                 sleep(500);
 
-                //Go backward
-                drive.goBackward(0.5);
-                sleep(300);
 
-                //drive.strafeR(1f);
-                //sleep(600);
+                drive.strafeL(1f);
+                sleep(600);
 
                 //Ending positions
-                claw.setPosition(0);
+                claw.setPosition(0.1);
 
                 //Stop and park under bridge
                 drive.stopDrive();
@@ -453,23 +449,21 @@ public class LastResortAuton extends LinearOpMode {
             case 1://middle
 
                 //Align
-                drive.strafeR(0.7);
-                sleep(900);
+                drive.strafeR(1);
+                sleep(300);
                 drive.stopDrive();
 
                 //Move up
                 drive.goForward(0.5);
-                sleep(700);
+                sleep(400);
 
                 drive.stopDrive();
 
 
                 //Grab stone
-                claw.setPosition(0);
+                claw.setPosition(0.05);
                 sleep(500);
 
-                //Raise arm slightly to reduce the drag of the stone
-                arm.setPosition(0.1);
 
                 //Back up
                 drive.goBackward(0.7);
@@ -478,29 +472,33 @@ public class LastResortAuton extends LinearOpMode {
                 drive.stopDrive();
 
 
-                drive.strafeL(0.8f);
-                sleep(1200);
+                drive.strafeR(1f);
+                sleep(600);
 
-                //Stop and put down arm
                 drive.stopDrive();
 
-                arm.setPosition(0);
-                sleep(300);
+                drive.turnCW(1);
+                sleep(1200);
+                drive.stopDrive();
+
+                sleep(200);
+
+
+                drive.goForward(1f);
+                sleep(700);
+                drive.stopDrive();
+                sleep(200);
 
                 //Release stone
                 claw.setPosition(0.4);
                 sleep(500);
 
-                //Go backward
-                drive.goBackward(0.5);
 
-                sleep(300);
-
-                //drive.strafeR(1f);
-                //sleep(600);
+                drive.strafeL(1f);
+                sleep(600);
 
                 //Ending positions
-                claw.setPosition(0);
+                claw.setPosition(0.05);
 
                 //Stop and park under bridge
                 drive.stopDrive();
@@ -508,8 +506,8 @@ public class LastResortAuton extends LinearOpMode {
                 break;
 
             case 2://right
-                drive.strafeR(0.8);
-                sleep(1100);
+                drive.strafeR(1);
+                sleep(600);
 
                 drive.stopDrive();
 
@@ -519,41 +517,43 @@ public class LastResortAuton extends LinearOpMode {
                 drive.stopDrive();
 
 
-                claw.setPosition(0);
+                claw.setPosition(0.05);
                 sleep(500);
-                arm.setPosition(0.1);
 
                 drive.goBackward(0.7);
                 sleep(600);
 
                 drive.stopDrive();
 
-                turnTo(-90, 0.7);
-
                 sleep(200);
 
-                drive.goForward(0.8);
-
-                sleep(1300);
-
-                //drive.strafeL(1f);
-                //sleep(1400);
-
-                arm.setPosition(0);
-                sleep(500);
-
-                claw.setPosition(0.4);
-                sleep(500);
-
-                drive.goBackward(0.5);
-                sleep(200);
+                drive.strafeL(1f);
+                sleep(700);
 
                 drive.stopDrive();
 
-                //drive.strafeR(1f);
-                //sleep(700);
+                drive.turnCW(1);
+                sleep(1200);
+                drive.stopDrive();
 
-                claw.setPosition(0);
+                sleep(200);
+
+
+                drive.goForward(1f);
+                sleep(700);
+                drive.stopDrive();
+                sleep(200);
+
+                drive.stopDrive();
+                claw.setPosition(0.4);
+                sleep(500);
+
+
+
+                drive.strafeR(0.9f);
+                sleep(700);
+
+                claw.setPosition(0.05);
                 sleep(700);
                 break;
         }

@@ -23,9 +23,9 @@ public class BaseVectorTuning extends OpMode {
 
 
     public static double strafeR_LeftFront = 0.72f;
-    public static double strafeR_LeftBack = -0.60;
-    public static double strafeR_RightFront = -0.60f;
-    public static double strafeR_RightBack = 0.72f;
+    public static double strafeR_LeftBack = -0.70;
+    public static double strafeR_RightFront = -0.70f;
+    public static double strafeR_RightBack = 0.74f;
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -60,7 +60,7 @@ public class BaseVectorTuning extends OpMode {
     //Array to hold movement instructions
     //private float[][] matrix = {{0.75f, 1.0f, 0.7f, 1.0f}, {0.8f, -0.95f, -0.85f, 0.95f}, {0.75f, 1.0f, -0.75f, -1.0f}};
 
-    public static float[][] matrix = {{1.0f, 1.0f, 1.0f, 1.0f}, {0.72f, -0.60f, -0.60f, 0.72f}, {0.75f, 1.0f, -0.75f, -1.0f}};
+    public static float[][] matrix = {{1.0f, 1.0f, 1.0f, 1.0f}, {0.72f, -0.70f, -0.70f, 0.74f}, {0.75f, 1.0f, -0.75f, -1.0f}};
 
 
     /**Update the slow mode status
@@ -101,9 +101,10 @@ public class BaseVectorTuning extends OpMode {
         matrix[1][2] = (float) strafeR_RightFront;
         matrix[1][3] = (float) strafeR_RightBack;
 
-        driver.update();
-        driver.drive();
+        float[] input = {gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x};
+        float[] output = m_v_mult(matrix, input);
 
+        driver.drive(output);
 
     }
 

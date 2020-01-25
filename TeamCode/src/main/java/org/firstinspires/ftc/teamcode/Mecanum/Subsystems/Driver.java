@@ -125,10 +125,10 @@ public class Driver {
 
                 break;
             case FAST_REVERSE:
-                left_front_drive.setPower(outputs[0] * -0.75f);
-                left_back_drive.setPower(outputs[1] * -0.75f);
-                right_front_drive.setPower(outputs[2] * -0.75f);
-                right_back_drive.setPower(outputs[3] * -0.75f);
+                left_front_drive.setPower(outputs[0] * -0.5f);
+                left_back_drive.setPower(outputs[1] * -0.5f);
+                right_front_drive.setPower(outputs[2] * -0.5f);
+                right_back_drive.setPower(outputs[3] * -0.5f);
         }
     }
 
