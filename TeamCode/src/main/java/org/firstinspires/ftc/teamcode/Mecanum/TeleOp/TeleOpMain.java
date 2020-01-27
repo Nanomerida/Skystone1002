@@ -32,17 +32,10 @@ import java.util.Random;
 
 public class TeleOpMain extends OpMode {
 
-    TeleOpFieldCentric fieldCentric;
-    Driver driver;
-    FoundationMover foundationMover;
-    ElapsedTime ping = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+    private Driver driver;
+    private FoundationMover foundationMover;
 
 
-    /**
-     * Deserialize the controls
-     */
-    //DriverConfig.DriverControls driverControls = DriverConfig.deserializeDriver();
-    //DriverConfig.ManipulatorControls manipulatorControls = DriverConfig.deserializeManip();
 
 
     public ExpansionHubMotor left_front_drive = null;
@@ -67,24 +60,10 @@ public class TeleOpMain extends OpMode {
         LOCKED_ON_FOUNDATION,
         FULLY_UP
     }
-    enum ClawState {
-        OPEN,
-        CLOSED
-    }
-
-    enum LiftState {
-        MOVING,
-        HOLDING_AT_POSITION,
-        AT_BOTTOM,
-        MOVING_TO_BOTTOM
-
-    }
 
 
 
     private FoundationState foundationMoverState = FoundationState.LOCKED_ON_FOUNDATION;
-    private ClawState clawState = ClawState.OPEN;
-    private LiftState liftState = LiftState.AT_BOTTOM;
 
 
 
@@ -139,12 +118,7 @@ public class TeleOpMain extends OpMode {
     };
 
     private Func<Boolean> limitSwitches = () -> {
-        if(!revBulkData1.getDigitalInputState(left_bottom_switch) || !revBulkData10.getDigitalInputState(right_bottom_switch)){
-           return true;
-        }
-        else {
-            return false;
-        }
+        return !revBulkData1.getDigitalInputState(left_bottom_switch) || !revBulkData10.getDigitalInputState(right_bottom_switch);
     };
 
 
@@ -227,31 +201,11 @@ public class TeleOpMain extends OpMode {
     @Override
     public void start() {
         arm.setPosition(1);
+
     }
 
 
-    /**
-     * Current driver/manipulator controls
-     *
-     * Gamepad 1 = Driver(Parker)
-     * Gamepad 2 - Manipulator(Jonah)
-     *
-     *
-     * Gamepad 1 / left_stick = strafing
-     * Gamepad 1 / right_stick = turning
-     * Gamepad 1 / left_bumper = slow mode / normal activate
-     * Gamepad 1 / right_bumper = reverse / normal activate
-     * Gamepad 2 / dpad_up = lift up / lift hold toggle
-     * Gamepad 2 / dpad_down = lift down / lift hold toggle
-     * Gamepad 2 / left_bumper = claw open
-     * Gamepad 2 / right_bumper = claw closed
-     * Gamepad 2 / x = arm down
-     * Gamepad 2 / y = arm up (slightly)
-     * Gamepad 2 / right_stick = foundation movers
-     *
-     * Controls to be changed with the Config OpMode in future.
-     *
-     */
+
     @Override
     public void loop() {
 
@@ -345,9 +299,6 @@ public class TeleOpMain extends OpMode {
         lift_right.setPower(0);
     }
 
-    public interface ArcadeInput {
-        float[] inputs();
-    }
 
 
 }

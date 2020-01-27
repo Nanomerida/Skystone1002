@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.CRVuforia.Vuforia;
 import org.firstinspires.ftc.teamcode.Methods.GeneralMethods;
 import org.firstinspires.ftc.teamcode.hardware.DriveBaseVectors;
 
-@Autonomous(name="Last Resort RedLoadingZone", group = "Last Resort")
-public class LastResortAuton extends LinearOpMode {
+@Autonomous(name="Last Resort BlueLoadingZone", group = "Last Resort")
+public class LastResortAutoBlue extends LinearOpMode {
 
     class TimeBasedMover {
 
@@ -181,7 +181,6 @@ public class LastResortAuton extends LinearOpMode {
         vision.initHardware();
 
 
-
         left_front_drive = hardwareMap.get(DcMotor.class, "left_front_drive");
         left_back_drive = hardwareMap.get(DcMotor.class, "left_back_drive");
         right_front_drive = hardwareMap.get(DcMotor.class, "right_front_drive");
@@ -200,7 +199,7 @@ public class LastResortAuton extends LinearOpMode {
         right_back_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Initialize a simple drive base
-        drive = new TimeBasedMover(new DcMotor[] {left_front_drive, left_back_drive, right_front_drive, right_back_drive});
+        drive = new TimeBasedMover(new DcMotor[]{left_front_drive, left_back_drive, right_front_drive, right_back_drive});
 
 
         // MORE IMU STUFF
@@ -219,13 +218,11 @@ public class LastResortAuton extends LinearOpMode {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
-
-
         telemetry.log().add("Vision Started!");
         vision.startVision();
         telemetry.addData("Current Skystone", () -> vision.pipeline.getDetectedSkystonePosition());
         //Run vision in init
-        while (!isStarted()){
+        while (!isStarted()) {
 
             telemetry.update();
 
@@ -240,16 +237,6 @@ public class LastResortAuton extends LinearOpMode {
 
         telemetry.log().add("Going toward skystone: ",
                 skystonePosition);
-
-
-
-
-
-
-
-
-
-
 
 
 //---------------------------------------------------------------------------------------------------------------------------
@@ -392,12 +379,8 @@ public class LastResortAuton extends LinearOpMode {
         drive.stopDrive();
 
 
-        switch(skystonePosition) {
+        switch (skystonePosition) {
             case 0://left
-
-                drive.strafeL(1);
-                sleep(300);
-                drive.stopDrive();
 
                 //Go up.
                 drive.goForward(0.5);
@@ -418,7 +401,7 @@ public class LastResortAuton extends LinearOpMode {
 
                 drive.stopDrive();
 
-                drive.turnCW(1);
+                drive.turnCW(-1);
                 sleep(1200);
 
                 drive.stopDrive();
@@ -436,11 +419,11 @@ public class LastResortAuton extends LinearOpMode {
                 sleep(500);
 
 
-                drive.goBackward(0.5);
+                drive.strafeL(1f);
+                sleep(600);
 
-                sleep(500);
                 //Ending positions
-                claw.setPosition(0.05);
+                claw.setPosition(0.1);
 
                 //Stop and park under bridge
                 drive.stopDrive();
@@ -450,7 +433,7 @@ public class LastResortAuton extends LinearOpMode {
             case 1://middle
 
                 //Align
-                drive.strafeL(1);
+                drive.strafeR(1);
                 sleep(400);
                 drive.stopDrive();
 
@@ -473,8 +456,8 @@ public class LastResortAuton extends LinearOpMode {
                 drive.stopDrive();
 
 
-                drive.turnCW(1);
-                sleep(1200);
+                drive.turnCW(-1);
+                sleep(800);
                 drive.stopDrive();
 
                 sleep(200);
@@ -490,8 +473,8 @@ public class LastResortAuton extends LinearOpMode {
                 sleep(500);
 
 
-                drive.goBackward(0.5);
-                sleep(500);
+                drive.strafeL(1f);
+                sleep(600);
 
                 //Ending positions
                 claw.setPosition(0.05);
@@ -503,7 +486,7 @@ public class LastResortAuton extends LinearOpMode {
 
             case 2://right
                 drive.strafeR(1);
-                sleep(900);
+                sleep(600);
 
                 drive.stopDrive();
 
@@ -525,7 +508,7 @@ public class LastResortAuton extends LinearOpMode {
 
                 drive.stopDrive();
 
-                drive.turnCW(1);
+                drive.turnCW(-1);
                 sleep(1200);
                 drive.stopDrive();
 
@@ -542,276 +525,12 @@ public class LastResortAuton extends LinearOpMode {
                 sleep(500);
 
 
-
-                drive.goBackward(0.5);
-                sleep(500);
+                drive.strafeR(0.9f);
+                sleep(700);
 
                 claw.setPosition(0.05);
                 sleep(700);
                 break;
         }
-//--------------------------------------------------------------------------------------------------------------------------------------------------------
-/**This is just to test something*//*
-        left_front_drive.setPower(0.3);
-        left_back_drive.setPower(0.3);
-        right_front_drive.setPower(0.3);
-        right_back_drive.setPower(0.3);
-
-        sleep(750);
-
-        left_front_drive.setPower(0);
-        left_back_drive.setPower(0);
-        right_front_drive.setPower(0);
-        right_back_drive.setPower(0);
-
-
-        int skystonePos = blockPosBlue.visionTest();
-
-        switch(skystonePos) {
-            case 0://left
-                left_front_drive.setPower(0.6);
-                sleep(500);
-          /*      left_back_drive.setPower(-0.9);
-                right_front_drive.setPower(-0.6);
-                right_back_drive.setPower(0.9);
-
-                sleep(185);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
-
-                sleep(1000);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.3);
-                left_back_drive.setPower(-0.3);
-                right_front_drive.setPower(-0.3);
-                right_back_drive.setPower(-0.3);
-
-                sleep(600);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(1);
-                left_back_drive.setPower(1);
-                right_front_drive.setPower(-1);
-                right_back_drive.setPower(-1);
-
-                sleep(200);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(-1);
-                right_back_drive.setPower(1);
-
-                sleep(1400);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
-
-                sleep(250);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-
-                left_front_drive.setPower(-1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(1);
-                right_back_drive.setPower(1);
-
-                sleep(200);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                arm.setPower(-0.69420);
-                sleep(2000);
-
-                arm.setPower(0.69420);
-                sleep(2000);
-
-
-                left_front_drive.setPower(-1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(1);
-                right_back_drive.setPower(1);
-
-                sleep(200);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.55);
-                left_back_drive.setPower(1);
-                right_front_drive.setPower(0.65);
-                right_back_drive.setPower(-1);
-
-                sleep(1000);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);*/
-                /*break;
-            case 1://middle
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
-
-                sleep(1000);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.3);
-                left_back_drive.setPower(-0.3);
-                right_front_drive.setPower(-0.3);
-                right_back_drive.setPower(-0.3);
-
-                sleep(475);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(-1);
-                right_back_drive.setPower(1);
-
-                sleep(1400);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(0.3);
-                left_back_drive.setPower(0.3);
-                right_front_drive.setPower(0.3);
-                right_back_drive.setPower(0.3);
-
-                sleep(250);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-
-                left_front_drive.setPower(-1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(1);
-                right_back_drive.setPower(1);
-
-                sleep(200);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                arm.setPower(-0.69420);
-                sleep(2000);
-
-                arm.setPower(0.69420);
-                sleep(2000);
-
-
-                left_front_drive.setPower(-1);
-                left_back_drive.setPower(-1);
-                right_front_drive.setPower(1);
-                right_back_drive.setPower(1);
-
-                sleep(200);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                sleep(500);
-
-                left_front_drive.setPower(-0.55);
-                left_back_drive.setPower(1);
-                right_front_drive.setPower(0.65);
-                right_back_drive.setPower(-1);
-
-                sleep(1000);
-
-                left_front_drive.setPower(0);
-                left_back_drive.setPower(0);
-                right_front_drive.setPower(0);
-                right_back_drive.setPower(0);
-
-                break;
-            case 2://right
-                right_front_drive.setPower(1);
-                sleep(500);
-                break;
-        }*/
     }
 }

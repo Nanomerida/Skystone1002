@@ -32,7 +32,6 @@ public class Driver {
     private Gamepad driver;
     private DriveState driveState = DriveState.ULTRA_EPIC_FAST;
 
-    TeleOpMain.ArcadeInput arcadeInput;
 
     private float[] inputs;
 
@@ -48,7 +47,6 @@ public class Driver {
         right_front_drive =  hardwareMap.get(ExpansionHubMotor.class, "right_front_drive");
         right_back_drive =  hardwareMap.get(ExpansionHubMotor.class, "right_back_drive");
 
-        arcadeInput = () -> new float[] {this.driver.left_stick_y, this.driver.left_stick_x, -this.driver.right_stick_x};
 
 
     }
@@ -98,10 +96,10 @@ public class Driver {
 
                 break;
             case FAST_REVERSE:
-                left_front_drive.setPower(outputs[0] * -0.5f);
-                left_back_drive.setPower(outputs[1] * -0.5f);
-                right_front_drive.setPower(outputs[2] * -0.5f);
-                right_back_drive.setPower(outputs[3] * -0.5f);
+                left_front_drive.setPower(outputs[0] * -1f);
+                left_back_drive.setPower(outputs[1] * -1f);
+                right_front_drive.setPower(outputs[2] * -1f);
+                right_back_drive.setPower(outputs[3] * -1f);
         }
 
     }
