@@ -66,7 +66,7 @@ public class TeleOpMain extends OpMode {
     private FoundationState foundationMoverState = FoundationState.LOCKED_ON_FOUNDATION;
 
 
-
+/**Funny Number*/
 
 
 
@@ -200,7 +200,7 @@ public class TeleOpMain extends OpMode {
 
     @Override
     public void start() {
-        arm.setPosition(1);
+        //arm.setPosition(1);
 
     }
 
