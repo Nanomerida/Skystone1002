@@ -69,9 +69,6 @@ public class Vuforia {
     public VuforiaTrackables targetsSkyStone;// = vuforia.loadTrackablesFromAsset("Skystone");
     public VuforiaTrackable stoneTarget;// = targetsSkyStone.get(0);
 
-
-
-
     /** This method initiates vuforia. Make sure to pass a webcam object
      *
      * @param awebcamName The webcam object
@@ -89,7 +86,6 @@ public class Vuforia {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-
 
         /*
          * We also indicate which camera on the RC we wish to use.
@@ -120,8 +116,7 @@ public class Vuforia {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-
-
+        
         /*
          * We also indicate which camera on the RC we wish to use.
          */
@@ -135,7 +130,6 @@ public class Vuforia {
 
     }
 
-
     /**The method that looks for the Skystone for 5 seconds
      *
      * @return An enum value holding the results.
@@ -143,9 +137,6 @@ public class Vuforia {
     public SkystonePosition testVision() {
 
         stoneTarget.setName("Skystone");
-
-
-
 
         targetsSkyStone.activate();
         searchTime.reset();
@@ -162,8 +153,6 @@ public class Vuforia {
             }
         }
         if(stonePosition != SkystonePosition.LEFT && stonePosition != SkystonePosition.RIGHT) stonePosition = SkystonePosition.UNSEEN;
-       
-
 
         // Disable Tracking when we are done;
         targetsSkyStone.deactivate();
@@ -179,22 +168,13 @@ public class Vuforia {
     public void startVision() {
 
         stoneTarget.setName("Skystone");
-
-
-
-
         targetsSkyStone.activate();
         stonePosition = SkystonePosition.UNSEEN;
 
         runVision = true;
-
-
-
     }
 
     public void updateVision() {
-
-
 
             // check all the trackable targets to see which one (if any) is visible.
             if (((VuforiaTrackableDefaultListener) stoneTarget.getListener()).isVisible()) {
@@ -228,20 +208,12 @@ public class Vuforia {
             return Unit.INSTANCE;
         };
     }
-
-
-
     /**
      * This is here so you can still access the result after the program has already finished
      */
     public static SkystonePosition skystoneResult(){
         return stonePosition;
     }
-
-
-
-
-
 
     /**
      * This is the old deprecated method, but it is here because it is used everywhere in earlier code.
@@ -250,11 +222,7 @@ public class Vuforia {
     @Deprecated
     public int visionTest() {
 
-
         stoneTarget.setName("Skystone");
-
-
-
 
         targetsSkyStone.activate();
         searchTime.reset();
@@ -271,8 +239,6 @@ public class Vuforia {
             }
         }
         if(stonePosition != SkystonePosition.LEFT && stonePosition != SkystonePosition.RIGHT) stonePosition = SkystonePosition.UNSEEN;
-
-
 
         // Disable Tracking when we are done;
         targetsSkyStone.deactivate();
